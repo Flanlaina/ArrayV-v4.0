@@ -6,7 +6,7 @@ import utils.IndexedRotations;
 
 /*
 
-Coded for ArrayV by Haruki
+Coded for ArrayV by Flanlaina
 in collaboration with aphitorite and PCBoy
 
 +---------------------------+
@@ -22,7 +22,7 @@ in collaboration with aphitorite and PCBoy
  * To use this algorithm in another, use {@code blockMergeSort()} from a
  * reference instance.
  *
- * @author Haruki (Ayako-chan) - implementation of the sort
+ * @author Flanlaina - implementation of the sort
  * @author aphitorite - key idea / concept of Logsort, and implementation
  *         of Lograil Sort
  * @author PCBoy - Stable Segment Reversal and an equal-optimized
@@ -198,8 +198,7 @@ public class LazyLograilSort extends Sort {
     }
 
     protected void blockSwap(int[] array, int a, int b, int s) {
-        while (s-- > 0)
-            Writes.swap(array, a++, b++, 1, true, false);
+        while (s-- > 0) Writes.swap(array, a++, b++, 1, true, false);
     }
 
     protected void rotate(int[] array, int a, int m, int b) {
@@ -264,8 +263,8 @@ public class LazyLograilSort extends Sort {
         if (!left) Writes.swap(array, a + wLen, p + wLen, 1, true, false);
 
         for (i = 1; i < bCnt; i++) {
-            int nxt = a + i * bLen;
-            pc = p + i * bLen;
+            int nxt = a + i * bLen; pc = p + i * bLen;
+
             boolean frag = this.pivCmp(array[nxt + wLen], piv, pCmp) ^ (bit != 0);
             if (!frag) Writes.swap(array, nxt + wLen, pc + wLen, 1, true, false);
 
@@ -276,7 +275,7 @@ public class LazyLograilSort extends Sort {
                 left = !left;
             }
         }
-        if (left) inPlaceMergeBW(array, f, a + bCnt * bLen, b, left);
+        if (left) inPlaceMergeBW(array, f, a + bCnt * bLen, b, true);
     }
 
     private void blockMergeEasy(int[] array, int a, int m, int b, int p, int bLen, int piv, int pCmp, int bit) {

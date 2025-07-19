@@ -38,17 +38,17 @@ SOFTWARE.
  * @author S630690
  */
 final public class Writes {
-    private volatile long reversals;
-    private volatile long swaps;
-    private volatile long auxWrites;
-    private volatile long writes;
-    private volatile long allocAmount;
+    public volatile long reversals;
+    public volatile long swaps;
+    public volatile long auxWrites;
+    public volatile long writes;
+    public volatile long allocAmount;
     public volatile long recursions;
     public volatile long depth;
 
     private DecimalFormat formatter;
 
-    private ArrayVisualizer ArrayVisualizer;
+    private ArrayVisualizer arrayVisualizer;
     private Delays Delays;
     private Highlights Highlights;
     private Timer Timer;
@@ -62,7 +62,7 @@ final public class Writes {
         this.recursions = 0;
         this.depth = 0;
 
-        this.ArrayVisualizer = ArrayVisualizer;
+        this.arrayVisualizer = ArrayVisualizer;
         this.Delays = ArrayVisualizer.getDelays();
         this.Highlights = ArrayVisualizer.getHighlights();
         this.Timer = ArrayVisualizer.getTimer();
@@ -129,7 +129,7 @@ final public class Writes {
             else                       return this.formatter.format(this.allocAmount) + " Items in External Arrays";
         }
     }
-    
+
     public String getRecursions() {
         if (this.recursions < 0) {
             this.recursions = Long.MIN_VALUE;
@@ -196,12 +196,12 @@ final public class Writes {
     }
 
     public void swap(int[] array, int a, int b, double pause, boolean mark, boolean auxwrite) {
-        if (ArrayVisualizer.sortCanceled()) throw new StopSort();
-        if (!auxwrite && a >= ArrayVisualizer.getCurrentLength()) {
-            System.err.println("Warning: write to index " + a + ", which is out of bounds for the current length (" + ArrayVisualizer.getCurrentLength() + ")");
+        if (arrayVisualizer.sortCanceled()) throw new StopSort();
+        if (!auxwrite && a >= arrayVisualizer.getCurrentLength()) {
+            System.err.println("Warning: write to index " + a + ", which is out of bounds for the current length (" + arrayVisualizer.getCurrentLength() + ")");
         }
-        if (!auxwrite && b >= ArrayVisualizer.getCurrentLength()) {
-            System.err.println("Warning: write to index " + b + ", which is out of bounds for the current length (" + ArrayVisualizer.getCurrentLength() + ")");
+        if (!auxwrite && b >= arrayVisualizer.getCurrentLength()) {
+            System.err.println("Warning: write to index " + b + ", which is out of bounds for the current length (" + arrayVisualizer.getCurrentLength() + ")");
         }
 
         if (mark) this.markSwap(a, b);
@@ -215,7 +215,7 @@ final public class Writes {
         Timer.stopLap();
 
         this.updateSwap(auxwrite);
-        ArrayVisualizer.updateNow();
+        arrayVisualizer.updateNow();
         Delays.sleep(pause);
     }
 
@@ -261,9 +261,9 @@ final public class Writes {
     }
 
     public void write(int[] array, int at, int equals, double pause, boolean mark, boolean auxwrite) {
-        if (ArrayVisualizer.sortCanceled()) throw new StopSort();
-        if (!auxwrite && at >= ArrayVisualizer.getCurrentLength()) {
-            System.err.println("Warning: write to index " + at + ", which is out of bounds for the current length (" + ArrayVisualizer.getCurrentLength() + ")");
+        if (arrayVisualizer.sortCanceled()) throw new StopSort();
+        if (!auxwrite && at >= arrayVisualizer.getCurrentLength()) {
+            System.err.println("Warning: write to index " + at + ", which is out of bounds for the current length (" + arrayVisualizer.getCurrentLength() + ")");
         }
 
         if (mark) Highlights.markArray(1, at);
@@ -277,12 +277,12 @@ final public class Writes {
 
         Timer.stopLap();
 
-        ArrayVisualizer.updateNow();
+        arrayVisualizer.updateNow();
         Delays.sleep(pause);
     }
 
     public <T> void write(T[] array, int at, T equals, double pause, boolean mark) {
-        if (ArrayVisualizer.sortCanceled()) throw new StopSort();
+        if (arrayVisualizer.sortCanceled()) throw new StopSort();
         if (mark) Highlights.markArray(1, at);
 
         auxWrites++;
@@ -293,7 +293,7 @@ final public class Writes {
 
         Timer.stopLap();
 
-        ArrayVisualizer.updateNow();
+        arrayVisualizer.updateNow();
         Delays.sleep(pause);
     }
 
@@ -306,7 +306,7 @@ final public class Writes {
     }
 
     public void multiDimWrite(int[][] array, int x, int y, int equals, double pause, boolean mark, boolean auxwrite) {
-        if (ArrayVisualizer.sortCanceled()) throw new StopSort();
+        if (arrayVisualizer.sortCanceled()) throw new StopSort();
         if (mark) Highlights.markArray(1, x);
 
         if (auxwrite) auxWrites++;
@@ -318,12 +318,12 @@ final public class Writes {
 
         Timer.stopLap();
 
-        ArrayVisualizer.updateNow();
+        arrayVisualizer.updateNow();
         Delays.sleep(pause);
     }
 
     public <T> void multiDimWrite(T[][] array, int x, int y, T equals, double pause, boolean mark) {
-        if (ArrayVisualizer.sortCanceled()) throw new StopSort();
+        if (arrayVisualizer.sortCanceled()) throw new StopSort();
         if (mark) Highlights.markArray(1, x);
 
         auxWrites++;
@@ -334,13 +334,13 @@ final public class Writes {
 
         Timer.stopLap();
 
-        ArrayVisualizer.updateNow();
+        arrayVisualizer.updateNow();
         Delays.sleep(pause);
     }
 
     //Simulates a write in order to better estimate time for values being written to an ArrayList
     public void mockWrite(int length, int pos, int val, double pause) {
-        if (ArrayVisualizer.sortCanceled()) throw new StopSort();
+        if (arrayVisualizer.sortCanceled()) throw new StopSort();
         int[] mockArray = new int[length];
 
         this.auxWrites++;
@@ -443,16 +443,16 @@ final public class Writes {
     public int[] copyOfArray(int[] original, int newLength) {
         this.allocAmount += newLength;
         int[] result = Arrays.copyOf(original, newLength);
-        ArrayVisualizer.getArrays().add(result);
-        ArrayVisualizer.updateNow();
+        arrayVisualizer.getArrays().add(result);
+        arrayVisualizer.updateNow();
         return result;
     }
 
     public int[] copyOfRangeArray(int[] original, int from, int to) {
         this.allocAmount += to - from;
         int[] result = Arrays.copyOfRange(original, from, to);
-        ArrayVisualizer.getArrays().add(result);
-        ArrayVisualizer.updateNow();
+        arrayVisualizer.getArrays().add(result);
+        arrayVisualizer.updateNow();
         return result;
     }
 
@@ -477,22 +477,22 @@ final public class Writes {
     public int[] createExternalArray(int length) {
         this.allocAmount += length;
         int[] result = new int[length];
-        ArrayVisualizer.getArrays().add(result);
-        ArrayVisualizer.updateNow();
+        arrayVisualizer.getArrays().add(result);
+        arrayVisualizer.updateNow();
         return result;
     }
 
     public void deleteExternalArray(int[] array) {
         this.allocAmount -= array.length;
-        ArrayVisualizer.getArrays().remove(array);
-        ArrayVisualizer.updateNow();
+        arrayVisualizer.getArrays().remove(array);
+        arrayVisualizer.updateNow();
     }
 
     public void deleteExternalArrays(int[]... arrays) {
         this.allocAmount -= Arrays.stream(arrays).reduce(0, (a, b) -> (a + b.length), (a, b) -> a + b);
-        List<int[]> visArrays = ArrayVisualizer.getArrays();
+        List<int[]> visArrays = arrayVisualizer.getArrays();
         Arrays.stream(arrays).forEach(visArrays::remove);
-        ArrayVisualizer.updateNow();
+        arrayVisualizer.updateNow();
     }
 
     public void arrayListAdd(List<Integer> aList, int value) {

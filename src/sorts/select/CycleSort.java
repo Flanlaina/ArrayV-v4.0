@@ -48,7 +48,7 @@ final public class CycleSort extends Sort {
 	private int countLesser(int[] array, int a, int b, int t) {
 		int r = a;
 		
-		for(int i = a+1; i < b; i++) {
+		for (int i = a+1; i < b; i++) {
 			Highlights.markArray(1, r);
 			Highlights.markArray(2, i);
 			Delays.sleep(0.01);
@@ -59,28 +59,31 @@ final public class CycleSort extends Sort {
 		return r;
 	}
 
-    @Override
-    public void runSort(int[] array, int length, int bucketCount) {
-		for(int i = 0; i < length-1; i++) {
+	public void cycleSort(int[] array, int start, int end) {
+		for(int i = start; i < end-1; i++) {
 			Highlights.markArray(3, i);
 			
 			int t = array[i];
-			int r = this.countLesser(array, i, length, t);
+			int r = this.countLesser(array, i, end, t);
 			
-			if(r != i) {
+			if (r != i) {
 				do {
-					while(Reads.compareIndexValue(array, r, t, 0.01, true) == 0) r++;
+					while (Reads.compareIndexValue(array, r, t, 0.01, true) == 0) r++;
 					
 					int t1 = array[r];
 					Writes.write(array, r, t, 0.02, false, false);
 					t = t1;
 					
-					r = this.countLesser(array, i, length, t);
-				}
-				while(r != i);
+					r = this.countLesser(array, i, end, t);
+				} while(r != i);
 				
 				Writes.write(array, i, t, 0.02, false, false);
 			}
 		}
+	}
+
+    @Override
+    public void runSort(int[] array, int length, int bucketCount) {
+		cycleSort(array, 0, length);
     }
 }

@@ -186,7 +186,9 @@ final public class ArrayManager {
             Delays.setSleepRatio(sleepRatio);
         }
 
+        if (!ArrayVisualizer.shuffleEnabled()) Delays.changeSkipped(true);
         shuffle.shuffleArray(array, this.ArrayVisualizer);
+        if (!ArrayVisualizer.shuffleEnabled()) Delays.changeSkipped(false);
 
         Delays.setSleepRatio(speed);
 

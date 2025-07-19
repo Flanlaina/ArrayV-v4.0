@@ -8,7 +8,7 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Haruki
+Coded for ArrayV by Flanlaina
 
 +---------------------------+
 | Sorting Algorithm Scarlet |
@@ -17,7 +17,7 @@ Coded for ArrayV by Haruki
  */
 
 /**
- * @author Haruki (Ayako-chan)
+ * @author Flanlaina
  *
  */
 public class StableEulaSort extends Sort {
@@ -104,7 +104,7 @@ public class StableEulaSort extends Sort {
         uSet.clear();
         Writes.changeAllocAmount(-u);
 
-        int[] ptrs = Writes.createExternalArray(u + 1);
+        int[] ptrs = Writes.createExternalArray(u);
         int[] buf = Writes.createExternalArray(len);
         for (int i = a; i < b; i++) {
 
@@ -120,7 +120,7 @@ public class StableEulaSort extends Sort {
             Writes.write(ptrs, idx, ptrs[idx] + 1, 1, false, true);
         }
 
-        for (int i = 1; i <= u; i++) // Do a prefix sum to find locations
+        for (int i = 1; i < u; i++) // Do a prefix sum to find locations
             Writes.write(ptrs, i, ptrs[i] + ptrs[i - 1], 0, false, true);
 
         for (int i = len - 1; i >= 0; i--) {

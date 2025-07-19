@@ -3,13 +3,29 @@ package sorts.hybrid;
 import main.ArrayVisualizer;
 import sorts.templates.Sort;
 
+/*
+
+Coded for ArrayV by Flanlaina
+in collaboration with yuji
+
++---------------------------+
+| Sorting Algorithm Scarlet |
++---------------------------+
+
+ */
+
+/**
+ * @author Flanlaina
+ * @author yuji
+ *
+ */
 public final class IntroCircloidSort extends Sort {
 
     public IntroCircloidSort(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        this.setSortListName("Intro Circloid");
-        this.setRunAllSortsName("Introspective Circloid Sort");
-        this.setRunSortName("Introspective Circloid Sort");
+        this.setSortListName("Intro Circloid (Original)");
+        this.setRunAllSortsName("Original Introspective Circloid Sort");
+        this.setRunSortName("Original Introspective Circloid Sort");
         this.setCategory("Hybrid Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);
@@ -77,11 +93,11 @@ public final class IntroCircloidSort extends Sort {
         int length = b - a;
         int threshold = 0, n = 1;
         for(; n < length; n*=2, threshold++);
-        threshold /= 2;
+        threshold = (threshold + 1) / 2;
         int iterations = 0;
         do {
             iterations++;
-            if(iterations >= threshold) {
+            if(iterations > threshold) {
                 insertSort(array, a, b);
                 break;
             }

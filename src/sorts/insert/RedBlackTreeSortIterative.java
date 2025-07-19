@@ -5,7 +5,7 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Haruki
+Coded for ArrayV by Flanlaina
 extending code by Anonymous0726
 
 +---------------------------+
@@ -21,7 +21,7 @@ extending code by Anonymous0726
  * To use this algorithm in another, use {@code treeSort()} from a reference
  * instance.
  * 
- * @author Haruki (Flandre-chan0331 on GitHub)
+ * @author Flanlaina
  */
 public class RedBlackTreeSortIterative extends Sort {
 
@@ -184,12 +184,16 @@ public class RedBlackTreeSortIterative extends Sort {
         }
         public void insert(int idx) {
             Node x = root, y = nilNode;
+            boolean goLeft = false;
             while (x != nilNode) {
                 y = x;
-                if (Reads.compareIndices(array, idx, x.idx, 0.25, true) < 0)
-                    x = x.left;
-                else
-                    x = x.right;
+                if (Reads.compareIndices(array, idx, x.idx, 0.25, true) < 0) {
+                    x = x.left; // x == y.left
+                    goLeft = true;
+                } else {
+                    x = x.right; // x == y.right
+                    goLeft = false;
+                }
             }
             Node z = new Node(idx); // z's color is red
             z.left = z.right = nilNode;
@@ -197,16 +201,16 @@ public class RedBlackTreeSortIterative extends Sort {
             z.parent = treeWrite(y);
             if (y == nilNode)
                 this.root = treeWrite(z);
-            else if (Reads.compareIndices(array, z.idx, y.idx, 0.25, true) < 0)
+            else if (goLeft)
                 y.left = treeWrite(z);
             else
                 y.right = treeWrite(z);
             insertFixup(z);
         }
         private Node bstMinimum(Node p) {
-            if (p != nilNode)
-                while (p.left != nilNode)
-                    p = p.left;
+            if (p == nilNode) return nilNode;
+            while (p.left != nilNode)
+                p = p.left;
             return p;
         }
         private Node bstSucessor(Node x) {

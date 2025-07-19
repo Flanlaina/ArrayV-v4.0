@@ -8,7 +8,7 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Haruki
+Coded for ArrayV by Flanlaina
 in collaboration with aphitorite
 
 +---------------------------+
@@ -18,7 +18,7 @@ in collaboration with aphitorite
  */
 
 /**
- * @author Haruki (Ayako-chan)
+ * @author Flanlaina
  * @author aphitorite
  *
  */
@@ -106,7 +106,7 @@ public class EulaSort extends Sort {
         uSet.clear();
         Writes.changeAllocAmount(-u);
 
-        int[] ptrs = Writes.createExternalArray(u + 1);
+        int[] ptrs = Writes.createExternalArray(u);
         for (int i = a; i < b; i++) {
 
             // Decorative marking position.
@@ -118,7 +118,7 @@ public class EulaSort extends Sort {
             Writes.write(ptrs, idx, ptrs[idx] + 1, 1, false, true);
         }
 
-        for (int i = 1; i <= u; i++) // Do a prefix sum to find locations
+        for (int i = 1; i < u; i++) // Do a prefix sum to find locations
             Writes.write(ptrs, i, ptrs[i] + ptrs[i - 1], 0, false, true);
 
         for (int i = 0, j = 0; i < u; i++) {

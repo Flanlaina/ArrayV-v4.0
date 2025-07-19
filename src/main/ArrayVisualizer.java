@@ -253,6 +253,9 @@ public final class ArrayVisualizer {
 
     public static int MAX_LENGTH_POWER = 15;
 
+    private boolean useClassicColors = false;
+    private boolean inShowcase = false;
+
     private volatile boolean hidden;
     private volatile boolean frameSkipped;
 
@@ -658,6 +661,14 @@ public final class ArrayVisualizer {
 
     public static ArrayVisualizer getInstance() {
         return INSTANCE;
+    }
+
+    public boolean isClassicColorsEnabled() {
+        return useClassicColors;
+    }
+
+    public boolean isInShowcase() {
+        return inShowcase;
     }
 
     public JFrame getWindow() {
@@ -1105,17 +1116,16 @@ public final class ArrayVisualizer {
     }
 
     public Color getHighlightColor() {
-        if (this.colorEnabled()) {
-            if (this.analysisEnabled())
-                return Color.LIGHT_GRAY;
-            else
-                return Color.WHITE;
-        } else {
-            if (this.analysisEnabled())
-                return Color.BLUE;
-            else
-                return Color.RED;
+        if (!this.colorEnabled()) {
+            if (this.analysisEnabled()) return Color.BLUE;
+            else return Color.RED;
         }
+        if (this.useClassicColors) {
+            if (this.analysisEnabled()) return Color.WHITE;
+            else return Color.BLACK;
+        }
+        if (this.analysisEnabled()) return Color.LIGHT_GRAY;
+        else return Color.WHITE;
     }
 
     public void createVolatileImage() {
@@ -1193,7 +1203,7 @@ public final class ArrayVisualizer {
 
         this.Delays.setSleepRatio(1);
 
-        double sleepRatio = 256d/this.sortLength;
+        double sleepRatio = 256d / this.sortLength;
         long tempComps = this.Reads.getComparisons();
         this.Reads.setComparisons(0);
 
@@ -1210,14 +1220,19 @@ public final class ArrayVisualizer {
         int invalidateIdx = 0;
 
         for (int i = 0; i < this.sortLength + this.getLogBaseTwoOfLength(); i++) {
-            if (i < this.sortLength) this.Highlights.markArray(1, i);
+            if (i < this.sortLength)
+                this.Highlights.markArray(1, i);
             this.Highlights.incrementFancyFinishPosition();
 
-            if (i < this.sortLength - 1) {
-                if (validate && !validateFailed && this.Reads.compareOriginalValues(this.array[i], this.validateArray[i]) != 0) {
+            if (i < this.sortLength) {
+                if (validate && !validateFailed
+                        && this.Reads.compareOriginalValues(this.array[i], this.validateArray[i]) != 0) {
                     validateFailed = true;
                     invalidateIdx = i;
                 }
+            }
+
+            if (i < this.sortLength - 1) {
                 if (stable && this.Reads.compareOriginalValues(this.array[i], this.array[i + 1]) == cmpVal) {
                     stable = false;
                     unstableIdx = i;
@@ -1229,12 +1244,21 @@ public final class ArrayVisualizer {
                     this.Sounds.toggleSound(false);
                     this.Highlights.toggleFancyFinish(false);
 
+                    if (this.inShowcase) 
+                        this.extraHeading = " / Sort failed: Indices " + i + " and " + (i + 1) + " are out of order!";
+
                     for (int j = i + 1; j < this.sortLength; j++) {
                         this.Highlights.markArray(j, j);
-                        this.Delays.sleep(sleepRatio);
+                        this.Delays.sleep(this.inShowcase ? 0 : sleepRatio);
                     }
 
-                    JOptionPane.showMessageDialog(this.window, "The sort was unsuccessful;\nIndices " + i + " and " + (i + 1) + " are out of order!", "Error", JOptionPane.OK_OPTION, null);
+                    if (this.inShowcase) {
+                        try {Thread.sleep(3000);} catch (InterruptedException e) {}
+                    } else {
+                        JOptionPane.showMessageDialog(this.window,
+                            "The sort was unsuccessful;\nIndices " + i + " and " + (i + 1) + " are out of order!",
+                            "Error", JOptionPane.ERROR_MESSAGE, null);
+                    }
                     success = false;
 
                     this.Highlights.clearAllMarks();
@@ -1251,19 +1275,25 @@ public final class ArrayVisualizer {
         }
         this.Highlights.clearMark(1);
 
-        // if (tempStability && success)
-        //     JOptionPane.showMessageDialog(this.window, "This sort is stable!", "Information", JOptionPane.OK_OPTION, null);
         if (this.STABILITY && success && !stable) {
             boolean tempSound = this.Sounds.isEnabled();
             this.Sounds.toggleSound(false);
             this.Highlights.toggleFancyFinish(false);
 
+            if (this.inShowcase)
+                this.extraHeading = " / Original order of dupes not maintained. Sort is not stable.";
+
             for (int j = unstableIdx; j < this.sortLength; j++) {
                 this.Highlights.markArray(j, j);
-                this.Delays.sleep(sleepRatio);
+                this.Delays.sleep(this.inShowcase ? 0 : sleepRatio);
             }
 
-            JOptionPane.showMessageDialog(this.window, "This sort is not stable;\nIndices " + unstableIdx + " and " + (unstableIdx + 1) + " are out of order!", "Error", JOptionPane.OK_OPTION, null);
+            if (this.inShowcase) {
+                try {Thread.sleep(3000);} catch (InterruptedException e) {}
+            } else {
+                JOptionPane.showMessageDialog(this.window, "This sort is not stable;\nIndices " + unstableIdx + " and "
+                    + (unstableIdx + 1) + " are out of order!", "Error", JOptionPane.ERROR_MESSAGE, null);
+            }
 
             this.Highlights.clearAllMarks();
             this.Sounds.toggleSound(tempSound);
@@ -1272,12 +1302,21 @@ public final class ArrayVisualizer {
             this.Sounds.toggleSound(false);
             this.Highlights.toggleFancyFinish(false);
 
+            if (this.inShowcase) 
+                this.extraHeading = " / Sort failed: array[" + invalidateIdx + "] != validateArray[" + invalidateIdx + "]";
+
             for (int j = invalidateIdx + 1; j < this.sortLength; j++) {
                 this.Highlights.markArray(j, j);
-                this.Delays.sleep(sleepRatio);
+                this.Delays.sleep(this.inShowcase ? 0 : sleepRatio);
             }
 
-            JOptionPane.showMessageDialog(this.window, "The sort was unsuccessful;\narray[" + invalidateIdx + "] != validateArray[" + invalidateIdx + "]", "Error", JOptionPane.OK_OPTION, null);
+            if (this.inShowcase) {
+                try {Thread.sleep(3000);} catch (InterruptedException e) {}
+            } else {
+                JOptionPane.showMessageDialog(this.window,
+                    "The sort was unsuccessful;\narray[" + invalidateIdx + "] != validateArray[" + invalidateIdx + "]",
+                    "Error", JOptionPane.ERROR_MESSAGE, null);
+            }
 
             this.Highlights.clearAllMarks();
             this.Sounds.toggleSound(tempSound);
@@ -1323,7 +1362,7 @@ public final class ArrayVisualizer {
 
         this.arrays.subList(1, this.arrays.size()).clear();
         this.Writes.clearAllocAmount();
-
+        this.extraHeading = "";
         this.Highlights.clearAllMarks();
     }
 
@@ -1356,6 +1395,13 @@ public final class ArrayVisualizer {
     }
     public void toggleExternalArrays(boolean Bool) {
         this.EXTARRAYS = Bool;
+    }
+    public void toggleClassicColors(boolean Bool) {
+        this.useClassicColors = Bool;
+    }
+
+    public void toggleInShowcase(boolean inShowcase) {
+        this.inShowcase = inShowcase;
     }
 
     public void setVisual(VisualStyles choice) {
@@ -1479,11 +1525,15 @@ public final class ArrayVisualizer {
 
     public static void main(String[] args) {
         System.setProperty("sun.java2d.d3d", "false");
-        if (args.length > 0) {
-            if (args[0].contains("RSS")) doRSS = true;
-            else ArrayVisualizer.MAX_LENGTH_POWER = Integer.parseInt(args[0]);
+        // if (args.length > 0) {
+        //     if (args[0].contains("RSS")) doRSS = true;
+        //     else ArrayVisualizer.MAX_LENGTH_POWER = Integer.parseInt(args[0]);
+        // }
+        // if (args.length > 1) if (args[1].contains("RSS")) doRSS = true;
+        for (int i = 0; i < args.length; i++) {
+            if ("RSS".equals(args[i])) doRSS = true;
+            else ArrayVisualizer.MAX_LENGTH_POWER = Integer.parseInt(args[i]);
         }
-        if (args.length > 1) if (args[1].contains("RSS")) doRSS = true;
         new ArrayVisualizer();
     }
 }

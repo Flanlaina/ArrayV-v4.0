@@ -331,7 +331,7 @@ public final class PacheSort2 extends Sort {
 		
 		this.selectMinMax(array, a, b, bitLen);
 		
-		if(Reads.compareIndices(array, a1, b1-1, 1, true) < 0) {
+		if(Reads.compareIndices(array, a1-1, b1, 1, true) < 0) {
 			int a2 = a1;
 			
 			for(int i = 0; i < pCnt; i++)

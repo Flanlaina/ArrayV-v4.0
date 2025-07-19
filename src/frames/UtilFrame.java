@@ -117,6 +117,7 @@ final public class UtilFrame extends javax.swing.JFrame {
         this.jCheckBox7 = new javax.swing.JCheckBox();
         this.jCheckBox8 = new javax.swing.JCheckBox();
         this.jCheckBox9 = new javax.swing.JCheckBox();
+        this.jCheckBox10 = new javax.swing.JCheckBox();
         this.jSlider = new javax.swing.JSlider(SwingConstants.VERTICAL, 1, 12, 11);
         this.jComboBox1 = new javax.swing.JComboBox();
 
@@ -278,6 +279,15 @@ final public class UtilFrame extends javax.swing.JFrame {
             }
         });
 
+        jCheckBox10.setSelected(false);
+        jCheckBox10.setText("Classic Colors");
+        jCheckBox10.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox10ActionPerformed();
+            }
+        });
+
         jCheckBox9.setSelected(false);
         jCheckBox9.setText("Show Aux Arrays");
         jCheckBox9.addActionListener(new java.awt.event.ActionListener() {
@@ -322,6 +332,7 @@ final public class UtilFrame extends javax.swing.JFrame {
                                         .addComponent(this.jCheckBox7)
                                         .addComponent(this.jCheckBox8)
                                         .addComponent(this.jCheckBox9)
+                                        .addComponent(this.jCheckBox10)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, true)
                                                 .addComponent(this.jCheckBox5)
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
@@ -350,6 +361,8 @@ final public class UtilFrame extends javax.swing.JFrame {
                         .addComponent(this.jCheckBox8)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(this.jCheckBox9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(this.jCheckBox10)
                         .addGap(7, 7, 7)
                         .addComponent(this.jButton3)
                         .addGap(12, 12, 12)
@@ -540,6 +553,10 @@ final public class UtilFrame extends javax.swing.JFrame {
         ArrayVisualizer.toggleExternalArrays(jCheckBox9.isSelected());
     }//GEN-LAST:event_jCheckBox8ActionPerformed
 
+    private void jCheckBox10ActionPerformed() {
+        ArrayVisualizer.toggleClassicColors(jCheckBox10.isSelected());
+    }
+
     private void jComboBox1ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
         switch ((String)jComboBox1.getSelectedItem()) {
             case "Sorting":
@@ -615,6 +632,7 @@ final public class UtilFrame extends javax.swing.JFrame {
     private javax.swing.JCheckBox jCheckBox7;
     private javax.swing.JCheckBox jCheckBox8;
     private javax.swing.JCheckBox jCheckBox9;
+    private javax.swing.JCheckBox jCheckBox10;
     private javax.swing.JSlider jSlider;
     @SuppressWarnings("rawtypes")
     private javax.swing.JComboBox jComboBox1;

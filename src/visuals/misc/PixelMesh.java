@@ -44,14 +44,14 @@ final public class PixelMesh extends Visual {
 		return new Color(c, c, c);
 	}
 	
-	private int multx2i(int a, int b) {
-		return b<64?(a*b)/127:b<128?(a*(b+1))/127:255-(((255-a)*(256-b))/128);
-	}
-	private Color multx2(Color a, Color b) {
-		return new Color(multx2i(a.getRed(), b.getRed()), multx2i(a.getGreen(), b.getGreen()), multx2i(a.getBlue(), b.getBlue()));
-	}
+	// private int multx2i(int a, int b) {
+	// 	return b<64?(a*b)/127:b<128?(a*(b+1))/127:255-(((255-a)*(256-b))/128);
+	// }
+	// private Color multx2(Color a, Color b) {
+	// 	return new Color(multx2i(a.getRed(), b.getRed()), multx2i(a.getGreen(), b.getGreen()), multx2i(a.getBlue(), b.getBlue()));
+	// }
 	
-	private static boolean mixedMesh = true;
+	// private static boolean mixedMesh = true;
 	
 	public void drawVisual(int[] array, ArrayVisualizer ArrayVisualizer, Renderer Renderer, Highlights Highlights) {
 		if(Renderer.auxActive) return;
@@ -83,8 +83,13 @@ final public class PixelMesh extends Visual {
 				
 				else if(ArrayVisualizer.colorEnabled()) {
 					if(Highlights.containsPosition(idx)) {
-						if(ArrayVisualizer.analysisEnabled()) currColor = Color.LIGHT_GRAY;
-						else								  currColor = Color.WHITE;
+						if (ArrayVisualizer.isClassicColorsEnabled()) {
+							if (ArrayVisualizer.analysisEnabled()) currColor = Color.WHITE;
+							else                                   currColor = Color.BLACK;
+						} else {
+							if (ArrayVisualizer.analysisEnabled()) currColor = Color.LIGHT_GRAY;
+							else                                   currColor = Color.WHITE;
+						}
 					}
 					else currColor = getIntColor(array[idx], length);
 				} 

@@ -10,7 +10,7 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Haruki
+Coded for ArrayV by Flanlaina
 extending code by PCBoy
 
 +---------------------------+
@@ -22,17 +22,17 @@ O(n + n log u) time average, O(n + u) space average.
  */
 
 /**
- * @author Haruki
+ * @author Flanlaina
  * @author PCBoy
  * 
  */
-public class UBSSHaruki extends Sort {
+public class UBSSFlanlaina extends Sort {
 
-    public UBSSHaruki(ArrayVisualizer arrayVisualizer) {
+    public UBSSFlanlaina(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        this.setSortListName("Haruki's Unique-Based Stable Shuffle");
-        this.setRunAllSortsName("Haruki's Unique-Based Stable Shuffle");
-        this.setRunSortName("Haruki's Unique-Based Stable Shuffle");
+        this.setSortListName("Flanlaina's Unique-Based Stable Shuffle");
+        this.setRunAllSortsName("Flanlaina's Unique-Based Stable Shuffle");
+        this.setRunSortName("Flanlaina's Unique-Based Stable Shuffle");
         this.setCategory("Tests");
         this.setComparisonBased(true);
         this.setBucketSort(false);
@@ -121,11 +121,12 @@ public class UBSSHaruki extends Sort {
         
         // Guess what, TreeSet? Yep, forget you! I have what I want now!
         uSet.clear();
+        Writes.changeAllocAmount(-u);
         
         int[] buf = Writes.createExternalArray(len);
         int[] locs = Writes.createExternalArray(len);
-        int[] ptrs = new int[u + 1];
-        Writes.changeAllocAmount(u + 1);
+        int[] ptrs = new int[u];
+        Writes.changeAllocAmount(u);
         
         arrayVisualizer.setExtraHeading(" / Grouping elements...");
         for (int i = start; i < end; i++) {
@@ -141,7 +142,7 @@ public class UBSSHaruki extends Sort {
         }
         Highlights.clearMark(2);
         
-        for (int i = 1; i <= u; i++) // Do a prefix sum to find locations
+        for (int i = 1; i < u; i++) // Do a prefix sum to find locations
             Writes.write(ptrs, i, ptrs[i] + ptrs[i - 1], 0, false, true);
         
         for (int i = len - 1; i >= 0; i--) {
@@ -166,8 +167,9 @@ public class UBSSHaruki extends Sort {
             // And now, increment the index of the duplicate we want to use.
             Writes.write(ptrs, locs[i], ptrs[locs[i]] + 1, 1, false, true);
         }
-        Writes.changeAllocAmount(-(2 * u + 1));
+        Writes.changeAllocAmount(-u);
         Writes.deleteExternalArrays(buf, locs, uniques);
+        arrayVisualizer.setExtraHeading("");
     }
 
     @Override

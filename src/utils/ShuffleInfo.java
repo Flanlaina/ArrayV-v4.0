@@ -96,7 +96,7 @@ final public class ShuffleInfo {
         if (this.isDistribution) {
             Writes Writes = arrayVisualizer.getWrites();
             int currentLen = arrayVisualizer.getCurrentLength();
-            double sleep = arrayVisualizer.shuffleEnabled() ? 1 : 0;
+            double sleep = 1;
             int[] copy = new int[currentLen];
             int[] tmp = new int[currentLen];
             Writes.arraycopy(array, 0, copy, 0, currentLen, sleep, true, true);

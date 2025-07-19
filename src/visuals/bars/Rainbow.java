@@ -52,8 +52,13 @@ final public class Rainbow extends Visual {
 
             j += width;
         }
-        if (ArrayVisualizer.analysisEnabled()) this.mainRender.setColor(Color.LIGHT_GRAY);
-        else                                   this.mainRender.setColor(Color.WHITE);
+        if (ArrayVisualizer.isClassicColorsEnabled()) {
+            if (ArrayVisualizer.analysisEnabled()) this.mainRender.setColor(Color.WHITE);
+            else                                   this.mainRender.setColor(Color.BLACK);
+        } else {
+            if (ArrayVisualizer.analysisEnabled()) this.mainRender.setColor(Color.LIGHT_GRAY);
+            else                                   this.mainRender.setColor(Color.WHITE);
+        }
 
         for (int i = 0, j = 0; i < Renderer.getArrayLength(); i++) {
             int width = (int) (Renderer.getXScale() * (i + 1)) - j;

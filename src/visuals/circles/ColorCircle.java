@@ -80,8 +80,13 @@ final public class ColorCircle extends Visual {
                 this.mainRender.setColor(getIntColor(array[i], ArrayVisualizer.getCurrentLength()));
 
                 if (Highlights.containsPosition(i)) {
-                    if (ArrayVisualizer.analysisEnabled()) this.extraRender.setColor(Color.LIGHT_GRAY);
-                    else                                  this.extraRender.setColor(Color.WHITE);
+                    if (ArrayVisualizer.isClassicColorsEnabled()) {
+                        if (ArrayVisualizer.analysisEnabled()) this.mainRender.setColor(Color.WHITE);
+                        else                                   this.mainRender.setColor(Color.BLACK);
+                    } else {
+                        if (ArrayVisualizer.analysisEnabled()) this.mainRender.setColor(Color.LIGHT_GRAY);
+                        else                                   this.mainRender.setColor(Color.WHITE);
+                    }
 
                     px[0] =  width/2 + (int)((r + p/4) * Math.cos(Math.PI * ((2d*i - 1) / n - 0.5)));
                     py[0] = height/2 + (int)((r + p/4) * Math.sin(Math.PI * ((2d*i - 1) / n - 0.5)));

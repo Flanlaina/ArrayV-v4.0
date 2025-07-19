@@ -5,7 +5,7 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Ayako-chan
+Coded for ArrayV by Flanlaina
 
 +---------------------------+
 | Sorting Algorithm Scarlet |
@@ -14,16 +14,16 @@ Coded for ArrayV by Ayako-chan
  */
 
 /**
- * @author Ayako-chan
+ * @author Flanlaina
  *
  */
-public final class InverseSelectionSort extends Sort {
+public final class HeadPullSelectionSort extends Sort {
 
-    public InverseSelectionSort(ArrayVisualizer arrayVisualizer) {
+    public HeadPullSelectionSort(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        this.setSortListName("Inverse Selection");
-        this.setRunAllSortsName("Inverse Selection Sort");
-        this.setRunSortName("Inverse Selection Sort");
+        this.setSortListName("Head Pull Selection");
+        this.setRunAllSortsName("Head Pull Selection Sort");
+        this.setRunSortName("Head Pull Selection Sort");
         this.setCategory("Selection Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);
@@ -32,17 +32,7 @@ public final class InverseSelectionSort extends Sort {
         this.setUnreasonableLimit(0);
         this.setBogoSort(false);
     }
-    
-    protected void insertTo(int[] array, int a, int b) {
-        Highlights.clearMark(2);
-        int temp = array[a];
-        int d = (a > b) ? -1 : 1;
-        for (int i = a; i != b; i += d)
-            Writes.write(array, i, array[i + d], 0.0625, true, false);
-        if (a != b)
-            Writes.write(array, b, temp, 0.05, true, false);
-    }
-    
+
     public void selectionSort(int[] array, int a, int b) {
         for (int i = a; i < b; i++) {
             int maxIdx = i;
@@ -53,7 +43,7 @@ public final class InverseSelectionSort extends Sort {
                 }
             }
             Highlights.clearMark(3);
-            insertTo(array, maxIdx, a);
+            Writes.multiSwap(array, maxIdx, a, 0.0625, true, false);
         }
     }
 

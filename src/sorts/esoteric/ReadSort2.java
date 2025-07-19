@@ -8,15 +8,15 @@ public class ReadSort2 extends BogoSorting {
     public ReadSort2(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
 
-        this.setSortListName("Read 2");
-        this.setRunAllSortsName("Read Sort 2");
-        this.setRunSortName("Readsort 2");
+        this.setSortListName("Read (Insertion)");
+        this.setRunAllSortsName("Read Sort (Insertion)");
+        this.setRunSortName("Readsort (Insertion)");
         this.setCategory("Impractical Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);
         this.setRadixSort(false);
-        this.setUnreasonablySlow(false);
-        this.setUnreasonableLimit(0);
+        this.setUnreasonablySlow(true);
+        this.setUnreasonableLimit(512);
         this.setBogoSort(false);
     }
 

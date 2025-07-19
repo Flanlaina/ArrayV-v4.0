@@ -247,21 +247,21 @@ public final class FlanSort2 extends Sort {
 
 			if(loc == bLoc) { // if there is no empty space filled elements in gap are split
 			                  // dont increment i since no elements are inserted in this case
+				int rotP = -1;
 			
 				do bLoc += G+1;
-				while(bLoc < pEnd && this.rightBinSearch(array, bLoc-G, bLoc, bsv, bw) == bLoc);
+				while(bLoc < pEnd && (rotP = this.rightBinSearch(array, bLoc-G, bLoc, bsv, bw)) == bLoc);
 
 				if(bLoc == pb) // weve reached the end of buffer: force a rebalance
 					this.rebalance(array, a, i, p, pEnd, pb, bsv, bw);
 					
-				else if(bLoc == pEnd) { // otherwise: append chunk at last gap
+				else if(bLoc == pEnd) { // otherwise: append new gap after last gap
 					int rotS = G/2 + 1; // any amount such that 1 <= rotS <= G
 					this.shiftBW(array, loc-rotS, bLoc-(G+1), bLoc-(G+1)+rotS);
 					pEnd += G+1;
 				}
 				else { // if a gap is full find next non full gap to the right & shift the space down
-					int rotP = this.rightBinSearch(array, bLoc-G, bLoc, bsv, bw);
-					int rotS = bLoc - Math.max(rotP, bLoc - (G+1)/2); // ceiling division so that G == 1 works
+					int rotS = bLoc - Math.max(rotP, bLoc - (G+1)/2); // ceiling division by 2 so that G == 1 works
 					this.shiftBW(array, loc-rotS, bLoc-rotS, bLoc);
 				}
 			}

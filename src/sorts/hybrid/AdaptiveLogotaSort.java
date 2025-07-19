@@ -6,7 +6,7 @@ import utils.IndexedRotations;
 
 /*
 
-Coded for ArrayV by Haruki
+Coded for ArrayV by Flanlaina
 in collaboration with aphitorite
 
 +---------------------------+
@@ -16,7 +16,7 @@ in collaboration with aphitorite
  */
 
 /**
- * @author Haruki
+ * @author Flanlaina
  * @author aphitorite
  *
  */
@@ -308,8 +308,8 @@ public class AdaptiveLogotaSort extends Sort {
             if (la == 0)
                 med = array[a + lCnt - 1];
             else
-                med = Reads.compareIndices(array, m + la - 1, a + (lCnt - la) - 1, 0.25, true) > 0 ? array[m + la - 1]
-                        : array[a + (lCnt - la) - 1];
+                med = Reads.compareIndices(array, m + la - 1, a + (lCnt - la) - 1, 0.25, true) > 0
+                    ? array[m + la - 1] : array[a + (lCnt - la) - 1];
         } else {
             if (l <= bLen) {
                 this.mergeFWExt(array, swap, a, m, b);
@@ -330,8 +330,8 @@ public class AdaptiveLogotaSort extends Sort {
             else if (la == 0)
                 med = array[m + lCnt - 1];
             else
-                med = Reads.compareIndices(array, a + la - 1, m + (lCnt - la) - 1, 0.25, true) >= 0 ? array[a + la - 1]
-                        : array[m + (lCnt - la) - 1];
+                med = Reads.compareIndices(array, a + la - 1, m + (lCnt - la) - 1, 0.25, true) >= 0
+                    ? array[a + la - 1] : array[m + (lCnt - la) - 1];
         }
         Highlights.clearMark(2);
 

@@ -5,17 +5,18 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Haruki
-in collaboration with PCBoy
-
 +---------------------------+
-| Sorting Algorithm Scarlet |
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
 +---------------------------+
 
  */
 
 /**
- * @author Haruki (Ayako-chan)
+ * @author Flanlaina
  * @author PCBoy
  *
  */
@@ -29,8 +30,8 @@ public class ReverseShnexCycleSort extends Sort {
         this.setComparisonBased(true);
         this.setBucketSort(false);
         this.setRadixSort(false);
-        this.setUnreasonablySlow(false);
-        this.setUnreasonableLimit(0);
+        this.setUnreasonablySlow(true);
+        this.setUnreasonableLimit(512);
         this.setBogoSort(false);
     }
 
@@ -55,7 +56,7 @@ public class ReverseShnexCycleSort extends Sort {
             double times = 1;
             do {
                 while(Reads.compareIndices(array, r, i, 0.01, true) == 0) r++;
-                Writes.multiSwap(array, r, i, 1 / times, true, false);
+                Writes.multiSwap(array, r, i, 0.25 / times, true, false);
                 times += 0.1;
                 r = countLesser(array, i, b, i);
             } while (r != i);
