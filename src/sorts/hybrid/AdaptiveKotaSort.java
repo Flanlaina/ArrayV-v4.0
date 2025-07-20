@@ -5,11 +5,12 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Haruki
-in collaboration with aphitorite
-
 +---------------------------+
-| Sorting Algorithm Scarlet |
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
 +---------------------------+
 
  */
@@ -20,7 +21,7 @@ in collaboration with aphitorite
  * To use this algorithm in another, use {@code blockMergeSort()} from a reference
  * instance.
  *
- * @author Haruki (Ayako-chan)
+ * @author Flanlaina
  * @author aphitorite
  *
  */
@@ -53,7 +54,7 @@ public class AdaptiveKotaSort extends Sort {
         return a;
     }
 
-    void multiSwap(int[] array, int a, int b, int s) {
+    void blockSwap(int[] array, int a, int b, int s) {
         while (s-- > 0) Writes.swap(array, a++, b++, 1, true, false);
     }
 
@@ -70,12 +71,12 @@ public class AdaptiveKotaSort extends Sort {
         int l = m - a, r = b - m;
         while (l > 1 && r > 1) {
             if (r < l) {
-                this.multiSwap(array, m - r, m, r);
+                this.blockSwap(array, m - r, m, r);
                 b -= r;
                 m -= r;
                 l -= r;
             } else {
-                this.multiSwap(array, a, m, l);
+                this.blockSwap(array, a, m, l);
                 a += l;
                 m += l;
                 r -= l;
@@ -97,14 +98,14 @@ public class AdaptiveKotaSort extends Sort {
         return a;
     }
 
-    protected int leftExpSearch(int[] array, int a, int b, int val, boolean left) {
+    protected int minExpSearch(int[] array, int a, int b, int val, boolean left) {
         int i = 1;
         if (left) while (a - 1 + i < b && Reads.compareValues(val, array[a - 1 + i]) > 0) i *= 2;
         else while (a - 1 + i < b && Reads.compareValues(val, array[a - 1 + i]) >= 0) i *= 2;
         return binSearch(array, a + i / 2, Math.min(b, a - 1 + i), val, left);
     }
 
-    protected int rightExpSearch(int[] array, int a, int b, int val, boolean left) {
+    protected int maxExpSearch(int[] array, int a, int b, int val, boolean left) {
         int i = 1;
         if (left) while (b - i >= a && Reads.compareValues(val, array[b - i]) <= 0) i *= 2;
         else while (b - i >= a && Reads.compareValues(val, array[b - i]) < 0) i *= 2;
@@ -209,7 +210,7 @@ public class AdaptiveKotaSort extends Sort {
                 j = i - (i - j - 1) % mRun - 1;
             }
             while (i - j < mRun && i < b) {
-                insertTo(array, i, rightExpSearch(array, j, i, array[i], false));
+                insertTo(array, i, maxExpSearch(array, j, i, array[i], false));
                 i++;
             }
             j = i++;
@@ -223,7 +224,7 @@ public class AdaptiveKotaSort extends Sort {
 
     protected void mergeFW(int[] array, int a, int m, int b, int p) {
         int pLen = m - a;
-        multiSwap(array, a, p, pLen);
+        blockSwap(array, a, p, pLen);
         int i = 0, j = m, k = a;
         while (i < pLen && j < b) {
             if (Reads.compareValues(array[p + i], array[j]) <= 0)
@@ -236,7 +237,7 @@ public class AdaptiveKotaSort extends Sort {
 
     protected void mergeBW(int[] array, int a, int m, int b, int p) {
         int pLen = b - m;
-        multiSwap(array, m, p, pLen);
+        blockSwap(array, m, p, pLen);
         int i = pLen - 1, j = m - 1, k = b - 1;
         while (i >= 0 && j >= a) {
             if (Reads.compareValues(array[p + i], array[j]) >= 0)
@@ -249,32 +250,32 @@ public class AdaptiveKotaSort extends Sort {
 
     protected void inPlaceMergeFW(int[] array, int a, int m, int b) {
         while (a < m && m < b) {
-            int i = leftExpSearch(array, m, b, array[a], true);
+            int i = minExpSearch(array, m, b, array[a], true);
             rotate(array, a, m, i);
             int t = i - m;
             m = i;
             a += t + 1;
             if (m >= b) break;
-            a = leftExpSearch(array, a, m, array[m], false);
+            a = minExpSearch(array, a, m, array[m], false);
         }
     }
 
     protected void inPlaceMergeBW(int[] array, int a, int m, int b) {
         while (b > m && m > a) {
-            int i = rightExpSearch(array, a, m, array[b - 1], false);
+            int i = maxExpSearch(array, a, m, array[b - 1], false);
             rotate(array, i, m, b);
             int t = m - i;
             m = i;
             b -= t + 1;
             if (m <= a) break;
-            b = rightExpSearch(array, m, b, array[m - 1], true);
+            b = maxExpSearch(array, m, b, array[m - 1], true);
         }
     }
 
     public void inPlaceMerge(int[] array, int a, int m, int b) {
         if (Reads.compareValues(array[m - 1], array[m]) <= 0) return;
-        a = leftExpSearch(array, a, m, array[m], false);
-        b = rightExpSearch(array, m, b, array[m - 1], true);
+        a = minExpSearch(array, a, m, array[m], false);
+        b = maxExpSearch(array, m, b, array[m - 1], true);
         if (Reads.compareValues(array[a], array[b - 1]) > 0) {
             rotate(array, a, m, b);
             return;
@@ -285,8 +286,8 @@ public class AdaptiveKotaSort extends Sort {
 
     public void merge(int[] array, int a, int m, int b, int p) {
         if (Reads.compareValues(array[m - 1], array[m]) <= 0) return;
-        a = leftExpSearch(array, a, m, array[m], false);
-        b = rightExpSearch(array, m, b, array[m - 1], true);
+        a = minExpSearch(array, a, m, array[m], false);
+        b = maxExpSearch(array, m, b, array[m - 1], true);
         if (Reads.compareValues(array[a], array[b - 1]) > 0) {
             rotate(array, a, m, b);
             return;
@@ -297,8 +298,8 @@ public class AdaptiveKotaSort extends Sort {
 
     protected void fragmentedMergeFW(int[] array, int a, int m, int b, int s) {
         if (Reads.compareValues(array[m - 1], array[m]) <= 0) return;
-        a = leftExpSearch(array, a, m, array[m], false);
-        int rPos = leftExpSearch(array, m, b, array[a], true);
+        a = minExpSearch(array, a, m, array[m], false);
+        int rPos = minExpSearch(array, m, b, array[a], true);
         rotate(array, a, m, rPos);
         int dist = rPos-m;
         a += dist;
@@ -318,8 +319,8 @@ public class AdaptiveKotaSort extends Sort {
 
     protected void fragmentedMergeBW(int[] array, int a, int m, int b, int s) {
         if (Reads.compareValues(array[m - 1], array[m]) <= 0) return;
-        b = rightExpSearch(array, m, b, array[m - 1], true);
-        int rPos = rightExpSearch(array, a, m, array[b - 1], false);
+        b = maxExpSearch(array, m, b, array[m - 1], true);
+        int rPos = maxExpSearch(array, a, m, array[b - 1], false);
         this.rotate(array, rPos, m, b);
         int dist = m-rPos;
         b -= dist;
@@ -350,7 +351,7 @@ public class AdaptiveKotaSort extends Sort {
         while (a < b) {
             int min = this.selectMin(array, a, b, bLen);
 
-            if (min != a) this.multiSwap(array, a, min, bLen);
+            if (min != a) this.blockSwap(array, a, min, bLen);
             Writes.swap(array, a, t++, 10, true, false);
 
             a += bLen;
@@ -359,12 +360,12 @@ public class AdaptiveKotaSort extends Sort {
 
     void blockMerge(int[] array, int a, int m, int b, int t, int p, int bLen) {
         if (Reads.compareValues(array[m - 1], array[m]) <= 0) return;
-        b = rightExpSearch(array, m, b, array[m - 1], true);
+        b = maxExpSearch(array, m, b, array[m - 1], true);
         if(b - m <= 2 * bLen) {
             mergeBW(array, a, m, b, p);
             return;
         }
-        int a1 = leftExpSearch(array, a, m, array[m], false);
+        int a1 = minExpSearch(array, a, m, array[m], false);
         if(m - a1 <= 2 *bLen) {
             mergeFW(array, a1, m, b, p);
             return;
@@ -413,25 +414,25 @@ public class AdaptiveKotaSort extends Sort {
 
         int b1 = b-c;
 
-        this.multiSwap(array, k-c, b1, c); //swap remainder to end (r buffer)
+        this.blockSwap(array, k-c, b1, c); //swap remainder to end (r buffer)
         r -= c;
 
         //l and r buffers are divisible by bLen
-        this.multiSwap(array, m-l, a, l);    //swap l buffer to front
-        this.multiSwap(array, b1-r, a+l, r); //swap r buffer to front
-        this.multiSwap(array, a, p, 2*bLen); //swap first merged elements to correct position in front
+        this.blockSwap(array, m-l, a, l);    //swap l buffer to front
+        this.blockSwap(array, b1-r, a+l, r); //swap r buffer to front
+        this.blockSwap(array, a, p, 2*bLen); //swap first merged elements to correct position in front
 
         this.blockSelect(array, a+2*bLen, b1, t, bLen);
     }
 
     void blockMergeNoBuf(int[] array, int a, int m, int b, int t, int bLen) { //from wiki sort
         if (Reads.compareValues(array[m - 1], array[m]) <= 0) return;
-        b = rightExpSearch(array, m, b, array[m - 1], true);
+        b = maxExpSearch(array, m, b, array[m - 1], true);
         if(b - m <= 2 * bLen) {
             inPlaceMergeBW(array, a, m, b);
             return;
         }
-        int a1 = leftExpSearch(array, a, m, array[m], false);
+        int a1 = minExpSearch(array, a, m, array[m], false);
         if(m - a1 <= 2 * bLen) {
             inPlaceMergeFW(array, a1, m, b);
             return;
@@ -444,14 +445,14 @@ public class AdaptiveKotaSort extends Sort {
 
         while (i < m && m < b1) {
             if (Reads.compareValues(array[i-1], array[m+bLen-1]) > 0) {
-                this.multiSwap(array, i, m, bLen);
+                this.blockSwap(array, i, m, bLen);
                 this.inPlaceMergeBW(array, a, i, i+bLen);
 
                 m += bLen;
             } else {
                 int min = this.selectMin(array, i, m, bLen);
 
-                if (min > i) this.multiSwap(array, i, min, bLen);
+                if (min > i) this.blockSwap(array, i, min, bLen);
                 Writes.swap(array, t++, i, 1, true, false);
             }
             i += bLen;
@@ -460,7 +461,7 @@ public class AdaptiveKotaSort extends Sort {
             do {
                 int min = this.selectMin(array, i, m, bLen);
 
-                if (min > i) this.multiSwap(array, i, min, bLen);
+                if (min > i) this.blockSwap(array, i, min, bLen);
                 Writes.swap(array, t++, i, 1, true, false);
                 i += bLen;
             } while(i < m);
@@ -506,7 +507,7 @@ public class AdaptiveKotaSort extends Sort {
     }
 
     /**
-     * Sorts the range {@code [a, b)} of {@code array} using a block merge sort.
+     * Sorts the range {@code [a, b)} of {@code array} using a Adaptive Kotasort.
      *
      * @param array the array
      * @param a     the start of the range, inclusive
@@ -564,14 +565,15 @@ public class AdaptiveKotaSort extends Sort {
             for (; j <= bufLen; j *= 2)
                 for (i = a1; i+j < b1; i += 2*j)
                     this.merge(array, i, i+j, Math.min(i+2*j, b1), p);
-            //block merge
 
+            //block merge
             int limit = bLen*(tLen+3);
             for (; j < length && Math.min(2*j, length) < limit; j *= 2) {
                 for (i = a1; i+j < b1; i += 2*j)
                     this.blockMerge(array, i, i+j, Math.min(i+2*j, b1), t, p, bLen);
             }
             insertSort(array, p, p + bufLen);
+
             // strategy 2
             if (bufLen <= tLen) bufLen *= 2;
             bLen = 2*j/bufLen;
