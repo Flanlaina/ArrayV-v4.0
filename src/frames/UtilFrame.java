@@ -271,7 +271,7 @@ final public class UtilFrame extends javax.swing.JFrame {
         });
 
         jCheckBox8.setSelected(false);
-        jCheckBox8.setText("Enable Color");
+        jCheckBox8.setText("Enable Rainbow");
         jCheckBox8.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -280,7 +280,7 @@ final public class UtilFrame extends javax.swing.JFrame {
         });
 
         jCheckBox10.setSelected(false);
-        jCheckBox10.setText("Classic Colors");
+        jCheckBox10.setText("Classic Style");
         jCheckBox10.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -554,7 +554,7 @@ final public class UtilFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jCheckBox8ActionPerformed
 
     private void jCheckBox10ActionPerformed() {
-        ArrayVisualizer.toggleClassicColors(jCheckBox10.isSelected());
+        ArrayVisualizer.toggleClassicStyle(jCheckBox10.isSelected());
     }
 
     private void jComboBox1ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed

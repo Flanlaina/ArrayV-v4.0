@@ -1,22 +1,22 @@
 package sorts.quick;
 
 import main.ArrayVisualizer;
-import sorts.insert.InsertionSort;
-import sorts.select.MaxHeapSort;
 import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Harumi
-
 +---------------------------+
-| Sorting Algorithm Scarlet |
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
 +---------------------------+
 
  */
 
 /**
- * @author Harumi
+ * @author Flanlaina
  *
  */
 public class SimpleHybridQuickSort extends Sort {
@@ -35,8 +35,9 @@ public class SimpleHybridQuickSort extends Sort {
         setBogoSort(false);
     }
 
-    MaxHeapSort heapSorter;
-    InsertionSort insertSorter;
+    static int log2(int val) {
+        return 31 - Integer.numberOfLeadingZeros(val);
+    }
 
     private int medianOfThree(int[] array, int i0, int i1, int i2) {
         int tmp;
@@ -94,10 +95,51 @@ public class SimpleHybridQuickSort extends Sort {
         return i;
     }
 
+    public void insertSort(int[] array, int a, int b, double delay) {
+        for (int i = a + 1; i < b; i++) {
+            int j = i;
+            int t = array[i];
+            while (j > a && Reads.compareValueIndex(array, t, j - 1, delay, true) < 0) {
+                Writes.write(array, j, array[j - 1], delay, true, false);
+                j--;
+            }
+            if (j != i)Writes.write(array, j, t, delay, true, false);
+        }
+    }
+
+    private void siftDown(int[] array, int val, int i, int p, int n) {
+        while (4 * i + 1 < n) {
+            int max = val;
+            int next = i, child = 4 * i + 1;
+            for (int j = child; j < Math.min(child + 4, n); j++) {
+                if (Reads.compareValues(array[p + j], max) > 0) {
+                    max = array[p + j];
+                    next = j;
+                }
+            }
+            if (next == i) break;
+            Writes.write(array, p + i, max, 1, true, false);
+            i = next;
+        }
+        Writes.write(array, p + i, val, 1, true, false);
+    }
+
+    public void heapSort(int[] array, int a, int b) {
+        int n = b - a;
+        for (int i = (n - 1) / 4; i >= 0; i--)
+            this.siftDown(array, array[a + i], i, a, n);
+        for (int i = n - 1; i > 0; i--) {
+            Highlights.markArray(2, a + i);
+            int t = array[a + i];
+            Writes.write(array, a + i, array[a], 1, false, false);
+            this.siftDown(array, t, 0, a, i);
+        }
+    }
+
     private void sort(int[] array, int a, int b, int depthLimit) {
         while (b - a > 16) {
             if (depthLimit == 0) {
-                heapSorter.customHeapSort(array, a, b, 1.0);
+                heapSort(array, a, b);
                 return;
             }
             int piv = medianOfThreeNinthers(array, a, b - 1);
@@ -111,14 +153,11 @@ public class SimpleHybridQuickSort extends Sort {
                 a = p;
             }
         }
-
-        insertSorter.customInsertSort(array, a, b, 0.5D, false);
+        insertSort(array, a, b, 0.5D);
     }
     
     public void quickSort(int[] array, int a, int b) {
-        insertSorter = new InsertionSort(arrayVisualizer);
-        heapSorter = new MaxHeapSort(arrayVisualizer);
-        sort(array, a, b, 2 * (int) (Math.log(b - a) / Math.log(2)));
+        sort(array, a, b, 2 * log2(b - a));
     }
 
     @Override

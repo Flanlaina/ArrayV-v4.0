@@ -253,7 +253,7 @@ public final class ArrayVisualizer {
 
     public static int MAX_LENGTH_POWER = 15;
 
-    private boolean useClassicColors = false;
+    private boolean useClassicStyle = false;
     private boolean inShowcase = false;
 
     private volatile boolean hidden;
@@ -663,8 +663,8 @@ public final class ArrayVisualizer {
         return INSTANCE;
     }
 
-    public boolean isClassicColorsEnabled() {
-        return useClassicColors;
+    public boolean isClassicStyleEnabled() {
+        return useClassicStyle;
     }
 
     public boolean isInShowcase() {
@@ -1120,7 +1120,7 @@ public final class ArrayVisualizer {
             if (this.analysisEnabled()) return Color.BLUE;
             else return Color.RED;
         }
-        if (this.useClassicColors) {
+        if (this.useClassicStyle) {
             if (this.analysisEnabled()) return Color.WHITE;
             else return Color.BLACK;
         }
@@ -1396,8 +1396,8 @@ public final class ArrayVisualizer {
     public void toggleExternalArrays(boolean Bool) {
         this.EXTARRAYS = Bool;
     }
-    public void toggleClassicColors(boolean Bool) {
-        this.useClassicColors = Bool;
+    public void toggleClassicStyle(boolean Bool) {
+        this.useClassicStyle = Bool;
     }
 
     public void toggleInShowcase(boolean inShowcase) {

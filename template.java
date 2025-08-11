@@ -3,7 +3,7 @@ package sorts.category;
 import main.ArrayVisualizer;
 import sorts.templates.Sort;
 
-final public class MySort extends Sort {
+public class MySort extends Sort {
     public MySort(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
 
@@ -20,7 +20,7 @@ final public class MySort extends Sort {
     }
 
     @Override
-    public void runSort(int[] array, int currentLength, int bucketCount) {
+    public void runSort(int[] array, int sortLength, int bucketCount) throws Exception {
 
     }
 }

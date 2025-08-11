@@ -5,18 +5,19 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Haruki
-extending code by Meme Man
-
 +---------------------------+
-| Sorting Algorithm Scarlet |
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
 +---------------------------+
 
  */
 
 /**
- * @author Haruki
- * @author Meme Man
+ * @author Flanlaina
+ * @author gooflang
  *
  */
 public class TernaryInsertionSort2 extends Sort {
@@ -56,22 +57,22 @@ public class TernaryInsertionSort2 extends Sort {
         return a;
     }
 
-    public void insertionSort(int[] array, int a, int b, double rSleep, double wSleep) {
+    public void insertionSort(int[] array, int a, int b, double rSleep, double wSleep, boolean aux) {
         for (int i = a + 1; i < b; i++) {
             int current = array[i];
             int dest = ternarySearch(array, a, i, current, rSleep);
             int pos = i;
             while (pos > dest) {
-                Writes.write(array, pos, array[pos - 1], wSleep, true, false);
+                Writes.write(array, pos, array[pos - 1], wSleep, true, aux);
                 pos--;
             }
-            if (pos < i) Writes.write(array, pos, current, wSleep, true, false);
+            if (pos < i) Writes.write(array, pos, current, wSleep, true, aux);
         }
     }
 
     @Override
     public void runSort(int[] array, int sortLength, int bucketCount) {
-        insertionSort(array, 0, sortLength, 1, 0.05);
+        insertionSort(array, 0, sortLength, 1, 0.05, false);
 
     }
 

@@ -5,28 +5,28 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Ayako-chan
-in collaboration with yuji and PCBoy
-
 +---------------------------+
-| Sorting Algorithm Scarlet |
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
 +---------------------------+
 
  */
 
 /**
- * @author Ayako-chan
- * @author yuji
- * @author PCBoy
+ * @author Flanlaina
+ * @author gooflang
  *
  */
-public class IntroCircloidSortIterative extends Sort {
+public class NitroConeSortRecursive extends Sort {
 
-    public IntroCircloidSortIterative(ArrayVisualizer arrayVisualizer) {
+    public NitroConeSortRecursive(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        this.setSortListName("Intro Circloid (Iterative)");
-        this.setRunAllSortsName("Iterative Introspective Circloid Sort");
-        this.setRunSortName("Iterative Introspective Circloid Sort");
+        this.setSortListName("Nitro Cone (Recursive)");
+        this.setRunAllSortsName("Recursive Nitro Cone Sort");
+        this.setRunSortName("Nitro Conesort");
         this.setCategory("Hybrid Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);
@@ -56,22 +56,27 @@ public class IntroCircloidSortIterative extends Sort {
         shellPass(array, a, b, 1);
     }
     
-    protected boolean circlePass(int[] array, int a, int n, int b) {
-        boolean anyswaps = false;
-        for (int g = 2; g <= n; g *= 2) {
-            for (int s = a; s + g - 1 < a + n; s += g) {
-                int i = s, j = s + g - 1;
-                while (i < j) {
-                    if (i < b && j < b && Reads.compareIndices(array, i, j, 0.5, true) > 0) {
-                        Writes.swap(array, i, j, 1, true, false);
-                        anyswaps = true;
-                    }
-                    i++;
-                    j--;
-                }
-            }
+    public boolean conePass(int[] array, int a, int b, int c, int d, int bnd) {
+        Writes.recordDepth(d++);
+        if (a >= b || a+c >= b-c) return false;
+        boolean swaps = false;
+        if (b-c < bnd && Reads.compareIndices(array, a+c, b-c, 0.5, true) > 0) {
+            Writes.swap(array, a+c, b-c, 0.5, true, false);
+            swaps = true;
         }
-        return anyswaps;
+        int m = (a+b) >> 1;
+        Writes.recursion();
+        swaps |= conePass(array, a, m, c, d, bnd);
+        Writes.recursion();
+        swaps |= conePass(array, m+1, b, c, d, bnd);
+        return swaps;
+    }
+
+    public boolean cone(int[] array, int a, int b, int bnd) {
+        if (a >= b) return false;
+        boolean swaps = false;
+        for (int i = 0; i <= (b-a) >> 1; i++) swaps |= conePass(array, a, b, i, 0, bnd);
+        return swaps;
     }
     
     public void sort(int[] array, int a, int b) {
@@ -86,7 +91,7 @@ public class IntroCircloidSortIterative extends Sort {
                 shellSort(array, a, b);
                 break;
             }
-        } while (circlePass(array, a, n, b));
+        } while (cone(array, a, a + n - 1, b));
     }
 
     @Override

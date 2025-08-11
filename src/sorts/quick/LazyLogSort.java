@@ -2,10 +2,11 @@ package sorts.quick;
 
 import main.ArrayVisualizer;
 import sorts.templates.Sort;
+import utils.IndexedRotations;
 
 /*
 
-Coded for ArrayV by Harumi
+Coded for ArrayV by Flanlaina
 in collaboration with aphitorite
 
 +---------------------------+
@@ -15,11 +16,11 @@ in collaboration with aphitorite
  */
 
 /**
- * @author Harumi
+ * @author Flanlaina
  * @author aphitorite
  *
  */
-public final class LazyLogSort extends Sort {
+public class LazyLogSort extends Sort {
 
     public LazyLogSort(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
@@ -35,7 +36,7 @@ public final class LazyLogSort extends Sort {
         this.setBogoSort(false);
     }
 
-    static int partialInsertLimit = 8;
+    static final int PARTIAL_INSERT_LIMIT = 8;
     
     int productLog(int n) {
         int r = 1;
@@ -117,14 +118,9 @@ public final class LazyLogSort extends Sort {
         }
     }
 
-    protected void multiSwap(int[] array, int a, int b, int len, boolean fw) {
+    protected void blockSwap(int[] array, int a, int b, int len) {
         if (a == b) return;
-        if (fw)
-            for (int i = 0; i < len; i++)
-                Writes.swap(array, a + i, b + i, 1, true, false);
-        else
-            for (int i = len - 1; i >= 0; i--)
-                Writes.swap(array, a + i, b + i, 1, true, false);
+        for (int i = 0; i < len; i++) Writes.swap(array, a + i, b + i, 1, true, false);
     }
 
     protected void insertTo(int[] array, int a, int b, double sleep) {
@@ -139,52 +135,7 @@ public final class LazyLogSort extends Sort {
 
     protected void rotate(int[] array, int a, int m, int b) {
         Highlights.clearAllMarks();
-        if (a >= m || m >= b) return;
-        int l = m - a, r = b - m;
-        if (l % r == 0 || r % l == 0) {
-            while (l > 1 && r > 1) {
-                if (r < l) {
-                    this.multiSwap(array, m - r, m, r, false);
-                    b -= r;
-                    m -= r;
-                    l -= r;
-                } else {
-                    this.multiSwap(array, a, m, l, true);
-                    a += l;
-                    m += l;
-                    r -= l;
-                }
-            }
-            if (r == 1) this.insertTo(array, m, a, 0.5);
-            else if (l == 1) this.insertTo(array, a, b - 1, 0.5);
-        } else {
-            int p0 = a, p1 = m - 1, p2 = m, p3 = b - 1;
-            int tmp;
-            while (p0 < p1 && p2 < p3) {
-                tmp = array[p1];
-                Writes.write(array, p1--, array[p0], 0.5, true, false);
-                Writes.write(array, p0++, array[p2], 0.5, true, false);
-                Writes.write(array, p2++, array[p3], 0.5, true, false);
-                Writes.write(array, p3--, tmp, 0.5, true, false);
-            }
-            while (p0 < p1) {
-                tmp = array[p1];
-                Writes.write(array, p1--, array[p0], 0.5, true, false);
-                Writes.write(array, p0++, array[p3], 0.5, true, false);
-                Writes.write(array, p3--, tmp, 0.5, true, false);
-            }
-            while (p2 < p3) {
-                tmp = array[p2];
-                Writes.write(array, p2++, array[p3], 0.5, true, false);
-                Writes.write(array, p3--, array[p0], 0.5, true, false);
-                Writes.write(array, p0++, tmp, 0.5, true, false);
-            }
-            if (p0 < p3) { // don't count reversals that don't do anything
-                if (p3 - p0 >= 3) Writes.reversal(array, p0, p3, 1, true, false);
-                else Writes.swap(array, p0, p3, 1, true, false);
-                Highlights.clearMark(2);
-            }
-        }
+        IndexedRotations.cycleReverse(array, a, m, b, 1, true, false);
     }
 
     protected int expSearch(int[] array, int a, int b, int val) {
@@ -210,17 +161,15 @@ public final class LazyLogSort extends Sort {
     }
 
     public void insertSort(int[] array, int a, int b) {
+        if (b - a < 2) return;
         int i = a + 1;
-        if (i < b) {
-            if (Reads.compareIndices(array, i - 1, i++, 0.5, true) > 0) {
-                while (i < b && Reads.compareIndices(array, i - 1, i, 0.5, true) > 0) i++;
-                if (i - a < 4) Writes.swap(array, a, i - 1, 1.0, true, false);
-                else Writes.reversal(array, a, i - 1, 1.0, true, false);
-            } else while (i < b && Reads.compareIndices(array, i - 1, i, 0.5, true) <= 0) i++;
-        }
+        if (Reads.compareIndices(array, i - 1, i++, 0.5, true) > 0) {
+            while (i < b && Reads.compareIndices(array, i - 1, i, 0.5, true) > 0) i++;
+            if (i - a < 4) Writes.swap(array, a, i - 1, 1.0, true, false);
+            else Writes.reversal(array, a, i - 1, 1.0, true, false);
+        } else while (i < b && Reads.compareIndices(array, i - 1, i, 0.5, true) <= 0) i++;
         Highlights.clearMark(2);
-        for (; i < b; i++)
-            insertTo(array, i, expSearch(array, a, i, array[i]), 0.25);
+        for (; i < b; i++) insertTo(array, i, expSearch(array, a, i, array[i]), 0.25);
     }
 
     //Refactored from PDQSorting.java
@@ -229,7 +178,7 @@ public final class LazyLogSort extends Sort {
         double sleep = 0.25;
         int c = 0;
         for (int i = a + 1; i < b; i++) {
-            if (c > partialInsertLimit) return false;
+            if (c > PARTIAL_INSERT_LIMIT) return false;
             if (Reads.compareIndices(array, i - 1, i, sleep, true) > 0) {
                 int t = array[i];
                 int j = i;
@@ -251,34 +200,35 @@ public final class LazyLogSort extends Sort {
 
     void pivBufXor(int[] array, int pa, int pb, int v, int wLen) {
         while (wLen-- > 0) {
-            if (v % 2 == 1)
-                Writes.swap(array, pa + wLen, pb + wLen, 1, true, false);
-            v /= 2;
+            if ((v & 1) == 1) Writes.swap(array, pa + wLen, pb + wLen, 1, true, false);
+            v >>= 1;
         }
     }
 
     // @param bit - < pivot means this bit
-    int pivBufGet(int[] array, int pa, int piv, boolean bias, int wLen, int bit) {
+    int pivBufGet(int[] array, int pa, int piv, boolean eqLower, int wLen, int bit) {
         int r = 0;
         while (wLen-- > 0) {
-            r *= 2;
-            r |= (this.pivCmp(array[pa++], piv, bias) ? 0 : 1) ^ bit;
+            r <<= 1;
+            r |= (this.pivCmp(array[pa++], piv, eqLower) ? 0 : 1) ^ bit;
         }
         return r;
     }
     
-    protected void blockCycle(int[] array, int p, int n, int p1, int bLen, int wLen, int piv, boolean pCmp, int bit) {
-        for (int i = 0; i < n; i++) {
-            int dest = this.pivBufGet(array, p + i * bLen, piv, pCmp, wLen, bit);
+    protected void blockCycle(int[] array, int a, int n, int tagStart, int bLen, int wLen, int piv, boolean eqLower,
+            int bit) {
+        for (int i = 0, aPtr = a, tPtr = tagStart; i < n; i++, aPtr += bLen, tPtr += bLen) {
+            int dest = this.pivBufGet(array, aPtr, piv, eqLower, wLen, bit);
             while (dest != i) {
-                this.multiSwap(array, p + i * bLen, p + dest * bLen, bLen, true);
-                dest = this.pivBufGet(array, p + i * bLen, piv, pCmp, wLen, bit);
+                this.blockSwap(array, aPtr, a + dest * bLen, bLen);
+                dest = this.pivBufGet(array, aPtr, piv, eqLower, wLen, bit);
             }
-            this.pivBufXor(array, p + i * bLen, p1 + i * bLen, i, wLen);
+            this.pivBufXor(array, aPtr, tPtr, i, wLen);
         }
     }
 
     protected int[] partition(int[] array, int a, int b, int bLen, int piv, boolean eqLower) {
+        // determines which elements do not need to be moved
         for(; a < b; a++) {
             Highlights.markArray(1, a);
             Delays.sleep(0.25);
@@ -289,7 +239,7 @@ public final class LazyLogSort extends Sort {
             Delays.sleep(0.25);
             if(this.pivCmp(array[b-1], piv, eqLower)) break;
         }
-        boolean allEqual = b == a;
+        boolean alreadyParted = b == a;
         if (b - a <= bLen) {
             int j = a;
             for (int i = a; i < b; i++) {
@@ -297,8 +247,10 @@ public final class LazyLogSort extends Sort {
                 if (cmp < 0 || eqLower && cmp == 0)
                     insertTo(array, i, j++, 0.25);
             }
-            return new int[] {j, allEqual ? 1 : 0};
+            return new int[] {j, alreadyParted ? 1 : 0};
         }
+
+        // sort blocks and type blocks
         int p = a;
         int l = 0, r = 0;
         int lb = 0, rb = 0;
@@ -321,30 +273,42 @@ public final class LazyLogSort extends Sort {
                 }
             }
         }
+
+        // sort blocks
         int min = Math.min(lb, rb);
         int m = a + lb * bLen;
         if (min > 0) {
-            int bCnt = lb + rb;
+            //int bCnt = lb + rb;
             int wLen = 32 - Integer.numberOfLeadingZeros(min - 1); // ceil(log2(min))
-            for (int i = 0, j = 0, k = 0; i < min; i++) { // set bit buffers
-                while (!this.pivCmp(array[a + j * bLen + wLen], piv, eqLower)) j++;
-                while (this.pivCmp(array[a + k * bLen + wLen], piv, eqLower)) k++;
-                this.pivBufXor(array, a + (j++) * bLen, a + (k++) * bLen, i, wLen);
+            for (int i = 0, j = a, k = a; i < min; i++) { // set bit buffers
+                while (!this.pivCmp(array[j + wLen], piv, eqLower)) j += bLen;
+                while (this.pivCmp(array[k + wLen], piv, eqLower)) k += bLen;
+                this.pivBufXor(array, j, k, i, wLen);
+                j += bLen; k += bLen;
             }
             if (lb < rb) {
-                for (int i = bCnt - 1, j = 0; j < rb; i--) // swap right to left
-                    if (!this.pivCmp(array[a + i * bLen + wLen], piv, eqLower))
-                        this.multiSwap(array, a + i * bLen, a + (bCnt - (++j)) * bLen, bLen, false);
+                for (int i = p - bLen, j = p; i >= a; i -= bLen) { // swap right to left
+                    if (!pivCmp(array[i + wLen], piv, eqLower)) {
+                        j -= bLen;
+                        blockSwap(array, i, j, bLen);
+                    }
+                }
                 this.blockCycle(array, a, lb, m, bLen, wLen, piv, eqLower, 0);
             } else {
-                for (int i = 0, j = 0; j < lb; i++) // swap left to right
-                    if (this.pivCmp(array[a + i * bLen + wLen], piv, eqLower))
-                        this.multiSwap(array, a + i * bLen, a + (j++) * bLen, bLen, true);
+                for (int i = a, j = a; i < p; i += bLen) { // swap left to right
+                    if (pivCmp(array[i + wLen], piv, eqLower)) {
+                        blockSwap(array, i, j, bLen);
+                        j += bLen;
+                    }
+                }
                 this.blockCycle(array, m, rb, a, bLen, wLen, piv, eqLower, 1);
             }
         }
+
+        // handle leftover
         rotate(array, m, b - r - l, b - r);
-        return new int[] {m + l, allEqual ? 1 : 0};
+
+        return new int[] {m + l, alreadyParted ? 1 : 0};
     }
 
     protected void sortHelper(int[] array, int a, int b, int bLen, boolean bad) {

@@ -9,7 +9,7 @@ import utils.IndexedRotations;
 MIT License
 
 Copyright (c) 2021 aphitorite, Scandum
-Copyright (c) 2022-2024 Flanlaina, Sorting Algorithm Scarlet
+Copyright (c) 2022-2025 Flanlaina, Sorting Algorithm Scarlet
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -42,14 +42,14 @@ SOFTWARE.
  * @author Scandum
  * 
  */
-public class BlockTimSort2 extends Sort {
+public class RewrittenBlockTimSort extends Sort {
 
-    public BlockTimSort2(ArrayVisualizer arrayVisualizer) {
+    public RewrittenBlockTimSort(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
         //enableSort(false);
-        setSortListName("Block Tim 2");
-        setRunAllSortsName("Block Tim Sort");
-        setRunSortName("Block Timsort");
+        setSortListName("Block Tim (Rewritten)");
+        setRunAllSortsName("Rewritten Block Tim Sort");
+        setRunSortName("Rewritten Block Timsort");
         setCategory("Hybrid Sorts");
         setComparisonBased(true);
         setBucketSort(false);

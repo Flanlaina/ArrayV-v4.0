@@ -507,7 +507,7 @@ public class AdaptiveKotaSort extends Sort {
     }
 
     /**
-     * Sorts the range {@code [a, b)} of {@code array} using a Adaptive Kotasort.
+     * Sorts the range {@code [a, b)} of {@code array} using Adaptive Kotasort.
      *
      * @param array the array
      * @param a     the start of the range, inclusive

@@ -75,7 +75,7 @@ final public class DisparityChords extends Visual {
 
                 this.mainRender.drawLine(ax, ay, bx, by);
             } else if (Highlights.containsPosition(i)) {
-                if (ArrayVisualizer.isClassicColorsEnabled()) {
+                if (ArrayVisualizer.isClassicStyleEnabled()) {
                     if (ArrayVisualizer.analysisEnabled()) this.mainRender.setColor(Color.WHITE);
                     else                                   this.mainRender.setColor(Color.BLACK);
                 } else {

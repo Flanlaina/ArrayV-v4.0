@@ -34,19 +34,24 @@ public final class DeakSort extends Sort {
     }
 
     private void deak(int[] array, int a, int b, int depth) {
-        if (b - a < 2) return;
-        if (Reads.compareIndices(array, a, b - 1, 0.1, true) > 0) Writes.swap(array, a, b - 1, 0.1, true, false);
+        if (b <= a) return;
+        if (Reads.compareIndices(array, a, b, 0.1, true) > 0) Writes.swap(array, a, b, 0.1, true, false);
         int m = a + (b - a) / 2;
         Writes.recordDepth(depth);
         Writes.recursion();
         deak(array, a, m, depth+1);
         Writes.recursion();
-        deak(array, m, b, depth+1);
+        deak(array, m+1, b, depth+1);
     }
 
-    private int segmentCount(int[] array, int start, int end){
+    private boolean isSorted(int[] array, int a, int b) {
+        for (int i = a+1; i < b; i++) if (Reads.compareIndices(array, i, i - 1, 0.1, true) < 0) return false;
+        return true;
+    }
+
+    private int segmentCount(int[] array, int length){
         int count = 1;
-        for (int i = start; i < end - 1; i++) {
+        for (int i = 0; i < length; i++) {
             if (Reads.compareIndices(array, i, i + 1, 0.1, true) > 0){
                 count++;
             }
@@ -56,26 +61,18 @@ public final class DeakSort extends Sort {
 
     @Override
     public void runSort(int[] array, int currentLength, int bucketCount) {
-        int tries = 0, segCnt = segmentCount(array, 0, currentLength);
-        while (segCnt > 2 && tries < currentLength) {
+        while (!isSorted(array, 0, currentLength)) {
             for (int i = 0; i <= currentLength; i++) {
                 deak(array, 0, i, 0);
             }
-            segCnt = segmentCount(array, 0, currentLength);
-            tries++;
+            if (segmentCount(array, currentLength) == 2) break; 
         }
-        if (tries >= currentLength || segCnt > 1) {
-            // bubble sort
-            boolean change = true;
-            while (change) {
-                change = false;
-                for (int i = 1; i < currentLength; i++) {
-                    if (Reads.compareIndices(array, i, i - 1, 0.1, true) < 0) {
-                        Writes.swap(array, i, i - 1, 0.1, true, false);
-                        change = true;
-                    }
-                }
-            } 
+        for (int i = 1; i < currentLength; i++){
+            if (Reads.compareIndices(array, i, i+1, 0.1, true) > 0){
+                Writes.swap(array, i, i+1, 0.1, true, false);
+            } else {
+                break;
+            }
         }
     }
 }

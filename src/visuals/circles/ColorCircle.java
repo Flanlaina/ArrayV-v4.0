@@ -80,7 +80,7 @@ final public class ColorCircle extends Visual {
                 this.mainRender.setColor(getIntColor(array[i], ArrayVisualizer.getCurrentLength()));
 
                 if (Highlights.containsPosition(i)) {
-                    if (ArrayVisualizer.isClassicColorsEnabled()) {
+                    if (ArrayVisualizer.isClassicStyleEnabled()) {
                         if (ArrayVisualizer.analysisEnabled()) this.mainRender.setColor(Color.WHITE);
                         else                                   this.mainRender.setColor(Color.BLACK);
                     } else {

@@ -5,28 +5,29 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Ayako-chan
-in collaboration with Meme Man and aphitorite
-
 +---------------------------+
-| Sorting Algorithm Scarlet |
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
 +---------------------------+
 
  */
 
 /**
- * @author Ayako-chan
- * @author Meme Man
+ * @author Flanlaina
+ * @author gooflang
  * @author aphitorite
  *
  */
-public final class IntroConeSortIterative extends Sort {
+public class NitroConeSortIterative extends Sort {
 
-    public IntroConeSortIterative(ArrayVisualizer arrayVisualizer) {
+    public NitroConeSortIterative(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        this.setSortListName("Intro Cone (Iterative)");
-        this.setRunAllSortsName("Iterative Introspective Cone Sort");
-        this.setRunSortName("Iterative Introspective Conesort");
+        this.setSortListName("Nitro Cone (Iterative)");
+        this.setRunAllSortsName("Iterative Nitro Cone Sort");
+        this.setRunSortName("Iterative Nitro Conesort");
         this.setCategory("Hybrid Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);

@@ -6,7 +6,7 @@ import sorts.templates.Sort;
 /*
 
 Coded for ArrayV by Ayako-chan
-in collaboration with Meme Man
+in collaboration with yuji
 
 +---------------------------+
 | Sorting Algorithm Scarlet |
@@ -16,16 +16,16 @@ in collaboration with Meme Man
 
 /**
  * @author Ayako-chan
- * @author Meme Man
+ * @author yuji
  *
  */
-public final class IntroConeSortRecursive extends Sort {
+public class NitroCircloidSortRecursive extends Sort {
 
-    public IntroConeSortRecursive(ArrayVisualizer arrayVisualizer) {
+    public NitroCircloidSortRecursive(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        this.setSortListName("Intro Cone (Recursive)");
-        this.setRunAllSortsName("Recursive Introspective Cone Sort");
-        this.setRunSortName("Introspective Conesort");
+        this.setSortListName("Nitro Circloid (Recursive)");
+        this.setRunAllSortsName("Recursive Nitro Circloid Sort");
+        this.setRunSortName("Nitro Circloid Sort");
         this.setCategory("Hybrid Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);
@@ -55,25 +55,28 @@ public final class IntroConeSortRecursive extends Sort {
         shellPass(array, a, b, 1);
     }
     
-    public int conePass(int[] array, int a, int b, int c, int d, int swaps) {
-        if (a >= b || a+c >= b-c) return swaps;
-        Writes.recordDepth(d++);
-        if (Reads.compareIndices(array, a+c, b-c, 0.5, true) > 0) {
-            Writes.swap(array, a+c, b-c, 0.5, true, false);
-            swaps++;
+    protected boolean circle(int[] array, int left, int right) {
+        int a = left;
+        int b = right;
+        boolean swapped = false;
+        while (a < b) {
+            if (Reads.compareIndices(array, a, b, 0.25, true) > 0) {
+                Writes.swap(array, a, b, 1, true, false);
+                swapped = true;
+            }
+            a++;
+            b--;
+            if(a == b) b++;
         }
-        int m = (b - a) / 2;
-        Writes.recursion();
-        swaps = conePass(array, a, a+m, c, d, swaps);
-        Writes.recursion();
-        swaps = conePass(array, b-m, b, c, d, swaps);
-        return swaps;
+        return swapped;
     }
-
-    public int cone(int[] array, int a, int b, int swaps) {
-        if (a >= b) return swaps;
-        for (int i = 0; i < (b - a + 1) / 2; i++) swaps = conePass(array, a, b, i, 0, swaps);
-        return swaps;
+    
+    public boolean circlePass(int[] array, int left, int right) {
+        if (left >= right) return false;
+        int mid = left + (right - left) / 2; //avoid integer overflow
+        boolean l = this.circlePass(array, left, mid);
+        boolean r = this.circlePass(array, mid+1, right);
+        return this.circle(array, left, right) || l || r;
     }
     
     public void sort(int[] array, int a, int b) {
@@ -84,17 +87,16 @@ public final class IntroConeSortRecursive extends Sort {
         int iterations = 0;
         do {
             iterations++;
-            if(iterations >= threshold) {
+            if (iterations >= threshold) {
                 shellSort(array, a, b);
                 break;
             }
-        } while (cone(array, a, b-1, 0) != 0);
+        } while (circlePass(array, a, b - 1));
     }
 
     @Override
-    public void runSort(int[] array, int sortLength, int bucketCount) {
-        sort(array, 0, sortLength);
-
+    public void runSort(int[] array, int length, int bucketCount) {
+        sort(array, 0, length);
     }
 
 }

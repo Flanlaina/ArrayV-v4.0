@@ -19,13 +19,13 @@ in collaboration with Lancewer
  * @author Lancewer
  *
  */
-public class BisurgeSort extends Sort {
+public class BisurgeSortRecursive extends Sort {
 
-    public BisurgeSort(ArrayVisualizer arrayVisualizer) {
+    public BisurgeSortRecursive(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        this.setSortListName("Bisurge");
-        this.setRunAllSortsName("Bisurge Sort");
-        this.setRunSortName("Bisurgesort");
+        this.setSortListName("Bisurge (Recursive)");
+        this.setRunAllSortsName("Recursive Bisurge Sort");
+        this.setRunSortName("Recursive Bisurgesort");
         this.setCategory("Merge Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);

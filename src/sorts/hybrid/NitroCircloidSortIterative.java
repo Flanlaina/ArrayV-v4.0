@@ -6,7 +6,7 @@ import sorts.templates.Sort;
 /*
 
 Coded for ArrayV by Ayako-chan
-in collaboration with yuji
+in collaboration with yuji and PCBoy
 
 +---------------------------+
 | Sorting Algorithm Scarlet |
@@ -17,15 +17,16 @@ in collaboration with yuji
 /**
  * @author Ayako-chan
  * @author yuji
+ * @author PCBoy
  *
  */
-public final class IntroCircloidSortRecursive extends Sort {
+public class NitroCircloidSortIterative extends Sort {
 
-    public IntroCircloidSortRecursive(ArrayVisualizer arrayVisualizer) {
+    public NitroCircloidSortIterative(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        this.setSortListName("Intro Circloid (Recursive)");
-        this.setRunAllSortsName("Recursive Introspective Circloid Sort");
-        this.setRunSortName("Introspective Circloid Sort");
+        this.setSortListName("Nitro Circloid (Iterative)");
+        this.setRunAllSortsName("Iterative Nitro Circloid Sort");
+        this.setRunSortName("Iterative Nitro Circloid Sort");
         this.setCategory("Hybrid Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);
@@ -55,28 +56,22 @@ public final class IntroCircloidSortRecursive extends Sort {
         shellPass(array, a, b, 1);
     }
     
-    protected boolean circle(int[] array, int left, int right) {
-        int a = left;
-        int b = right;
-        boolean swapped = false;
-        while (a < b) {
-            if (Reads.compareIndices(array, a, b, 0.25, true) > 0) {
-                Writes.swap(array, a, b, 1, true, false);
-                swapped = true;
+    protected boolean circlePass(int[] array, int a, int n, int b) {
+        boolean anyswaps = false;
+        for (int g = 2; g <= n; g *= 2) {
+            for (int s = a; s + g - 1 < a + n; s += g) {
+                int i = s, j = s + g - 1;
+                while (i < j) {
+                    if (i < b && j < b && Reads.compareIndices(array, i, j, 0.5, true) > 0) {
+                        Writes.swap(array, i, j, 1, true, false);
+                        anyswaps = true;
+                    }
+                    i++;
+                    j--;
+                }
             }
-            a++;
-            b--;
-            if(a == b) b++;
         }
-        return swapped;
-    }
-    
-    public boolean circlePass(int[] array, int left, int right) {
-        if (left >= right) return false;
-        int mid = left + (right - left) / 2; //avoid integer overflow
-        boolean l = this.circlePass(array, left, mid);
-        boolean r = this.circlePass(array, mid+1, right);
-        return this.circle(array, left, right) || l || r;
+        return anyswaps;
     }
     
     public void sort(int[] array, int a, int b) {
@@ -87,16 +82,17 @@ public final class IntroCircloidSortRecursive extends Sort {
         int iterations = 0;
         do {
             iterations++;
-            if (iterations >= threshold) {
+            if(iterations >= threshold) {
                 shellSort(array, a, b);
                 break;
             }
-        } while (circlePass(array, a, b - 1));
+        } while (circlePass(array, a, n, b));
     }
 
     @Override
-    public void runSort(int[] array, int length, int bucketCount) {
-        sort(array, 0, length);
+    public void runSort(int[] array, int sortLength, int bucketCount) {
+        sort(array, 0, sortLength);
+
     }
 
 }

@@ -52,7 +52,7 @@ final public class Rainbow extends Visual {
 
             j += width;
         }
-        if (ArrayVisualizer.isClassicColorsEnabled()) {
+        if (ArrayVisualizer.isClassicStyleEnabled()) {
             if (ArrayVisualizer.analysisEnabled()) this.mainRender.setColor(Color.WHITE);
             else                                   this.mainRender.setColor(Color.BLACK);
         } else {

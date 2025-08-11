@@ -53,22 +53,22 @@ public class NitroCircleSortIterative extends Sort {
         shellPass(array, a, b, 1);
     }
     
-    protected int circlePass(int[] array, int a, int n, int b) {
-        int swapCnt = 0;
+    protected boolean circlePass(int[] array, int a, int n, int b) {
+        boolean anySwaps = false;
         for (int g = n / 2; g > 0; g /= 2) {
             for (int s = a; s + g < b; s += 2 * g) {
                 int i = s, j = s + 2 * g - 1;
                 while (i < j) {
                     if (j < b && Reads.compareIndices(array, i, j, 0.5, true) > 0) {
                         Writes.swap(array, i, j, 1, true, false);
-                        swapCnt++;
+                        anySwaps = true;
                     }
                     i++;
                     j--;
                 }
             }
         }
-        return swapCnt;
+        return anySwaps;
     }
     
     public void sort(int[] array, int a, int b) {
@@ -83,7 +83,7 @@ public class NitroCircleSortIterative extends Sort {
                 shellSort(array, a, b);
                 break;
             }
-        } while (circlePass(array, a, n, b) != 0);
+        } while (circlePass(array, a, n, b));
     }
 
     @Override

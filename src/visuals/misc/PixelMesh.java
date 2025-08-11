@@ -83,7 +83,7 @@ final public class PixelMesh extends Visual {
 				
 				else if(ArrayVisualizer.colorEnabled()) {
 					if(Highlights.containsPosition(idx)) {
-						if (ArrayVisualizer.isClassicColorsEnabled()) {
+						if (ArrayVisualizer.isClassicStyleEnabled()) {
 							if (ArrayVisualizer.analysisEnabled()) currColor = Color.WHITE;
 							else                                   currColor = Color.BLACK;
 						} else {

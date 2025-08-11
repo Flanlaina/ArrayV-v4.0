@@ -1,4 +1,4 @@
-package sorts.hybrid;
+package sorts.quick;
 
 import main.ArrayVisualizer;
 import sorts.insert.InsertionSort;
@@ -9,14 +9,14 @@ import sorts.templates.Sort;
  * @author Ayako-chan
  *
  */
-public final class SimpleHybridQuickSort extends Sort {
+public final class OriginalSimpleHybridQuickSort extends Sort {
 
-    public SimpleHybridQuickSort(ArrayVisualizer arrayVisualizer) {
+    public OriginalSimpleHybridQuickSort(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        setSortListName("Simple Hybrid Quick");
+        setSortListName("Simple Hybrid Quick (Original)");
         setRunAllSortsName("Simple Hybrid Quick Sort");
         setRunSortName("Simple Hybrid Quicksort");
-        setCategory("Hybrid Sorts");
+        setCategory("Quick Sorts");
         setComparisonBased(true);
         setBucketSort(false);
         setRadixSort(false);
