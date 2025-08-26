@@ -1,4 +1,4 @@
-package sorts.hybrid;
+package sorts.quick;
 
 import main.ArrayVisualizer;
 import sorts.templates.Sort;
@@ -38,7 +38,7 @@ final public class WeaveQuickSort extends Sort {
 		this.setSortListName("Weave Quick");
 		this.setRunAllSortsName("Weave Quick Sort");
 		this.setRunSortName("Weave Quicksort");
-		this.setCategory("Hybrid Sorts");
+		this.setCategory("Quick Sorts");
 		this.setComparisonBased(true);
 		this.setBucketSort(false);
 		this.setRadixSort(false);

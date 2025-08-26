@@ -1,4 +1,4 @@
-package sorts.hybrid;
+package sorts.quick;
 
 import main.ArrayVisualizer;
 import sorts.insert.InsertionSort;
@@ -26,7 +26,7 @@ public final class MOMTernaryQuickSort extends Sort {
         this.setSortListName("MOM Ternary Quick");
         this.setRunAllSortsName("Median-of-Medians Ternary Quick Sort");
         this.setRunSortName("Median-of-Medians Ternary Quicksort");
-        this.setCategory("Hybrid Sorts");
+        this.setCategory("Quick Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);
         this.setRadixSort(false);

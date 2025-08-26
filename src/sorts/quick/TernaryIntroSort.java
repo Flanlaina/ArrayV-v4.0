@@ -1,10 +1,22 @@
-package sorts.hybrid;
+package sorts.quick;
 
 import main.ArrayVisualizer;
 import sorts.templates.Sort;
 
+/*
+
++---------------------------+
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
++---------------------------+
+
+ */
+
 /**
- * @author Ayako
+ * @author Flanlaina
  * @author David Musser
  *
  */

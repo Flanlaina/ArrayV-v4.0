@@ -1,4 +1,4 @@
-package sorts.hybrid;
+package sorts.quick;
 
 import sorts.templates.Sort;
 import sorts.insert.InsertionSort;
@@ -34,7 +34,7 @@ final public class StupidQuickSort extends Sort {
         this.setSortListName("Stupid Quick");
         this.setRunAllSortsName("Stupid Quick Sort");
         this.setRunSortName("Stupid Quicksort");
-        this.setCategory("Hybrid Sorts");
+        this.setCategory("Quick Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);
         this.setRadixSort(false);

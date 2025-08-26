@@ -1,4 +1,4 @@
-package sorts.hybrid;
+package sorts.quick;
 
 import sorts.templates.Sort;
 import sorts.insert.BinaryInsertionSort;
@@ -38,7 +38,7 @@ final public class LogSort extends Sort {
 		this.setSortListName("Log");
 		this.setRunAllSortsName("Log Sort");
 		this.setRunSortName("Logsort");
-		this.setCategory("Hybrid Sorts");
+		this.setCategory("Quick Sorts");
 		this.setComparisonBased(true);
 		this.setBucketSort(false);
 		this.setRadixSort(false);

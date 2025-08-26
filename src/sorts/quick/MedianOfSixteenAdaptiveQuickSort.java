@@ -1,4 +1,4 @@
-package sorts.hybrid;
+package sorts.quick;
 
 import main.ArrayVisualizer;
 import sorts.insert.UnstableInsertionSort;
@@ -37,7 +37,7 @@ final public class MedianOfSixteenAdaptiveQuickSort extends Sort {
         this.setSortListName("Median-of-16 Adaptive Quick");
         this.setRunAllSortsName("Median-Of-16 Adaptive QuickSort");
         this.setRunSortName("Median-Of-16 Adaptive QuickSort");
-        this.setCategory("Hybrid Sorts");
+        this.setCategory("Quick Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);
         this.setRadixSort(false);

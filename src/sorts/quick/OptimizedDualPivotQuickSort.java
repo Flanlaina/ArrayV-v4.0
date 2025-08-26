@@ -1,4 +1,4 @@
-package sorts.hybrid;
+package sorts.quick;
 
 import main.ArrayVisualizer;
 import sorts.insert.InsertionSort;
@@ -17,7 +17,7 @@ final public class OptimizedDualPivotQuickSort extends Sort {
         //this.setRunAllID("Optimized Dual-Pivot Quick Sort");
         this.setRunAllSortsName("Optimized Dual-Pivot Quick Sort [Arrays.sort]");
         this.setRunSortName("Optimized Dual-Pivot Quicksort");
-        this.setCategory("Hybrid Sorts");
+        this.setCategory("Quick Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);
         this.setRadixSort(false);

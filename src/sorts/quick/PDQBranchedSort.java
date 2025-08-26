@@ -1,4 +1,4 @@
-package sorts.hybrid;
+package sorts.quick;
 
 import main.ArrayVisualizer;
 import sorts.select.MaxHeapSort;
@@ -28,7 +28,7 @@ final public class PDQBranchedSort extends PDQSorting {
         this.setSortListName("Pattern-Defeating Quick (PDQ)");
         this.setRunAllSortsName("Pattern-Defeating Quick Sort");
         this.setRunSortName("Pattern-Defeating Quicksort");
-        this.setCategory("Hybrid Sorts");
+        this.setCategory("Quick Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);
         this.setRadixSort(false);

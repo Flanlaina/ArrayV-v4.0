@@ -1,4 +1,4 @@
-package sorts.hybrid;
+package sorts.quick;
 
 import sorts.insert.BinaryInsertionSort;
 import sorts.templates.Sort;
@@ -37,7 +37,7 @@ final public class StacklessHybridQuickSort2 extends Sort {
 		this.setSortListName("Stackless Hybrid Quick II");
 		this.setRunAllSortsName("Stackless Hybrid Quicksort");
 		this.setRunSortName("Stackless Hybrid Quicksort");
-		this.setCategory("Hybrid Sorts");
+		this.setCategory("Quick Sorts");
 		this.setComparisonBased(true);
 		this.setBucketSort(false);
 		this.setRadixSort(false);

@@ -1,4 +1,4 @@
-package sorts.hybrid;
+package sorts.quick;
 
 import main.ArrayVisualizer;
 import sorts.insert.InsertionSort;
@@ -17,7 +17,7 @@ public final class MOMIntroSort extends Sort {
         //this.setRunAllID("Introspective Sort (std::sort)");
         this.setRunAllSortsName("Median-of-Medians Introspective Sort");
         this.setRunSortName("Median-of-Medians Introsort");
-        this.setCategory("Hybrid Sorts");
+        this.setCategory("Quick Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);
         this.setRadixSort(false);
