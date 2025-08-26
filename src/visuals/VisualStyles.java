@@ -120,6 +120,24 @@ public enum VisualStyles {
         public void drawVisual(int[] array, ArrayVisualizer ArrayVisualizer, Renderer Renderer, Highlights Highlights) {
             ArrayVisualizer.getVisuals()[14].drawVisual(array, ArrayVisualizer, Renderer, Highlights);
         }
+    },
+    ACCESS_HEATMAP {
+        @Override
+        public void drawVisual(int[] array, ArrayVisualizer ArrayVisualizer, Renderer Renderer, Highlights Highlights) {
+            ArrayVisualizer.getVisuals()[15].drawVisual(array, ArrayVisualizer, Renderer, Highlights);
+        }
+    },
+    DATA_TRACE {
+        @Override
+        public void drawVisual(int[] array, ArrayVisualizer ArrayVisualizer, Renderer Renderer, Highlights Highlights) {
+            ArrayVisualizer.getVisuals()[16].drawVisual(array, ArrayVisualizer, Renderer, Highlights);
+        }
+    },
+    SCATTER_CHORDS {
+        @Override
+        public void drawVisual(int[] array, ArrayVisualizer ArrayVisualizer, Renderer Renderer, Highlights Highlights) {
+            ArrayVisualizer.getVisuals()[17].drawVisual(array, ArrayVisualizer, Renderer, Highlights);
+        }
     };
 
     public VisualStyles getCurrentVisual() {

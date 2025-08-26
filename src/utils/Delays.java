@@ -1,6 +1,7 @@
 package utils;
 
 import java.text.DecimalFormat;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import main.ArrayVisualizer;
 import panes.JErrorPane;
@@ -32,14 +33,12 @@ SOFTWARE.
  */
 
 final public class Delays {
-    private ArrayVisualizer arrayVisualizer;
+    private volatile double sleepRatio;
+    private volatile boolean skipped;
 
-    private volatile double SLEEPRATIO;
-    private volatile boolean SKIPPED;
-
-    private double addamt;
     private double delay;
-    private double nanos;
+    private static AtomicInteger noStepping = new AtomicInteger();
+    private volatile static boolean stepping;
 
     private volatile double currentDelay;
     private volatile boolean paused;
@@ -49,20 +48,16 @@ final public class Delays {
     private Sounds Sounds;
 
     public Delays(ArrayVisualizer arrayVisualizer) {
-        this.arrayVisualizer = arrayVisualizer;
-
-        this.SLEEPRATIO = 1.0;
-        this.SKIPPED = false;
-        this.addamt = 0;
-
+        this.sleepRatio = 1.0;
+        this.skipped = false;
         this.formatter = arrayVisualizer.getNumberFormat();
         this.Sounds = arrayVisualizer.getSounds();
     }
 
     public String displayCurrentDelay() {
-        if (this.SKIPPED)
+        if (this.skipped)
             return "Canceled";
-        if (this.paused)
+        if (this.paused && !stepping)
             return "Paused";
 
         String currDelay = "";
@@ -89,8 +84,6 @@ final public class Delays {
         this.delay = (this.delay * oldRatio) / newRatio;
         this.currentDelay = this.delay;
         this.Sounds.changeNoteDelayAndFilter((int) this.currentDelay);
-        this.addamt = 0;
-
         if (this.currentDelay < 0) {
             this.delay = this.currentDelay = 0;
         }
@@ -102,18 +95,18 @@ final public class Delays {
     }
 
     public double getSleepRatio() {
-        return this.SLEEPRATIO;
+        return this.sleepRatio;
     }
     public void setSleepRatio(double sleepRatio) {
-        this.SLEEPRATIO = sleepRatio;
+        this.sleepRatio = sleepRatio;
     }
 
     public boolean skipped() {
-        return this.SKIPPED;
+        return this.skipped;
     }
     public void changeSkipped(boolean Bool) {
-        this.SKIPPED = Bool;
-        if (this.SKIPPED) this.Sounds.changeNoteDelayAndFilter(1);
+        this.skipped = Bool;
+        if (this.skipped) this.Sounds.changeNoteDelayAndFilter(1);
     }
 
     public boolean paused() {
@@ -127,25 +120,58 @@ final public class Delays {
         this.changePaused(!this.paused);;
     }
 
+    public static void disableStepping() {
+        if (noStepping.incrementAndGet() < 0) {
+            noStepping.set(0);
+            throw new IllegalStateException("Stepping toggle overflow");
+        }
+    }
+
+    public static void enableStepping() {
+        if (noStepping.decrementAndGet() < 0) {
+            noStepping.set(0);
+            throw new IllegalStateException("Stepping toggle underflow");
+        }
+        if (canStep()) {
+            // Step has ended
+            stepping = false;
+        }
+    }
+
+    public static boolean canStep() {
+        return noStepping.get() == 0;
+    }
+
+    public boolean isStepping() {
+        return stepping;
+    }
+
+    public void beginStepping() {
+        if (canStep()) {
+            stepping = true;
+        }
+    }
+
     public void sleep(double millis) {
         if (millis <= 0) {
             return;
         }
 
-        this.delay += (millis * (1 / this.SLEEPRATIO));
-        this.currentDelay = (millis * (1 / this.SLEEPRATIO));
+        this.delay += (millis * (1 / this.sleepRatio));
+        this.currentDelay = (millis * (1 / this.sleepRatio));
 
         this.Sounds.changeNoteDelayAndFilter((int) this.currentDelay);
 
         try {
             // With this for loop, you can change the speed of sorts without waiting for the current delay to finish.
-            if (!this.SKIPPED) {
-                while (this.paused || this.delay >= 1) {
+            if (!this.skipped) {
+                while (this.delay >= 1) {
+                    //noinspection BusyWait
                     Thread.sleep(1);
-                    if (!this.paused)
-                        this.delay--;
+                    if (!this.paused) this.delay--;
                 }
-            } else {
+            }
+            else {
                 this.delay = 0;
             }
         } catch (Exception ex) {

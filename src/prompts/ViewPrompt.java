@@ -91,6 +91,9 @@ final public class ViewPrompt extends javax.swing.JFrame implements AppFrame {
         this.hoopStack         = new javax.swing.JButton();
         this.disparityBarGraph = new javax.swing.JButton();
         this.disparityChords   = new javax.swing.JButton();
+        this.heatmap           = new javax.swing.JButton();
+        this.dataTrace         = new javax.swing.JButton();
+        this.scatterChords     = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -216,6 +219,30 @@ final public class ViewPrompt extends javax.swing.JFrame implements AppFrame {
             }
         });
 
+        heatmap.setText("Access Heatmap");
+        heatmap.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                heatmapActionPerformed(evt);
+            }
+        });
+
+        dataTrace.setText("Data Trace");
+        dataTrace.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dataTraceActionPerformed(evt);
+            }
+        });
+
+        scatterChords.setText("Scatter Chords");
+        scatterChords.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                scatterChordsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.CENTER)
@@ -227,21 +254,24 @@ final public class ViewPrompt extends javax.swing.JFrame implements AppFrame {
                         .addComponent(rainbow, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
                         .addComponent(colorCircle, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
                         .addComponent(disparity, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(disparityBarGraph, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(disparityBarGraph, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(heatmap, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
                         .addComponent(disparityDots, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
                         .addComponent(sineWave, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
                         .addComponent(waveDots, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
                         .addComponent(dotGraph, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
-                        .addComponent(hoopStack, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(hoopStack, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(dataTrace, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
                         .addComponent(pixelMesh, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
                         .addComponent(spiral, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
                         .addComponent(customImage, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
                         .addComponent(spiralDots, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(disparityChords, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(disparityChords, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(scatterChords, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGap(18))
         );
         layout.setVerticalGroup(
@@ -274,6 +304,11 @@ final public class ViewPrompt extends javax.swing.JFrame implements AppFrame {
                         .addComponent(hoopStack)
                         .addComponent(disparityBarGraph)
                         .addComponent(disparityChords))
+                    .addPreferredGap(ComponentPlacement.UNRELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(heatmap)
+                        .addComponent(dataTrace)
+                        .addComponent(scatterChords))
                     .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         getContentPane().setLayout(layout);
@@ -386,6 +421,24 @@ final public class ViewPrompt extends javax.swing.JFrame implements AppFrame {
         UtilFrame.jButton2ResetText();
         dispose();
     }
+    private void heatmapActionPerformed(java.awt.event.ActionEvent evt) {
+        setAllFieldsFalse();
+        ArrayVisualizer.setVisual(VisualStyles.ACCESS_HEATMAP);
+        UtilFrame.jButton2ResetText();
+        dispose();
+    }
+    private void dataTraceActionPerformed(java.awt.event.ActionEvent evt) {
+        setAllFieldsFalse();
+        ArrayVisualizer.setVisual(VisualStyles.DATA_TRACE);
+        UtilFrame.jButton2ResetText();
+        dispose();
+    }
+    private void scatterChordsActionPerformed(java.awt.event.ActionEvent evt) {
+        setAllFieldsFalse();
+        ArrayVisualizer.setVisual(VisualStyles.SCATTER_CHORDS);
+        UtilFrame.jButton2ResetText();
+        dispose();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton barGraph;
@@ -403,5 +456,8 @@ final public class ViewPrompt extends javax.swing.JFrame implements AppFrame {
     private javax.swing.JButton hoopStack;
     private javax.swing.JButton disparityBarGraph;
     private javax.swing.JButton disparityChords;
+    private javax.swing.JButton dataTrace;
+    private javax.swing.JButton heatmap;
+    private javax.swing.JButton scatterChords;
     private javax.swing.JLabel jLabel1;
 }

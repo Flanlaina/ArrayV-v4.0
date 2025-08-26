@@ -4,6 +4,7 @@ import main.ArrayVisualizer;
 import panes.JErrorPane;
 
 import sorts.hybrid.*;
+import sorts.quick.*;
 import sorts.templates.Sort;
 import utils.Shuffles;
 

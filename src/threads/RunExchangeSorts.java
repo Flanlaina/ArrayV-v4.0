@@ -3,6 +3,7 @@ package threads;
 import main.ArrayVisualizer;
 import panes.JErrorPane;
 import sorts.exchange.*;
+import sorts.quick.*;
 import sorts.templates.Sort;
 import utils.Shuffles;
 

@@ -19,13 +19,13 @@ in collaboration with PCBoy
  * @author PCBoy
  *
  */
-public class BubbleQuickSort extends Sort {
+public class TernaryBubbleQuickSort extends Sort {
 
-    public BubbleQuickSort(ArrayVisualizer arrayVisualizer) {
+    public TernaryBubbleQuickSort(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        this.setSortListName("Bubble Quick");
-        this.setRunAllSortsName("Bubble Quick Sort");
-        this.setRunSortName("Bubble Quicksort");
+        this.setSortListName("Ternary Bubble Quick");
+        this.setRunAllSortsName("Ternary Bubble Quick Sort");
+        this.setRunSortName("Ternary Bubble Quicksort");
         this.setCategory("Quick Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);
@@ -67,46 +67,43 @@ public class BubbleQuickSort extends Sort {
         return c > 0 ? 1 : (c < 0 ? -1 : 0);
     }
 
-    protected int pivCmp(int[] array, int a, int b, int piv, boolean eqLower) {
+    protected int pivCmp(int[] array, int a, int b, int piv) {
         Highlights.markArray(1, a);
         Highlights.markArray(2, b);
         Delays.sleep(0.125);
         int c1 = pivCmpHelper(array[a], piv);
         int c2 = pivCmpHelper(array[b], piv);
-        int biasType = eqLower ? 1 : 0;
-        return (c1 >= biasType && c2 < biasType ? 1 : c1 < biasType && c2 >= biasType ? -1 : 0);
+        return c1 > c2 ? 1 : (c1 < c2 ? -1 : 0);
     }
 
-    protected int partition(int[] array, int a, int b, int piv, boolean eqLower) {
+    protected int[] partition(int[] array, int a, int b, int piv) {
         for (int i = b - 1, c = 1, s, f = a; i > a; i -= c) {
             c = 1;
             s = Math.max(f - 1, a);
             boolean fChange = false;
             for (int j = s; j < i; j++) {
-                if (pivCmp(array, j, j + 1, piv, eqLower) > 0) {
+                if (pivCmp(array, j, j + 1, piv) > 0) {
                     if (!fChange) f = j;
                     Writes.swap(array, j, j + 1, 0.125, fChange = true, false);
                     c = 1;
                 } else c++;
             }
         }
-        return binSearch(array, a, b, piv, !eqLower);
+        int rIdx = binSearch(array, a, b, piv, false);
+        return new int[] { binSearch(array, a, rIdx, piv, true), rIdx };
     }
     
     protected void sortHelper(int[] array, int a, int b) {
         while (b - a > 2) {
             int pivIdx = medOf3(array, a, a + (b - a) / 2, b - 1);
-            int m = partition(array, a, b, array[pivIdx], false);
-            if (m == a) {
-                a = partition(array, a, b, array[pivIdx], true);
-                continue;
-            }
-            if (b - m < m - a) {
-                sortHelper(array, m, b);
-                b = m;
+            int[] pr = partition(array, a, b, array[pivIdx]);
+            if (pr[0] == a && pr[1] == b) return;
+            if (b - pr[1] < pr[0] - a) {
+                sortHelper(array, pr[1], b);
+                b = pr[0];
             } else {
-                sortHelper(array, a, m);
-                a = m;
+                sortHelper(array, a, pr[0]);
+                a = pr[1];
             }
         }
         if (b - a == 2) {

@@ -68,6 +68,7 @@ import utils.Timer;
 import utils.Writes;
 import visuals.Visual;
 import visuals.VisualStyles;
+import visuals.bars.AccessHeatmap;
 import visuals.bars.BarGraph;
 import visuals.bars.DisparityBarGraph;
 import visuals.bars.Rainbow;
@@ -76,7 +77,9 @@ import visuals.circles.ColorCircle;
 import visuals.circles.DisparityChords;
 import visuals.circles.DisparityCircle;
 import visuals.circles.Spiral;
+import visuals.dots.DataTrace;
 import visuals.dots.DisparityDots;
+import visuals.dots.ScatterChords;
 import visuals.dots.ScatterPlot;
 import visuals.dots.SpiralDots;
 import visuals.dots.WaveDots;
@@ -161,12 +164,13 @@ public final class ArrayVisualizer {
 
     final private Properties buildInfo;
 
-    final int[] array;
-    final int[] validateArray;
-    final int[] stabilityTable;
-    final int[] indexTable;
-    final ArrayList<int[]> arrays;
-    private final StatisticType[] statsConfig;
+    int[] array;
+    int[] validateArray;
+    int[] stabilityTable;
+    int[] indexTable;
+    ArrayList<int[]> arrays;
+    private StatisticType[] statsConfig;
+    int[] heatmap;
 
     private SortPair[] AllSorts; // First row of Comparison/DistributionSorts arrays consists of class names
     private SortPair[] ComparisonSorts; // First row of Comparison/DistributionSorts arrays consists of class names
@@ -258,6 +262,13 @@ public final class ArrayVisualizer {
 
     private volatile boolean hidden;
     private volatile boolean frameSkipped;
+
+    public volatile boolean colorCoding = false;
+
+    final private int MIN_TEMP = 3000;
+    final private int MAX_TEMP = 10000;
+    final private double HEAT_RATE = 1.1;
+    final private double COOL_RATE = 0.9925;
 
     public ArrayVisualizer() {
         if (INSTANCE != null) {
@@ -396,15 +407,18 @@ public final class ArrayVisualizer {
         this.MIN_ARRAY_VAL = 2;
         this.MAX_ARRAY_VAL = (int)Math.pow(2, MAX_LENGTH_POWER);
 
-        int[] array;
+        int[] array, tmpHeatMap;
         try {
             array = new int[this.MAX_ARRAY_VAL];
+            tmpHeatMap = new int[this.MAX_ARRAY_VAL];
         } catch (OutOfMemoryError e) {
             JErrorPane.invokeCustomErrorMessage("Failed to allocate main array. The program will now exit.");
             System.exit(1);
             array = null;
+            tmpHeatMap = null;
         }
         this.array = array;
+        this.heatmap = tmpHeatMap;
 
         this.sortLength = this.MAX_ARRAY_VAL;
 
@@ -598,7 +612,7 @@ public final class ArrayVisualizer {
                 background.setColor(Color.BLACK);
                 int coltmp = 255;
 
-                ArrayVisualizer.this.visualClasses = new Visual[15];
+                ArrayVisualizer.this.visualClasses = new Visual[18];
 
                 ArrayVisualizer.this.visualClasses[0]  = new          BarGraph(ArrayVisualizer.this);
                 ArrayVisualizer.this.visualClasses[1]  = new           Rainbow(ArrayVisualizer.this);
@@ -615,6 +629,9 @@ public final class ArrayVisualizer {
                 ArrayVisualizer.this.visualClasses[12] = new         PixelMesh(ArrayVisualizer.this);
                 ArrayVisualizer.this.visualClasses[13] = new            Spiral(ArrayVisualizer.this);
                 ArrayVisualizer.this.visualClasses[14] = new        SpiralDots(ArrayVisualizer.this);
+                ArrayVisualizer.this.visualClasses[15] = new     AccessHeatmap(ArrayVisualizer.this);
+                ArrayVisualizer.this.visualClasses[16] = new         DataTrace(ArrayVisualizer.this);
+                ArrayVisualizer.this.visualClasses[17] = new     ScatterChords(ArrayVisualizer.this);
 
                 while (ArrayVisualizer.this.visualsEnabled) {
                     if (ArrayVisualizer.this.updateVisualsForced == 0) {
@@ -657,6 +674,18 @@ public final class ArrayVisualizer {
 
         this.Sounds.startAudioThread();
         this.drawWindows();
+    }
+
+    public int[] getHeatmap() {
+        return this.heatmap;
+    }
+
+    public void hmHit(int i) {
+        this.heatmap[i] = Math.min(MAX_TEMP, Math.max(MIN_TEMP, (int)(this.heatmap[i] * HEAT_RATE)));
+    }
+
+    public void hmCool(int i) {
+        this.heatmap[i] = (int)(this.heatmap[i] * COOL_RATE); 
     }
 
     public static ArrayVisualizer getInstance() {
@@ -757,6 +786,33 @@ public final class ArrayVisualizer {
             }
             mainRender.drawString(stat, xOffset, (int)(windowRatio * yPos) + yOffset);
             yPos += fontSelectionScale;
+        }
+        
+        if (colorCoding && Highlights.getDeclaredColors().size() > 0) {
+            int startOffset = currentWidth(), metricFontHeight = mainRender.getFontMetrics().getHeight(),
+                startStat = mainRender.getFontMetrics().stringWidth("") + xOffset + 24,
+                copyYPos = (int)(currentHeight() - 45) + yOffset, textWidth;
+
+            for (String color : Highlights.getDeclaredColors()) {
+                textWidth = mainRender.getFontMetrics().stringWidth(color);
+                startOffset -= textWidth + metricFontHeight + 20;
+                if (startOffset <= startStat) {
+                    startOffset = currentWidth() - textWidth - metricFontHeight - 20;
+                    copyYPos -= metricFontHeight + 8;
+                }
+
+                if (!dropShadow) {
+                    mainRender.setColor(Highlights.getColorFromName(color));
+                }
+
+                mainRender.fillRect(startOffset, copyYPos - metricFontHeight + (metricFontHeight / 3), metricFontHeight, metricFontHeight);
+
+                if (!dropShadow) {
+                    mainRender.setColor(textColor);
+                }
+
+                mainRender.drawString(color, startOffset + metricFontHeight + 6, copyYPos);
+            }
         }
     }
 
@@ -1352,6 +1408,8 @@ public final class ArrayVisualizer {
     public void endSort() {
         this.Timer.disableRealTimer();
         this.Highlights.clearAllMarks();
+        this.Highlights.clearAllColorsReferenced();
+        this.Highlights.clearColorList();
         System.out.println(formatTimes());
 
         this.isCanceled = false;
@@ -1399,7 +1457,9 @@ public final class ArrayVisualizer {
     public void toggleClassicStyle(boolean Bool) {
         this.useClassicStyle = Bool;
     }
-
+    public void toggleColorCoding(boolean Bool) {
+        this.colorCoding = Bool;
+    }
     public void toggleInShowcase(boolean inShowcase) {
         this.inShowcase = inShowcase;
     }
@@ -1479,7 +1539,7 @@ public final class ArrayVisualizer {
 
         StringBuilder title = new StringBuilder("w0rthy's Array Visualizer (Flanlaina's Personal Mod) - ");
         title.append(this.ComparisonSorts.length + this.DistributionSorts.length);
-        title.append(" Sorts, 15 Visual Styles, and Infinite Inputs to Sort");
+        title.append(" Sorts, 18 Visual Styles, and Infinite Inputs to Sort");
         String versionSha = buildInfo.getProperty("commitId");
         if (!versionSha.equals("@git.sha@") && !versionSha.equals("unknown")) { // Hash not loaded
             title.append(" (commit ").append(versionSha).append(")");

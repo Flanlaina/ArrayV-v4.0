@@ -5,33 +5,33 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Flanlaina
-in collaboration with PCBoy
-
 +---------------------------+
-| Sorting Algorithm Scarlet |
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
 +---------------------------+
 
  */
 
 /**
  * @author Flanlaina
- * @author PCBoy
  *
  */
-public class BubbleQuickSort extends Sort {
-
-    public BubbleQuickSort(ArrayVisualizer arrayVisualizer) {
+public class StoogeQuickSort extends Sort {
+    public StoogeQuickSort(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        this.setSortListName("Bubble Quick");
-        this.setRunAllSortsName("Bubble Quick Sort");
-        this.setRunSortName("Bubble Quicksort");
-        this.setCategory("Quick Sorts");
+
+        this.setSortListName("Stooge Quick");
+        this.setRunAllSortsName("Stooge Quick Sort");
+        this.setRunSortName("Stooge Quicksort");
+        this.setCategory("Impractical Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);
         this.setRadixSort(false);
-        this.setUnreasonablySlow(false);
-        this.setUnreasonableLimit(0);
+        this.setUnreasonablySlow(true);
+        this.setUnreasonableLimit(512);
         this.setBogoSort(false);
     }
 
@@ -70,29 +70,32 @@ public class BubbleQuickSort extends Sort {
     protected int pivCmp(int[] array, int a, int b, int piv, boolean eqLower) {
         Highlights.markArray(1, a);
         Highlights.markArray(2, b);
-        Delays.sleep(0.125);
+        Delays.sleep(0.005);
         int c1 = pivCmpHelper(array[a], piv);
         int c2 = pivCmpHelper(array[b], piv);
         int biasType = eqLower ? 1 : 0;
         return (c1 >= biasType && c2 < biasType ? 1 : c1 < biasType && c2 >= biasType ? -1 : 0);
     }
 
-    protected int partition(int[] array, int a, int b, int piv, boolean eqLower) {
-        for (int i = b - 1, c = 1, s, f = a; i > a; i -= c) {
-            c = 1;
-            s = Math.max(f - 1, a);
-            boolean fChange = false;
-            for (int j = s; j < i; j++) {
-                if (pivCmp(array, j, j + 1, piv, eqLower) > 0) {
-                    if (!fChange) f = j;
-                    Writes.swap(array, j, j + 1, 0.125, fChange = true, false);
-                    c = 1;
-                } else c++;
-            }
+    private void stoogeSort(int[] array, int start, int end, int piv, boolean eqLower) {
+        if (pivCmp(array, start, end, piv, eqLower) > 0) {
+            Writes.swap(array, start, end, 0.005, true, false);
         }
-        return binSearch(array, a, b, piv, !eqLower);
-    }
+        
+        if (end - start + 1 >= 3) {
+            int t = (end - start + 1) / 3;
     
+            this.stoogeSort(array, start, end-t, piv, eqLower);
+            this.stoogeSort(array, start+t, end, piv, eqLower);
+            this.stoogeSort(array, start, end-t, piv, eqLower);
+        }
+    }
+
+    protected int partition(int[] array, int start, int end, int piv, boolean eqLower) {
+        stoogeSort(array, start, end - 1, piv, eqLower);
+        return binSearch(array, start, end, piv, !eqLower);
+    }
+
     protected void sortHelper(int[] array, int a, int b) {
         while (b - a > 2) {
             int pivIdx = medOf3(array, a, a + (b - a) / 2, b - 1);
@@ -122,7 +125,5 @@ public class BubbleQuickSort extends Sort {
     @Override
     public void runSort(int[] array, int sortLength, int bucketCount) {
         quickSort(array, 0, sortLength);
-
     }
-
 }

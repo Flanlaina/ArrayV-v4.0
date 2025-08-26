@@ -418,8 +418,7 @@ public final class MashuSort extends Sort {
     }
 
     /**
-     * Sorts the range {@code [a, b)} of {@code array} using a Median-of-Medians
-     * Out-of-Place Stable Quicksort.
+     * Sorts the range {@code [a, b)} of {@code array} using Mashu Sort.
      * 
      * @param array the array
      * @param a     the start of the range, inclusive

@@ -308,6 +308,26 @@ public enum Shuffles {
             }
         }
     },
+    FIRST_LAST {
+        public String getName() {
+            return "First Item Last";
+        }
+        @Override
+        public void shuffleArray(int[] array, ArrayVisualizer ArrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
+            int currentLen = ArrayVisualizer.getCurrentLength();
+            Writes.insert(array, 0, currentLen - 1, 1, true, false);
+        }
+    },
+    LAST_FIRST {
+        public String getName() {
+            return "Last Item First";
+        }
+        @Override
+        public void shuffleArray(int[] array, ArrayVisualizer ArrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
+            int currentLen = ArrayVisualizer.getCurrentLength();
+            Writes.insert(array, currentLen - 1, 0, 1, true, false);
+        }
+    },
     RANDOM_ROTATION {
         @Override
         public String getName() {
