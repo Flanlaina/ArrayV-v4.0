@@ -204,19 +204,25 @@ final public class Writes {
             System.err.println("Warning: write to index " + b + ", which is out of bounds for the current length (" + arrayVisualizer.getCurrentLength() + ")");
         }
 
-        if (mark) this.markSwap(a, b);
+        if (a == b && ArrayVisualizer.writesWarningsEnabled) {
+            System.err.println("Self-swap at " + a + ".");
+            //throw new Error();
+        } else {
+            if (mark) this.markSwap(a, b);
 
-        Timer.startLap("Swap");
+            Timer.startLap("Swap");
 
-        int temp = array[a];
-        array[a] = array[b];
-        array[b] = temp;
+            int temp = array[a];
+            array[a] = array[b];
+            array[b] = temp;
 
-        Timer.stopLap();
+            Timer.stopLap();
 
-        this.updateSwap(auxwrite);
-        arrayVisualizer.updateNow();
-        Delays.sleep(pause);
+            this.updateSwap(auxwrite);
+            arrayVisualizer.updateNow();
+            Delays.sleep(pause);
+
+        }
     }
 
     public void multiSwap(int[] array, int pos, int to, double sleep, boolean mark, boolean auxwrite) {
@@ -253,10 +259,25 @@ final public class Writes {
     }
 
     public void reversal(int[] array, int start, int length, double sleep, boolean mark, boolean auxwrite) {
-        this.reversals++;
+        if (!ArrayVisualizer.writesWarningsEnabled) {
+            this.reversals++;
 
-        for (int i = start; i < start + ((length - start + 1) / 2); i++) {
-            this.swap(array, i, start + length - i, sleep, mark, auxwrite);
+            for (int i = start; i < start + ((length - start + 1) / 2); i++) {
+                this.swap(array, i, start + length - i, sleep, mark, auxwrite);
+            }
+            return;
+        }
+        if (length - start < 0) System.err.println("There is a reversal of negative length.");
+        else if (length - start == 0) System.err.println("Self-reversal at " + start + ".");
+        else if (length - start < 3) {
+            System.err.println("A reversal of gap " + (length - start) + " can be done in a single swap.");
+            this.swap(array, start, length, sleep, mark, auxwrite);
+        } else {
+            this.reversals++;
+
+            for (int i = start; i < start + ((length - start + 1) / 2); i++) {
+                this.swap(array, i, start + length - i, sleep, mark, auxwrite);
+            }
         }
     }
 

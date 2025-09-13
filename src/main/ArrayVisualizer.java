@@ -259,6 +259,7 @@ public final class ArrayVisualizer {
 
     private boolean useClassicStyle = false;
     private boolean inShowcase = false;
+    public static boolean writesWarningsEnabled = false;
 
     private volatile boolean hidden;
     private volatile boolean frameSkipped;
@@ -1592,6 +1593,7 @@ public final class ArrayVisualizer {
         // if (args.length > 1) if (args[1].contains("RSS")) doRSS = true;
         for (int i = 0; i < args.length; i++) {
             if ("RSS".equals(args[i])) doRSS = true;
+            else if ("--enable-writes-warnings".equals(args[i])) writesWarningsEnabled = true;
             else ArrayVisualizer.MAX_LENGTH_POWER = Integer.parseInt(args[i]);
         }
         new ArrayVisualizer();

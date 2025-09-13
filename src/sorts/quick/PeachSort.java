@@ -341,15 +341,43 @@ public class PeachSort extends Sort {
         return binSearch(array, Math.max(a, b - i + 1), b - i / 2, val, left);
     }
 
+    public int findRun(int[] array, int start, int end) {
+        int i = start + 1;
+        if (i >= end) return i;
+        boolean lessunique = false;
+        boolean different = false;
+        int cmp = Reads.compareIndices(array, i - 1, i, 0.5, true);
+        while (cmp == 0 && i < end) {
+            lessunique = true;
+            i++;
+            if (i < end) cmp = Reads.compareIndices(array, i - 1, i, 0.5, true);
+        }
+        if (cmp > 0) {
+            while (cmp >= 0 && i < end) {
+                if (cmp == 0) lessunique = true;
+                else different = true;
+                i++;
+                if (i < end) cmp = Reads.compareIndices(array, i - 1, i, 0.5, true);
+            }
+            if (i - start > 1 && different) {
+                if (i - start < 4) Writes.swap(array, start, i - 1, 0.75, true, false);
+                else Writes.reversal(array, start, i - 1, 0.75, true, false);
+                if (lessunique) segmentReversal(array, start, i - 1, 0.75, true, false);
+            }
+        } else {
+            while (cmp <= 0 && i < end) {
+                i++;
+                if (i < end) cmp = Reads.compareIndices(array, i - 1, i, 0.5, true);
+            }
+        }
+        return i;
+    }
+
     protected boolean buildRuns(int[] array, int a, int b, int mRun) {
         int i = a + 1, j = a;
         boolean noSort = true;
         while (i < b) {
-            if (Reads.compareIndices(array, i - 1, i++, 1, true) > 0) {
-                while (i < b && Reads.compareIndices(array, i - 1, i, 1, true) > 0) i++;
-                if (i - j < 4) Writes.swap(array, j, i - 1, 1.0, true, false);
-                else Writes.reversal(array, j, i - 1, 1.0, true, false);
-            } else while (i < b && Reads.compareIndices(array, i - 1, i, 1, true) <= 0) i++;
+            i = findRun(array, j, b);
             if (i < b) {
                 noSort = false;
                 j = i - (i - j - 1) % mRun - 1;
@@ -513,7 +541,6 @@ public class PeachSort extends Sort {
             else  med = Reads.compareIndices(array, a + la - 1, m + (lCnt - la) - 1, 0.25, true) >= 0
                     ? array[a + la - 1] : array[m + (lCnt - la) - 1];
         }
-        Highlights.clearMark(2);
 
         // stable ternary partition around median: [ < ][ = ][ > ]
         int m1 = this.binSearch(array, a, m, med, true);
@@ -535,13 +562,8 @@ public class PeachSort extends Sort {
                 this.blockMerge(array, swap, i, i+j, Math.min(right, i+2*j), bLen);
     }
 
-    protected void sortHelper(int[] array, int[] buf, int a, int b, int bLen, int depthLimit) {
+    protected void sortHelper(int[] array, int[] buf, int a, int b, int bLen, int badAllowed) {
         while (b - a > QUICKSORT_INSERT_THRESHOLD) {
-            if (depthLimit == 0) {
-                blockMergeSort(array, buf, a, b, bLen);
-                return;
-            }
-            depthLimit--;
             int pIdx = pseudomo243(array, a, b);
             Highlights.clearMark(2);
             int[] pr = partition(array, buf, a, b, bLen, array[pIdx], 1);
@@ -562,12 +584,18 @@ public class PeachSort extends Sort {
             }
             int lLen = m - a, rLen = b - m;
             boolean bad = rLen / 8 > lLen || lLen / 8 > rLen;
-            if (!bad && (pr[1] & 0x1) != 0 && partialInsert(array, a, m) && partialInsert(array, m, b)) return;
+            if (bad) {
+                badAllowed--;
+                if (badAllowed == 0) {
+                    blockMergeSort(array, buf, a, b, bLen);
+                    return;
+                }
+            } else if ((pr[1] & 0x1) != 0 && partialInsert(array, a, m) && partialInsert(array, m, b)) return;
             if (lLen > rLen) {
-                sortHelper(array, buf, m, b, bLen, depthLimit);
+                sortHelper(array, buf, m, b, bLen, badAllowed);
                 b = m;
             } else {
-                sortHelper(array, buf, a, m, bLen, depthLimit);
+                sortHelper(array, buf, a, m, bLen, badAllowed);
                 a = m;
             }
         }
@@ -615,13 +643,16 @@ public class PeachSort extends Sort {
             if (eq > 0) segmentReversal(array, a, b - 1, 0.75, true, false);
             return;
         }
-        bLen = Math.max(productLog2(len)[1], Math.min(bLen, len));
-        int[] buf = Writes.createExternalArray(2 * bLen);
+        bLen = Math.max(productLog2(len)[0], Math.min(bLen, len));
+        int[] buf;
         int sixth = len / 6;
-        if (streaks > len / 20 || balance <= sixth || balance + eq >= len - sixth)
+        if (streaks > len / 20 || balance <= sixth || balance + eq >= len - sixth) {
+            buf = Writes.createExternalArray(2 * bLen);
             blockMergeSort(array, buf, a, b, bLen);
-        else
-            sortHelper(array, buf, a, b, bLen * 2, 2 * log2(len));
+        } else {
+            buf = Writes.createExternalArray(bLen);
+            sortHelper(array, buf, a, b, bLen, log2(len));
+        }
         Writes.deleteExternalArray(buf);
     }
 

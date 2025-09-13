@@ -30,6 +30,10 @@ final public class MinHeapSort extends HeapSorting {
         this.setUnreasonableLimit(0);
         this.setBogoSort(false);
     }
+
+    public void makeHeap(int[] array, int start, int length, double sleep) {
+        this.heapify(array, start, length, sleep, false);
+    }
     
     @Override
     public void runSort(int[] array, int length, int bucketCount) {

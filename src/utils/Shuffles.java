@@ -10,6 +10,7 @@ import main.ArrayVisualizer;
 import sorts.select.PoplarHeapSort;
 import sorts.select.SmoothSort;
 import sorts.select.MaxHeapSort;
+import sorts.select.MinHeapSort;
 import sorts.select.TriangularHeapSort;
 import sorts.templates.PDQSorting;
 
@@ -75,6 +76,9 @@ public enum Shuffles {
         }
     },
     ALMOST {
+        public int randInt(int a, int b, Random rng) {
+            return rng.nextInt(b - a) + a;
+        }
         public String getName() {
             return "Slight Shuffle";
         }
@@ -84,8 +88,9 @@ public enum Shuffles {
             Random random = new Random();
 
             for (int i = 0; i < Math.max(currentLen / 20, 1); i++){
-                Writes.swap(array, random.nextInt(currentLen), random.nextInt(currentLen), 10, true, false);
-
+                int i1 = randInt(0, currentLen - 1, random);
+                int i2 = randInt(i1 + 1, currentLen, random);
+                Writes.swap(array, i1, i2, 10, true, false);
             }
         }
     },
@@ -121,8 +126,10 @@ public enum Shuffles {
             int currentLen = ArrayVisualizer.getCurrentLength();
             Random random = new Random();
 
-            for (int i = 0; i < currentLen; i++)
-                Writes.swap(array, i, random.nextInt(currentLen), 1, true, false);
+            for (int i = 0; i < currentLen; i++) {
+                int r = random.nextInt(currentLen);
+                if (i != r) Writes.swap(array, i, r, 1, true, false);
+            }
         }
     },
     SHUFFLED_TAIL {
@@ -372,7 +379,7 @@ public enum Shuffles {
 
             for (int i = 1; i < currentLen; i += 2){
                 int randomIndex = (((random.nextInt(currentLen - i) / 2)) * 2) + i;
-                Writes.swap(array, i, randomIndex, 2, true, false);
+                if (i != randomIndex) Writes.swap(array, i, randomIndex, 2, true, false);
             }
         }
     },
@@ -711,6 +718,17 @@ public enum Shuffles {
             Writes.reversal(array, currentLen/4, (3*currentLen+3)/4-1, 1, true, false);
         }
     },
+    PARTIAL_REVERSE_ALT {
+        public String getName() {
+            return "Half Reversed (Alternative)";
+        }
+        @Override
+        public void shuffleArray(int[] array, ArrayVisualizer ArrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
+            int currentLen = ArrayVisualizer.getCurrentLength();
+
+            Writes.reversal(array, currentLen/4, (3*currentLen+3)/4-1, 1, true, false);
+        }
+    },
     BST_TRAVERSAL {
         public String getName() {
             return "BST Traversal";
@@ -817,6 +835,18 @@ public enum Shuffles {
             int currentLen = ArrayVisualizer.getCurrentLength();
 
             MaxHeapSort heapSort = new MaxHeapSort(ArrayVisualizer);
+            heapSort.makeHeap(array, 0, currentLen, 1);
+        }
+    },
+    MIN_HEAPIFIED {
+        public String getName() {
+            return "Min Heapified";
+        }
+        @Override
+        public void shuffleArray(int[] array, ArrayVisualizer ArrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
+            int currentLen = ArrayVisualizer.getCurrentLength();
+
+            MinHeapSort heapSort = new MinHeapSort(ArrayVisualizer);
             heapSort.makeHeap(array, 0, currentLen, 1);
         }
     },
@@ -1928,13 +1958,33 @@ public enum Shuffles {
             int currentLen = ArrayVisualizer.getCurrentLength();
             Random random = new Random();
             shuffle(array, 0, currentLen, 1, Writes);
-            int r = random.nextInt((int) Math.sqrt(currentLen));
+            Highlights.clearMark(2);
+            int size = Math.max(4, (int)Math.sqrt(currentLen));
+            int r = random.nextInt(size-1)+1;
             int i = 0;
             for (; i + r < currentLen; i += r) {
                 sort(array, i, i + r, 1, Writes);
-                r = random.nextInt((int) Math.sqrt(currentLen));
+                r = random.nextInt(size-1)+1;
             }
-            sort(array, i, currentLen - 1, 1, Writes);
+            sort(array, i, currentLen, 1, Writes);
+        }
+    },
+    ONLY_RUNS_NO_SHUFFLE {
+        public String getName() {
+            return "Random Runs (No Shuffle)";
+        }
+        @Override
+        public void shuffleArray(int[] array, ArrayVisualizer ArrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
+            int currentLen = ArrayVisualizer.getCurrentLength();
+            Random random = new Random();
+            int size = Math.max(4, (int)Math.sqrt(currentLen));
+            int r = random.nextInt(size-1)+1;
+            int i = 0;
+            for (; i + r < currentLen; i += r) {
+                sort(array, i, i + r, 1, Writes);
+                r = random.nextInt(size-1)+1;
+            }
+            sort(array, i, currentLen, 1, Writes);
         }
     },
     RUNS {
@@ -1946,10 +1996,12 @@ public enum Shuffles {
             int currentLen = ArrayVisualizer.getCurrentLength();
             Random random = new Random();
             shuffle(array, 0, currentLen, 1, Writes);
-            int r = random.nextInt((int) Math.sqrt(currentLen));
+            Highlights.clearMark(2);
+            int size = Math.max(4, (int)Math.sqrt(currentLen));
+            int r = random.nextInt(size-1)+1;
             for (int i = 0; i + r < currentLen; i += r) {
                 if (random.nextInt(3) == 0) sort(array, i, i + r, 1, Writes);
-                r = random.nextInt((int) Math.sqrt(currentLen));
+                r = random.nextInt(size-1)+1;
             }
         }
     },
@@ -2139,7 +2191,7 @@ public enum Shuffles {
         Random random = new Random();
         for (int i = start; i < end; i++){
             int randomIndex = random.nextInt(end - i) + i;
-            Writes.swap(array, i, randomIndex, sleep, true, false);
+            if (i != randomIndex) Writes.swap(array, i, randomIndex, sleep, true, false);
         }
     }
 
@@ -2147,7 +2199,7 @@ public enum Shuffles {
         Random random = new Random(1);
         for (int i = start; i < end; i++){
             int randomIndex = random.nextInt(end - i) + i;
-            Writes.swap(array, i, randomIndex, sleep, true, false);
+            if (i != randomIndex) Writes.swap(array, i, randomIndex, sleep, true, false);
         }
     }
 
