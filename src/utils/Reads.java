@@ -2,7 +2,7 @@ package utils;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-
+import java.util.concurrent.atomic.AtomicLong;
 import main.ArrayVisualizer;
 
 /*
@@ -32,7 +32,7 @@ SOFTWARE.
  */
 
 final public class Reads {
-    private volatile long comparisons;
+    private AtomicLong comparisons;
     public volatile ArrayList<Integer> networkIndices;
 
     private ArrayVisualizer ArrayVisualizer;
@@ -46,7 +46,7 @@ final public class Reads {
     public Reads(ArrayVisualizer arrayVisualizer) {
         this.ArrayVisualizer = arrayVisualizer;
 
-        this.comparisons = 0;
+        this.comparisons = new AtomicLong(0);
         this.networkIndices = new ArrayList<>();
 
         this.Delays = ArrayVisualizer.getDelays();
@@ -57,29 +57,29 @@ final public class Reads {
     }
 
     public void resetStatistics() {
-        this.comparisons = 0;
+        this.comparisons.set(0);
     }
 
     public void addComparison() {
-        this.comparisons++;
+        this.comparisons.incrementAndGet();
     }
 
     public String getStats() {
-        if (this.comparisons < 0) {
-            this.comparisons = Long.MIN_VALUE;
+        if (this.comparisons.get() < 0) {
+            this.comparisons.set(Long.MIN_VALUE);
             return "Over " + this.formatter.format(Long.MAX_VALUE) + " Comparisons";
         } else {
-            if (this.comparisons == 1) return this.comparisons + " Comparison";
-            else                       return this.formatter.format(this.comparisons) + " Comparisons";
+            if (this.comparisons.get() == 1) return this.comparisons + " Comparison";
+            else                             return this.formatter.format(this.comparisons) + " Comparisons";
         }
     }
 
     public long getComparisons() {
-        return this.comparisons;
+        return this.comparisons.get();
     }
 
     public void setComparisons(long value) {
-        this.comparisons = value;
+        this.comparisons.set(value);
     }
 
     public int compareValues(int left, int right) {

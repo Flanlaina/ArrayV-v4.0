@@ -975,26 +975,11 @@ public enum Shuffles {
             for (int i = 1; i < currentLen; i+=2)
                 if (Reads.compareIndices(array, i - 1, i, 0.5, true) > 0)
                     Writes.swap(array, i-1, i, 0.5, true, false);
-
             Highlights.clearMark(2);
-
-            int[] temp = new int[currentLen];
 
             //sort the smaller and larger of the pairs separately with pigeonhole sort
             for (int m = 0; m < 2; m++) {
-                for (int k = m; k < currentLen; k+=2)
-                    Writes.write(temp, array[k], temp[array[k]] + 1, 0, false, true);
-
-                int i = 0, j = m;
-                while (true) {
-                    while (i < currentLen && temp[i] == 0) i++;
-                    if (i >= currentLen) break;
-
-                    Writes.write(array, j, i, 0.5, true, false);
-
-                    j+=2;
-                    Writes.write(temp, i, temp[i] - 1, 0, false, true);
-                }
+                gappedSort(array, m, currentLen, 2, 0.5, Writes);
             }
         }
     },
@@ -1011,26 +996,11 @@ public enum Shuffles {
             for (int i = 1; i < currentLen; i+=2)
                 if (Reads.compareIndices(array, i - 1, i, 0.5, true) > 0)
                     Writes.swap(array, i-1, i, 0.5, true, false);
-
             Highlights.clearMark(2);
-
-            int[] temp = new int[currentLen];
 
             //sort the smaller and larger of the pairs separately with pigeonhole sort
             for (int m = 0; m < 2; m++) {
-                for (int k = m; k < currentLen; k+=2)
-                    Writes.write(temp, array[k], temp[array[k]] + 1, 0, false, true);
-
-                int i = 0, j = m;
-                while (true) {
-                    while (i < currentLen && temp[i] == 0) i++;
-                    if (i >= currentLen) break;
-
-                    Writes.write(array, j, i, 0.5, true, false);
-
-                    j+=2;
-                    Writes.write(temp, i, temp[i] - 1, 0, false, true);
-                }
+                gappedSort(array, m, currentLen, 2, 0.5, Writes);
             }
         }
     },
@@ -1043,26 +1013,11 @@ public enum Shuffles {
             int currentLen = ArrayVisualizer.getCurrentLength();
 
             shuffle(array, 0, currentLen, 0.5, Writes);
-
             Highlights.clearMark(2);
-
-            int[] temp = new int[currentLen];
 
             //sort the smaller and larger of the pairs separately with pigeonhole sort
             for (int m = 0; m < 2; m++) {
-                for (int k = m; k < currentLen; k+=2)
-                    Writes.write(temp, array[k], temp[array[k]] + 1, 0, false, true);
-
-                int i = 0, j = m;
-                while (true) {
-                    while (i < currentLen && temp[i] == 0) i++;
-                    if (i >= currentLen) break;
-
-                    Writes.write(array, j, i, 0.5, true, false);
-
-                    j+=2;
-                    Writes.write(temp, i, temp[i] - 1, 0, false, true);
-                }
+                gappedSort(array, m, currentLen, 2, 0.5, Writes);
             }
         }
     },
@@ -1074,25 +1029,9 @@ public enum Shuffles {
         public void shuffleArray(int[] array, ArrayVisualizer ArrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
             int currentLen = ArrayVisualizer.getCurrentLength();
 
-            Highlights.clearMark(2);
-
-            int[] temp = new int[currentLen];
-
             //sort the smaller and larger of the pairs separately with pigeonhole sort
             for (int m = 0; m < 2; m++) {
-                for (int k = m; k < currentLen; k+=2)
-                    Writes.write(temp, array[k], temp[array[k]] + 1, 0, false, true);
-
-                int i = 0, j = m;
-                while (true) {
-                    while (i < currentLen && temp[i] == 0) i++;
-                    if (i >= currentLen) break;
-
-                    Writes.write(array, j, i, 0.5, true, false);
-
-                    j+=2;
-                    Writes.write(temp, i, temp[i] - 1, 0, false, true);
-                }
+                gappedSort(array, m, currentLen, 2, 0.5, Writes);
             }
         }
     },
@@ -2182,6 +2121,26 @@ public enum Shuffles {
 
         for (int count = 0, j = start; count < size; count++) {
             for (int i = 0; i < holes[count]; i++, j++) {
+                Writes.write(array, j, count + min, sleep, true, false);
+            }
+        }
+    }
+
+    public void gappedSort(int[] array, int start, int end, int gap, double sleep, Writes Writes) {
+        int min = array[start], max = min;
+        for (int i = start; i < end; i += gap) {
+            if (array[i] < min) min = array[i];
+            else if (array[i] > max) max = array[i];
+        }
+
+        int size = max - min + 1;
+        int[] holes = new int[size];
+
+        for (int i = start; i < end; i += gap)
+            Writes.write(holes, array[i] - min, holes[array[i] - min] + 1, 0, false, true);
+
+        for (int count = 0, j = start; count < size; count++) {
+            for (int i = 0; i < holes[count]; i++, j += gap) {
                 Writes.write(array, j, count + min, sleep, true, false);
             }
         }

@@ -92,7 +92,7 @@ public class DataTrace extends Visual {
 
         if (this.change) this.offset = (this.offset+1) % h;
 
-        long c = ArrayVisualizer.getWrites().writes;
+        long c = ArrayVisualizer.getWrites().getNumMainWrites();
         this.change = this.cachedWrites != (this.cachedWrites = c);
 
         int rectW = (int)Math.max(4, Math.ceil(this.widthScale));

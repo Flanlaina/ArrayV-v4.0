@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-
+import java.util.concurrent.atomic.AtomicLong;
 import main.ArrayVisualizer;
 
 /*
@@ -38,13 +38,13 @@ SOFTWARE.
  * @author S630690
  */
 final public class Writes {
-    public volatile long reversals;
-    public volatile long swaps;
-    public volatile long auxWrites;
-    public volatile long writes;
-    public volatile long allocAmount;
-    public volatile long recursions;
-    public volatile long depth;
+    public AtomicLong reversals;
+    public AtomicLong swaps;
+    public AtomicLong auxWrites;
+    public AtomicLong writes;
+    public AtomicLong allocAmount;
+    public AtomicLong recursions;
+    public AtomicLong depth;
 
     private DecimalFormat formatter;
 
@@ -54,13 +54,13 @@ final public class Writes {
     private Timer Timer;
 
     public Writes(ArrayVisualizer ArrayVisualizer) {
-        this.reversals = 0;
-        this.swaps = 0;
-        this.auxWrites = 0;
-        this.writes = 0;
-        this.allocAmount = 0;
-        this.recursions = 0;
-        this.depth = 0;
+        this.reversals = new AtomicLong(0);
+        this.swaps = new AtomicLong(0);
+        this.auxWrites = new AtomicLong(0);
+        this.writes = new AtomicLong(0);
+        this.allocAmount = new AtomicLong(0);
+        this.recursions = new AtomicLong(0);
+        this.depth = new AtomicLong(0);
 
         this.arrayVisualizer = ArrayVisualizer;
         this.Delays = ArrayVisualizer.getDelays();
@@ -71,123 +71,127 @@ final public class Writes {
     }
 
     public void resetStatistics() {
-        this.reversals = 0;
-        this.swaps = 0;
-        this.auxWrites = 0;
-        this.writes = 0;
-        this.allocAmount = 0;
-        this.recursions = 0;
-        this.depth = 0;
+        this.reversals.set(0);
+        this.swaps.set(0);
+        this.auxWrites.set(0);
+        this.writes.set(0);
+        this.allocAmount.set(0);
+        this.recursions.set(0);
+        this.depth.set(0);
+    }
+
+    public long getNumMainWrites() { // required by Data Trace
+        return this.writes.get();
     }
 
     public String getReversals() {
-        if (this.reversals < 0) {
-            this.reversals = Long.MIN_VALUE;
+        if (this.reversals.get() < 0) {
+            this.reversals.set(Long.MIN_VALUE);
             return "Over " + this.formatter.format(Long.MAX_VALUE) + " Reversals";
         } else {
-            if (reversals == 1) return this.reversals + " Reversal";
-            else                return this.formatter.format(this.reversals) + " Reversals";
+            if (reversals.get() == 1) return this.reversals + " Reversal";
+            else                      return this.formatter.format(this.reversals) + " Reversals";
         }
     }
 
     public String getSwaps() {
-        if (this.swaps < 0) {
-            this.swaps = Long.MIN_VALUE;
+        if (this.swaps.get() < 0) {
+            this.swaps.set(Long.MIN_VALUE);
             return "Over " + this.formatter.format(Long.MAX_VALUE) + " Swaps";
         } else {
-            if (this.swaps == 1) return this.swaps + " Swap";
-            else                 return this.formatter.format(this.swaps) + " Swaps";
+            if (this.swaps.get() == 1) return this.swaps + " Swap";
+            else                       return this.formatter.format(this.swaps) + " Swaps";
         }
     }
 
     public String getAuxWrites() {
-        if (this.auxWrites < 0) {
-            this.auxWrites = Long.MIN_VALUE;
+        if (this.auxWrites.get() < 0) {
+            this.auxWrites.set(Long.MIN_VALUE);
             return "Over " + this.formatter.format(Long.MAX_VALUE) + " Writes to Auxiliary Array(s)";
         } else {
-            if (this.auxWrites == 1) return this.auxWrites + " Write to Auxiliary Array(s)";
-            else                     return this.formatter.format(this.auxWrites) + " Writes to Auxiliary Array(s)";
+            if (this.auxWrites.get() == 1) return this.auxWrites + " Write to Auxiliary Array(s)";
+            else                           return this.formatter.format(this.auxWrites) + " Writes to Auxiliary Array(s)";
         }
     }
 
     public String getMainWrites() {
-        if (this.writes < 0) {
-            this.writes = Long.MIN_VALUE;
+        if (this.writes.get() < 0) {
+            this.writes.set(Long.MIN_VALUE);
             return "Over " + this.formatter.format(Long.MAX_VALUE) + " Writes to Main Array";
         } else {
-            if (this.writes == 1) return this.writes + " Write to Main Array";
-            else                 return this.formatter.format(this.writes) + " Writes to Main Array";
+            if (this.writes.get() == 1) return this.writes + " Write to Main Array";
+            else                        return this.formatter.format(this.writes) + " Writes to Main Array";
         }
     }
 
     public String getAllocAmount() {
-        if (this.allocAmount < 0) {
-            this.allocAmount = Long.MIN_VALUE;
+        if (this.allocAmount.get() < 0) {
+            this.allocAmount.set(Long.MIN_VALUE);
             return "Over " + this.formatter.format(Long.MAX_VALUE) + " Items in External Arrays";
         } else {
-            if (this.allocAmount == 1) return this.allocAmount + " Item in External Arrays";
-            else                       return this.formatter.format(this.allocAmount) + " Items in External Arrays";
+            if (this.allocAmount.get() == 1) return this.allocAmount + " Item in External Arrays";
+            else                             return this.formatter.format(this.allocAmount) + " Items in External Arrays";
         }
     }
 
     public String getRecursions() {
-        if (this.recursions < 0) {
-            this.recursions = Long.MIN_VALUE;
+        if (this.recursions.get() < 0) {
+            this.recursions.set(Long.MIN_VALUE);
             return "Over " + this.formatter.format(Long.MAX_VALUE) + " Recursions";
         }
         else {
-            if (recursions == 1) return this.recursions + " Recursion";
-            else               return this.formatter.format(this.recursions) + " Recursions";
+            if (recursions.get() == 1) return this.recursions + " Recursion";
+            else                       return this.formatter.format(this.recursions) + " Recursions";
         }
     }
 
     public String getRecursionDepth() {
-        if (this.depth < 0) {
-            this.depth = Long.MIN_VALUE;
+        if (this.depth.get() < 0) {
+            this.depth.set(Long.MIN_VALUE);
             return "Over " + this.formatter.format(Long.MAX_VALUE) + " Layers deep (at most)";
         }
         else {
-            if (depth == 1) return this.depth + " Layer deep (at most)";
-            else               return this.formatter.format(this.depth) + " Layers deep (at most)";
+            if (depth.get() == 1) return this.depth + " Layer deep (at most)";
+            else                  return this.formatter.format(this.depth) + " Layers deep (at most)";
         }
     }
 
     public void changeAuxWrites(int value) {
-        this.auxWrites += value;
+        this.auxWrites.addAndGet(value);
     }
 
     public void changeWrites(int value) {
-        this.writes += value;
+        this.writes.addAndGet(value);
     }
 
     public void changeAllocAmount(int value) {
-        this.allocAmount += value;
+        this.allocAmount.addAndGet(value);
     }
 
     public void clearAllocAmount() {
-        this.allocAmount = 0;
+        this.allocAmount.set(0);
     }
 
     public void changeReversals(int value) {
-        this.reversals += value;
+        this.reversals.addAndGet(value);
     }
     
     public void recursion() {
-        this.recursions++;
+        this.recursions.incrementAndGet();
     }
 
     public void recursion(int k) {
-        this.recursions += k;
+        this.recursions.addAndGet(k);
     }
 
     public void recordDepth(int k) {
-        if (this.depth < k) this.depth = k;
+        if (this.depth.get() < k) this.depth.set(k);
     }
 
     private void updateSwap(boolean auxwrite) {
-        this.swaps++;
-        if (auxwrite) this.auxWrites += 2;
-        else          this.writes += 2;
+        this.swaps.incrementAndGet();
+        if (auxwrite) this.auxWrites.addAndGet(2);
+        else          this.writes.addAndGet(2);
     }
 
     private void markSwap(int a, int b) {
@@ -199,14 +203,15 @@ final public class Writes {
         if (arrayVisualizer.sortCanceled()) throw new StopSort();
         if (!auxwrite && a >= arrayVisualizer.getCurrentLength()) {
             System.err.println("Warning: write to index " + a + ", which is out of bounds for the current length (" + arrayVisualizer.getCurrentLength() + ")");
+            // throw new IndexOutOfBoundsException("swap: Index:" + a + ", Length: " + arrayVisualizer.getCurrentLength());
         }
         if (!auxwrite && b >= arrayVisualizer.getCurrentLength()) {
             System.err.println("Warning: write to index " + b + ", which is out of bounds for the current length (" + arrayVisualizer.getCurrentLength() + ")");
+            // throw new IndexOutOfBoundsException("swap: Index:" + b + ", Length: " + arrayVisualizer.getCurrentLength());
         }
 
         if (a == b && ArrayVisualizer.writesWarningsEnabled) {
             System.err.println("Self-swap at " + a + ".");
-            //throw new Error();
         } else {
             if (mark) this.markSwap(a, b);
 
@@ -260,7 +265,7 @@ final public class Writes {
 
     public void reversal(int[] array, int start, int length, double sleep, boolean mark, boolean auxwrite) {
         if (!ArrayVisualizer.writesWarningsEnabled) {
-            this.reversals++;
+            this.reversals.incrementAndGet();
 
             for (int i = start; i < start + ((length - start + 1) / 2); i++) {
                 this.swap(array, i, start + length - i, sleep, mark, auxwrite);
@@ -273,7 +278,7 @@ final public class Writes {
             System.err.println("A reversal of gap " + (length - start) + " can be done in a single swap.");
             this.swap(array, start, length, sleep, mark, auxwrite);
         } else {
-            this.reversals++;
+            this.reversals.incrementAndGet();
 
             for (int i = start; i < start + ((length - start + 1) / 2); i++) {
                 this.swap(array, i, start + length - i, sleep, mark, auxwrite);
@@ -285,12 +290,13 @@ final public class Writes {
         if (arrayVisualizer.sortCanceled()) throw new StopSort();
         if (!auxwrite && at >= arrayVisualizer.getCurrentLength()) {
             System.err.println("Warning: write to index " + at + ", which is out of bounds for the current length (" + arrayVisualizer.getCurrentLength() + ")");
+            // throw new IndexOutOfBoundsException("write: Index:" + at + ", Length: " + arrayVisualizer.getCurrentLength());
         }
 
         if (mark) Highlights.markArray(1, at);
 
-        if (auxwrite) auxWrites++;
-        else          writes++;
+        if (auxwrite) auxWrites.incrementAndGet();
+        else          writes.incrementAndGet();
 
         Timer.startLap("Write");
 
@@ -306,7 +312,7 @@ final public class Writes {
         if (arrayVisualizer.sortCanceled()) throw new StopSort();
         if (mark) Highlights.markArray(1, at);
 
-        auxWrites++;
+        auxWrites.incrementAndGet();
 
         Timer.startLap("Write");
 
@@ -330,8 +336,8 @@ final public class Writes {
         if (arrayVisualizer.sortCanceled()) throw new StopSort();
         if (mark) Highlights.markArray(1, x);
 
-        if (auxwrite) auxWrites++;
-        else          writes++;
+        if (auxwrite) auxWrites.incrementAndGet();
+        else          writes.incrementAndGet();
 
         Timer.startLap();
 
@@ -347,7 +353,7 @@ final public class Writes {
         if (arrayVisualizer.sortCanceled()) throw new StopSort();
         if (mark) Highlights.markArray(1, x);
 
-        auxWrites++;
+        auxWrites.incrementAndGet();
 
         Timer.startLap();
 
@@ -364,7 +370,7 @@ final public class Writes {
         if (arrayVisualizer.sortCanceled()) throw new StopSort();
         int[] mockArray = new int[length];
 
-        this.auxWrites++;
+        this.auxWrites.incrementAndGet();
 
         Timer.startLap();
 
@@ -409,7 +415,7 @@ final public class Writes {
         int radix = registers.length;
 
         this.transcribe(tempArray, registers, 0, false, true);
-        auxWrites -= length;
+        auxWrites.addAndGet(-length);
 
         for (int i = 0; i < length; i++) {
             int register = i % radix;
@@ -462,7 +468,7 @@ final public class Writes {
     }
 
     public int[] copyOfArray(int[] original, int newLength) {
-        this.allocAmount += newLength;
+        this.allocAmount.addAndGet(newLength);
         int[] result = Arrays.copyOf(original, newLength);
         arrayVisualizer.getArrays().add(result);
         arrayVisualizer.updateNow();
@@ -470,7 +476,7 @@ final public class Writes {
     }
 
     public int[] copyOfRangeArray(int[] original, int from, int to) {
-        this.allocAmount += to - from;
+        this.allocAmount.addAndGet(to - from);
         int[] result = Arrays.copyOfRange(original, from, to);
         arrayVisualizer.getArrays().add(result);
         arrayVisualizer.updateNow();
@@ -496,7 +502,7 @@ final public class Writes {
     }
 
     public int[] createExternalArray(int length) {
-        this.allocAmount += length;
+        this.allocAmount.addAndGet(length);
         int[] result = new int[length];
         arrayVisualizer.getArrays().add(result);
         arrayVisualizer.updateNow();
@@ -504,21 +510,21 @@ final public class Writes {
     }
 
     public void deleteExternalArray(int[] array) {
-        this.allocAmount -= array.length;
+        this.allocAmount.addAndGet(-array.length);
         Highlights.unregisterColors(array);
         arrayVisualizer.getArrays().remove(array);
         arrayVisualizer.updateNow();
     }
 
     public void deleteExternalArrays(int[]... arrays) {
-        this.allocAmount -= Arrays.stream(arrays).reduce(0, (a, b) -> (a + b.length), (a, b) -> a + b);
+        this.allocAmount.addAndGet(-Arrays.stream(arrays).reduce(0, (a, b) -> (a + b.length), Integer::sum));
         List<int[]> visArrays = arrayVisualizer.getArrays();
         Arrays.stream(arrays).forEach(visArrays::remove);
         arrayVisualizer.updateNow();
     }
 
     public void arrayListAdd(List<Integer> aList, int value) {
-        allocAmount++;
+        allocAmount.incrementAndGet();
         aList.add(value);
     }
 
@@ -527,7 +533,7 @@ final public class Writes {
             ((ArrayVList)aList).add(value, sleep, false);
             return;
         }
-        allocAmount++;
+        allocAmount.incrementAndGet();
         aList.add(value);
         if (mockWrite) {
             this.mockWrite(aList.size(), aList.size() - 1, value, sleep);
@@ -537,13 +543,13 @@ final public class Writes {
     }
 
     public void arrayListRemoveAt(List<Integer> aList, int index) {
-        allocAmount--;
+        allocAmount.decrementAndGet();
         aList.remove(index);
     }
 
     public void arrayListClear(List<Integer> aList) {
         if (!(aList instanceof ArrayVList))
-            allocAmount -= aList.size();
+            allocAmount.addAndGet(-aList.size());
         aList.clear();
     }
 
@@ -551,7 +557,7 @@ final public class Writes {
         if (aList instanceof ArrayVList) {
             ((ArrayVList)aList).delete();
         } else {
-            allocAmount -= aList.size();
+            allocAmount.addAndGet(-aList.size());
         }
     }
 
