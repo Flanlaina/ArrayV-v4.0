@@ -141,14 +141,6 @@ public class BlockTimSort extends Sort {
         return noSort;
     }
 
-    protected boolean checkReverseBounds(int[] array, int a, int m, int b) {
-        if (Reads.compareValues(array[a], array[b - 1]) > 0) {
-            rotate(array, a, m, b);
-            return true;
-        }
-        return false;
-    }
-
     protected void mergeTo(int[] from, int[] to, int a, int m, int b, int p, boolean aux) {
         int i = a, j = m;
         while(i < m && j < b) {
