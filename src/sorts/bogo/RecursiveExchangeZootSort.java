@@ -36,6 +36,18 @@ public class RecursiveExchangeZootSort extends BogoSorting {
         this.setBogoSort(false);
     }
 
+    public boolean recIsSorted(int[] array, int a, int b, int depth) {
+        Writes.recordDepth(depth++);
+        if (b - a < 2) return true;
+        int m = a + (b - a) / 2;
+        boolean c = Reads.compareIndices(array, m - 1, m, this.delay, true) <= 0;
+        Writes.recursion();
+        c &= recIsSorted(array, a, m, depth);
+        Writes.recursion();
+        c &= recIsSorted(array, m, b, depth);
+        return c;
+    }
+
     protected boolean circle(int[] array, int left, int right) {
         int a = left;
         int b = right;
@@ -79,7 +91,7 @@ public class RecursiveExchangeZootSort extends BogoSorting {
     }
 
     public void recZoot(int[] array, int a, int b) {
-        while (!isRangeSorted(array, a, b)) {
+        while (!recIsSorted(array, a, b, 0)) {
             recShuffle(array, a, b, 0);
             recRev(array, a, b-1, 0);
         }

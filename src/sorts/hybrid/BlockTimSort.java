@@ -5,7 +5,7 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Haruki
+Coded for ArrayV by Flanlaina
 in collaboration with aphitorite
 
 +---------------------------+
@@ -20,7 +20,7 @@ in collaboration with aphitorite
  * To use this algorithm in another, use {@code blockMergeSort()} from a
  * reference instance.
  * 
- * @author Haruki (a.k.a. Ayako-chan)
+ * @author Flanlaina
  * @author aphitorite
  *
  */
@@ -42,12 +42,6 @@ public class BlockTimSort extends Sort {
 
     // adaptive stable merge sort with O(sqrt(n)) dynamic external buffer
 
-    public static int getMinLevel(int n) {
-        while (n >= 32)
-            n = (n + 1) / 2;
-        return n;
-    }
-
     protected void insertTo(int[] array, int a, int b) {
         Highlights.clearMark(2);
         int temp = array[a];
@@ -57,21 +51,12 @@ public class BlockTimSort extends Sort {
         if (a != b) Writes.write(array, b, temp, 0.5, true, false);
     }
 
-    protected void insertToBWExt(int[] array, int a, int b) {
-        Highlights.clearMark(2);
-        int temp = array[a];
-        for (int i = a; i < b; i++)
-            Writes.write(array, i, array[i + 1], 0.5, false, true);
-        if (a != b)
-            Writes.write(array, b, temp, 0.5, false, true);
-    }
-
-    protected void multiSwap(int[] array, int a, int b, int len) {
+    protected void blockSwap(int[] array, int a, int b, int len) {
         for (int i = 0; i < len; i++)
             Writes.swap(array, a + i, b + i, 1, true, false);
     }
 
-    protected void shiftFWExt(int[] array, int a, int m, int b) {
+    private void shiftFWExt(int[] array, int a, int m, int b) {
         Highlights.clearMark(2);
         while (m < b)
             Writes.write(array, a++, array[m++], 1, true, false);
@@ -79,21 +64,33 @@ public class BlockTimSort extends Sort {
 
     protected void rotate(int[] array, int a, int m, int b) {
         Highlights.clearAllMarks();
-        int l = m - a, r = b - m;
-        while (l > 1 && r > 1)
-            if (r < l) {
-                this.multiSwap(array, m - r, m, r);
-                b -= r;
-                m -= r;
-                l -= r;
-            } else {
-                this.multiSwap(array, a, m, l);
-                a += l;
-                m += l;
-                r -= l;
-            }
-        if (r == 1) this.insertTo(array, m, a);
-        else if (l == 1) this.insertTo(array, a, b - 1);
+        if (a == m || m == b) return;
+        int p0 = a, p1 = m - 1, p2 = m, p3 = b - 1;
+        int tmp;
+        while (p0 < p1 && p2 < p3) {
+            tmp = array[p1];
+            Writes.write(array, p1--, array[p0], 0.5, true, false);
+            Writes.write(array, p0++, array[p2], 0.5, true, false);
+            Writes.write(array, p2++, array[p3], 0.5, true, false);
+            Writes.write(array, p3--, tmp, 0.5, true, false);
+        }
+        while (p0 < p1) {
+            tmp = array[p1];
+            Writes.write(array, p1--, array[p0], 0.5, true, false);
+            Writes.write(array, p0++, array[p3], 0.5, true, false);
+            Writes.write(array, p3--, tmp, 0.5, true, false);
+        }
+        while (p2 < p3) {
+            tmp = array[p2];
+            Writes.write(array, p2++, array[p3], 0.5, true, false);
+            Writes.write(array, p3--, array[p0], 0.5, true, false);
+            Writes.write(array, p0++, tmp, 0.5, true, false);
+        }
+        if (p0 < p3) { // don't count reversals that don't do anything
+            if (p3 - p0 >= 3) Writes.reversal(array, p0, p3, 1, true, false);
+            else Writes.swap(array, p0, p3, 1, true, false);
+            Highlights.clearMark(2);
+        }
     }
 
     protected int binSearch(int[] array, int a, int b, int val, boolean left) {
@@ -108,14 +105,14 @@ public class BlockTimSort extends Sort {
         return a;
     }
 
-    protected int leftExpSearch(int[] array, int a, int b, int val, boolean left) {
+    protected int minExpSearch(int[] array, int a, int b, int val, boolean left) {
         int i = 1;
         if (left) while (a - 1 + i < b && Reads.compareValues(val, array[a - 1 + i]) > 0) i *= 2;
         else while (a - 1 + i < b && Reads.compareValues(val, array[a - 1 + i]) >= 0) i *= 2;
         return binSearch(array, a + i / 2, Math.min(b, a - 1 + i), val, left);
     }
 
-    protected int rightExpSearch(int[] array, int a, int b, int val, boolean left) {
+    protected int maxExpSearch(int[] array, int a, int b, int val, boolean left) {
         int i = 1;
         if (left) while (b - i >= a && Reads.compareValues(val, array[b - i]) <= 0) i *= 2;
         else while (b - i >= a && Reads.compareValues(val, array[b - i]) < 0) i *= 2;
@@ -136,7 +133,7 @@ public class BlockTimSort extends Sort {
                 j = i - (i - j - 1) % mRun - 1;
             }
             while (i - j < mRun && i < b) {
-                insertTo(array, i, rightExpSearch(array, j, i, array[i], false));
+                insertTo(array, i, binSearch(array, j, i, array[i], false));
                 i++;
             }
             j = i++;
@@ -150,17 +147,6 @@ public class BlockTimSort extends Sort {
             return true;
         }
         return false;
-    }
-
-    protected void mergeFromBuf(int[] array, int[] buf, int a, int m, int b, int bufLen) {
-        int i = 0;
-        while(i < bufLen && m < b)
-            if(Reads.compareValues(buf[i], array[m]) <= 0)
-                Writes.write(array, a++, buf[i++], 1, true, false);
-            else
-                Writes.write(array, a++, array[m++], 1, true, false);
-        while(i < bufLen)
-            Writes.write(array, a++, buf[i++], 1, true, false);
     }
 
     protected void mergeTo(int[] from, int[] to, int a, int m, int b, int p, boolean aux) {
@@ -189,51 +175,49 @@ public class BlockTimSort extends Sort {
         int s = m - a;
         Writes.arraycopy(array, a, tmp, 0, s, 1, true, true);
         int i = 0, j = m;
-        while (i < s && j < b)
+        while (i < s && j < b) {
             if (Reads.compareValues(tmp[i], array[j]) <= 0)
                 Writes.write(array, a++, tmp[i++], 1, true, false);
             else
                 Writes.write(array, a++, array[j++], 1, true, false);
-        while (i < s)
-            Writes.write(array, a++, tmp[i++], 1, true, false);
+        }
+        while (i < s) Writes.write(array, a++, tmp[i++], 1, true, false);
     }
 
     protected void mergeBWExt(int[] array, int[] tmp, int a, int m, int b) {
         int s = b - m;
         Writes.arraycopy(array, m, tmp, 0, s, 1, true, true);
         int i = s - 1, j = m - 1;
-        while (i >= 0 && j >= a)
+        while (i >= 0 && j >= a) {
             if (Reads.compareValues(tmp[i], array[j]) >= 0)
                 Writes.write(array, --b, tmp[i--], 1, true, false);
             else
                 Writes.write(array, --b, array[j--], 1, true, false);
-        while (i >= 0)
-            Writes.write(array, --b, tmp[i--], 1, true, false);
+        }
+        while (i >= 0) Writes.write(array, --b, tmp[i--], 1, true, false);
     }
 
     protected void inPlaceMergeFW(int[] array, int a, int m, int b) {
         while (a < m && m < b) {
-            int i = leftExpSearch(array, m, b, array[a], true);
+            int i = minExpSearch(array, m, b, array[a], true);
             rotate(array, a, m, i);
             int t = i - m;
             m = i;
             a += t + 1;
-            if (m >= b)
-                break;
-            a = leftExpSearch(array, a, m, array[m], false);
+            if (m >= b) break;
+            a = minExpSearch(array, a, m, array[m], false);
         }
     }
 
     protected void inPlaceMergeBW(int[] array, int a, int m, int b) {
         while (b > m && m > a) {
-            int i = rightExpSearch(array, a, m, array[b - 1], false);
+            int i = maxExpSearch(array, a, m, array[b - 1], false);
             rotate(array, i, m, b);
             int t = m - i;
             m = i;
             b -= t + 1;
-            if (m <= a)
-                break;
-            b = rightExpSearch(array, m, b, array[m - 1], true);
+            if (m <= a) break;
+            b = maxExpSearch(array, m, b, array[m - 1], true);
         }
     }
 
@@ -250,10 +234,6 @@ public class BlockTimSort extends Sort {
             mergeFWExt(array, buf, a, m, b);
     }
 
-    protected boolean getSubarray(int[] tags, int t, int mKey) {
-        return Reads.compareOriginalValues(tags[t], tags[mKey]) < 0;
-    }
-
     // returns mKey final position
     protected int blockSelect(int[] array, int[] tags, int p, int r, int d, int lCnt, int bCnt, int bLen) {
         int mKey = lCnt;
@@ -265,7 +245,7 @@ public class BlockTimSort extends Sort {
                     min = i;
             }
             if (min != j) {
-                multiSwap(array, p + j * bLen, p + min * bLen, bLen);
+                blockSwap(array, p + j * bLen, p + min * bLen, bLen);
                 Writes.swap(tags, j, min, 1, false, true);
                 if (k < bCnt && min == k - 1) k++;
             }
@@ -273,67 +253,101 @@ public class BlockTimSort extends Sort {
         }
         return mKey;
     }
-    
-    protected int mergeBlocks(int[] array, int a, int m, int b, int p, boolean fwEq) {
-        int i = a, j = m;
-        while (i < m && j < b) {
-            int cmp = Reads.compareIndices(array, i, j, 0.0, true);
+
+   protected int mergeBlocks(int[] array, int p, int a, int m, boolean fwEq) {
+        int i = m;
+
+        while(a < m) {
+            int cmp = Reads.compareIndices(array, a, i, 0.0, true);
             if (cmp < 0 || (fwEq && cmp == 0))
-                Writes.write(array, p++, array[i++], 1.0, true, false);
+                Writes.write(array, p++, array[a++], 1, true, false);
             else
-                Writes.write(array, p++, array[j++], 1.0, true, false);
+                Writes.write(array, p++, array[i++], 1, true, false);
         }
-        if(i > p) shiftFWExt(array, p, i, m);
-        return j;
+
+        return i;
+    }
+
+    protected void smartTailMerge(int[] array, int[] tmp, int p, int a, int m, int b, int bLen) {
+        int i = m;
+
+        while(a < m && i < b) {
+            if(Reads.compareIndices(array, a, i, 0.0, true) <= 0)
+                Writes.write(array, p++, array[a++], 1, true, false);
+            else
+                Writes.write(array, p++, array[i++], 1, true, false);
+        }
+        if(a < m) {
+            if(a > p) this.shiftFWExt(array, p, a, m);
+            Writes.arraycopy(tmp, 0, array, b-bLen, bLen, 1, true, false);
+        }
+        else {
+            a = 0;
+
+            while(a < bLen && i < b) {
+                Highlights.markArray(2, i);
+
+                if(Reads.compareValues(tmp[a], array[i]) <= 0)
+                    Writes.write(array, p++, tmp[a++], 1, true, false);
+                else
+                    Writes.write(array, p++, array[i++], 1, true, false);
+            }
+            Highlights.clearMark(2);
+            while(a < bLen) Writes.write(array, p++, tmp[a++], 1, true, false);
+        }
     }
 
     // is never called if m-a || b-m <= bLen
     // should never be called if (m-a)%bLen != 0
-    protected void blockMerge(int[] array, int[] buf, int[] tags, int a, int m, int b, int bLen) {
-        int b1 = b - (b - m - 1) % bLen - 1,
-                i = a + bLen, j = a, key = -1,
-                lCnt = (m - i) / bLen, bCnt = (b1 - i) / bLen, l = -1, r = lCnt - 1;
+    protected void blockMergeHelper(int[] array, int[] buf, int[] tags, int a, int m, int b, int bLen) {
+        int b1 = b - (b - m - 1) % bLen - 1, a1 = a + bLen,
+                lCnt = (m - a1) / bLen, bCnt = (b1 - a1) / bLen;
         for (int k = 0; k < bLen; k++) {
             Writes.write(buf, k, array[m - bLen + k], 0.5, true, false);
             Writes.write(array, m - bLen + k, array[a + k], 0.5, true, false);
         }
         for (int k = 0; k < bCnt; k++) Writes.write(tags, k, k, 0, true, true);
-        insertToBWExt(tags, 0, lCnt - 1);
-        int mKey = blockSelect(array, tags, i, 1, bLen - 1, lCnt, bCnt, bLen);
-        boolean frag = true;
-        while(l < lCnt && r < bCnt) {
-            if(frag) {
-                do {
-                    j += bLen;
-                    l++;
-                    key++;
-                } while (l < lCnt && getSubarray(tags, key, mKey));
-                if (l == lCnt) {
-                    i = mergeBlocks(array, i, j, b, i - bLen, true);
-                    mergeFromBuf(array, buf, i - bLen, i, b, bLen);
-                } else i = mergeBlocks(array, i, j, j + bLen - 1, i - bLen, true);
-            } else {
-                do {
-                    j += bLen;
-                    r++;
-                    key++;
-                } while (r < bCnt && !getSubarray(tags, key, mKey));
-                if (r == bCnt) {
-                    shiftFWExt(array, i - bLen, i, b);
-                    Writes.arraycopy(buf, 0, array, b - bLen, bLen, 1, true, false);
-                } else i = mergeBlocks(array, i, j, j + bLen - 1, i - bLen, false);
+
+        // insertToBWExt(tags, 0, lCnt - 1);
+        int tmp = tags[0];
+        for (int k = 0; k < lCnt - 1; k++)
+            Writes.write(tags, k, tags[k + 1], 0, false, true);
+        if (lCnt - 1 != 0) Writes.write(tags, lCnt - 1, tmp, 0, false, true);
+
+        int mKey = blockSelect(array, tags, a1, 1, bLen - 1, lCnt, bCnt, bLen);
+        int f = a1;
+        boolean leftFrag = Reads.compareOriginalValues(tags[0], tags[mKey]) < 0;
+        for (int k = 1; k < bCnt; k++) {
+            int nxt = a1 + k * bLen;
+            if (leftFrag ^ (Reads.compareOriginalValues(tags[k], tags[mKey]) < 0)) {
+                f = mergeBlocks(array, f - bLen, f, nxt, leftFrag);
+                leftFrag = !leftFrag;
             }
-            frag = !frag;
         }
+        this.smartTailMerge(array, buf, f - bLen, f, leftFrag ? b1 : f, b, bLen);
     }
 
     protected void smartMerge(int[] array, int[] buf, int a, int m, int b) {
         if (Reads.compareValues(array[m - 1], array[m]) <= 0) return;
-        a = leftExpSearch(array, a, m, array[m], false);
-        b = rightExpSearch(array, m, b, array[m - 1], true);
-        if (checkReverseBounds(array, a, m, b))
+        a = minExpSearch(array, a, m, array[m], false);
+        b = maxExpSearch(array, m, b, array[m - 1], true);
+        if (Reads.compareValues(array[a], array[b - 1]) > 0) {
+            rotate(array, a, m, b);
             return;
+        }
         merge(array, buf, a, m, b);
+    }
+
+    protected void smartInPlaceMerge(int[] array, int a, int m, int b) {
+        if (Reads.compareValues(array[m - 1], array[m]) <= 0) return;
+        a = minExpSearch(array, a, m, array[m], false);
+        b = maxExpSearch(array, m, b, array[m - 1], true);
+        if (Reads.compareValues(array[a], array[b - 1]) > 0) {
+            rotate(array, a, m, b);
+            return;
+        }
+        if (b - m < m - a) inPlaceMergeBW(array, a, m, b);
+        else inPlaceMergeFW(array, a, m, b);
     }
 
     protected void pingPongMerge(int[] array, int[] buf, int a, int m1, int m2, int m3, int b) {
@@ -348,22 +362,20 @@ public class BlockTimSort extends Sort {
             smartMerge(array, buf, a, m2, b);
     }
 
-    protected void smartBlockMerge(int[] array, int[] buf, int[] tags, int a, int m, int b, int bLen) {
+    protected void blockMerge(int[] array, int[] buf, int[] tags, int a, int m, int b, int bLen) {
         if (Reads.compareValues(array[m - 1], array[m]) <= 0) return;
-        int s = leftExpSearch(array, a, m, array[m], false);
-        b = rightExpSearch(array, m, b, array[m - 1], true);
-        if (checkReverseBounds(array, s, m, b))
+        int s = minExpSearch(array, a, m, array[m], false);
+        b = maxExpSearch(array, m, b, array[m - 1], true);
+        if (Reads.compareValues(array[s], array[b - 1]) > 0) {
+            rotate(array, s, m, b);
             return;
-        if (Math.min(m - s, b - m) <= bLen)
-            merge(array, buf, s, m, b);
-        else {
-            s -= (s - a) % bLen;
-            blockMerge(array, buf, tags, s, m, b, bLen);
         }
+        if (Math.min(m - s, b - m) <= bLen) merge(array, buf, s, m, b);
+        else blockMergeHelper(array, buf, tags, s - (s - a) % bLen, m, b, bLen);
     }
 
     /**
-     * Sorts the range {@code [a, b)} of {@code array} using a block merge sort.
+     * Sorts the range {@code [a, b)} of {@code array} using Block Timsort.
      *
      * @param array the array
      * @param a     the start of the range, inclusive
@@ -371,26 +383,20 @@ public class BlockTimSort extends Sort {
      */
     public void blockMergeSort(int[] array, int a, int b) {
         int len = b - a;
-        if (len < 128) { // adaptive bottom-up merge sort
-            int j = 16;
-            if (buildRuns(array, a, b, j)) return;
-            int[] tmp = Writes.createExternalArray(len / 2);
+        int j = 16;
+        if (buildRuns(array, a, b, j)) return;
+        if (len <= 64) { // adaptive lazy stable sort
             int i;
-            for (; j < len; j *= 2) {
-                for (i = a; i + 2 * j <= b; i += 2 * j)
-                    smartMerge(array, tmp, i, i + j, i + 2 * j);
-                if (i + j < b)
-                    smartMerge(array, tmp, i, i + j, b);
-            }
-            Writes.deleteExternalArray(tmp);
+            for (; j < len; j *= 2)
+                for (i = a; i + j < b; i += 2 * j)
+                    smartInPlaceMerge(array, i, i + j, Math.min(i + 2 * j, b));
             return;
         }
-        int j = 16;
         int bLen;
         for (bLen = j; bLen * bLen < len; bLen *= 2);
         int tLen = len / bLen;
-        if (buildRuns(array, a, b, j)) return;
         int[] buf = Writes.createExternalArray(bLen);
+        int[] tags = Writes.createExternalArray(tLen);
         int i;
         for (; 4 * j <= bLen; j *= 4) {
             for(i = a; i+2*j < b; i += 4*j)
@@ -399,17 +405,12 @@ public class BlockTimSort extends Sort {
                 smartMerge(array, buf, i, i + j, b);
         }
         for (; j <= bLen; j *= 2) {
-            for (i = a; i + 2 * j <= b; i += 2 * j)
-                smartMerge(array, buf, i, i + j, i + 2 * j);
-            if (i + j < b)
-                smartMerge(array, buf, i, i + j, b);
+            for (i = a; i + j < b; i += 2 * j)
+                smartMerge(array, buf, i, i + j, Math.min(i + 2 * j, b));
         }
-        int[] tags = Writes.createExternalArray(tLen);
         for (; j < len; j *= 2) {
-            for (i = a; i + 2 * j <= b; i += 2 * j)
-                smartBlockMerge(array, buf, tags, i, i + j, i + 2 * j, bLen);
-            if (i + j < b)
-                smartBlockMerge(array, buf, tags, i, i + j, b, bLen);
+            for (i = a; i + j < b; i += 2 * j)
+                blockMerge(array, buf, tags, i, i + j, Math.min(i + 2 * j, b), bLen);
         }
         Writes.deleteExternalArray(tags);
         Writes.deleteExternalArray(buf);

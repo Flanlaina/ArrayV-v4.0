@@ -5,7 +5,7 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Haruki
+Coded for ArrayV by Flanlaina
 in collaboration with aphitorite
 
 +---------------------------+
@@ -20,7 +20,7 @@ in collaboration with aphitorite
  * To use this algorithm in another, use {@code blockMergeSort()} from a
  * reference instance.
  * 
- * @author Haruki (a.k.a. Ayako-chan)
+ * @author Flanlaina
  * @author aphitorite
  *
  */
@@ -50,29 +50,36 @@ public class AdaptiveEctaSort extends Sort {
             Writes.write(array, i, array[i + d], 0.5, true, false);
         if (a != b) Writes.write(array, b, temp, 0.5, true, false);
     }
-    
-    protected void multiSwap(int[] array, int a, int b, int len) {
-        for (int i = 0; i < len; i++)
-            Writes.swap(array, a + i, b + i, 1, true, false);
-    }
 
     protected void rotate(int[] array, int a, int m, int b) {
         Highlights.clearAllMarks();
-        int l = m - a, r = b - m;
-        while (l > 1 && r > 1)
-            if (r < l) {
-                this.multiSwap(array, m - r, m, r);
-                b -= r;
-                m -= r;
-                l -= r;
-            } else {
-                this.multiSwap(array, a, m, l);
-                a += l;
-                m += l;
-                r -= l;
-            }
-        if (r == 1) this.insertTo(array, m, a);
-        else if (l == 1) this.insertTo(array, a, b - 1);
+        if (a == m || m == b) return;
+        int p0 = a, p1 = m - 1, p2 = m, p3 = b - 1;
+        int tmp;
+        while (p0 < p1 && p2 < p3) {
+            tmp = array[p1];
+            Writes.write(array, p1--, array[p0], 0.5, true, false);
+            Writes.write(array, p0++, array[p2], 0.5, true, false);
+            Writes.write(array, p2++, array[p3], 0.5, true, false);
+            Writes.write(array, p3--, tmp, 0.5, true, false);
+        }
+        while (p0 < p1) {
+            tmp = array[p1];
+            Writes.write(array, p1--, array[p0], 0.5, true, false);
+            Writes.write(array, p0++, array[p3], 0.5, true, false);
+            Writes.write(array, p3--, tmp, 0.5, true, false);
+        }
+        while (p2 < p3) {
+            tmp = array[p2];
+            Writes.write(array, p2++, array[p3], 0.5, true, false);
+            Writes.write(array, p3--, array[p0], 0.5, true, false);
+            Writes.write(array, p0++, tmp, 0.5, true, false);
+        }
+        if (p0 < p3) { // don't count reversals that don't do anything
+            if (p3 - p0 >= 3) Writes.reversal(array, p0, p3, 1, true, false);
+            else Writes.swap(array, p0, p3, 1, true, false);
+            Highlights.clearMark(2);
+        }
     }
     
     protected int binSearch(int[] array, int a, int b, int val, boolean left) {
@@ -87,14 +94,14 @@ public class AdaptiveEctaSort extends Sort {
         return a;
     }
 
-    protected int leftExpSearch(int[] array, int a, int b, int val, boolean left) {
+    protected int minExpSearch(int[] array, int a, int b, int val, boolean left) {
         int i = 1;
         if (left) while (a - 1 + i < b && Reads.compareValues(val, array[a - 1 + i]) > 0) i *= 2;
         else while (a - 1 + i < b && Reads.compareValues(val, array[a - 1 + i]) >= 0) i *= 2;
         return binSearch(array, a + i / 2, Math.min(b, a - 1 + i), val, left);
     }
 
-    protected int rightExpSearch(int[] array, int a, int b, int val, boolean left) {
+    protected int maxExpSearch(int[] array, int a, int b, int val, boolean left) {
         int i = 1;
         if (left) while (b - i >= a && Reads.compareValues(val, array[b - i]) <= 0) i *= 2;
         else while (b - i >= a && Reads.compareValues(val, array[b - i]) < 0) i *= 2;
@@ -115,7 +122,7 @@ public class AdaptiveEctaSort extends Sort {
                 j = i - (i - j - 1) % mRun - 1;
             }
             while (i - j < mRun && i < b) {
-                insertTo(array, i, rightExpSearch(array, j, i, array[i], false));
+                insertTo(array, i, binSearch(array, j, i, array[i], false));
                 i++;
             }
             j = i++;
@@ -123,14 +130,6 @@ public class AdaptiveEctaSort extends Sort {
         return noSort;
     }
 
-    protected boolean checkReverseBounds(int[] array, int a, int m, int b) {
-        if (Reads.compareValues(array[a], array[b - 1]) > 0) {
-            rotate(array, a, m, b);
-            return true;
-        }
-        return false;
-    }
-    
     protected void mergeTo(int[] from, int[] to, int a, int m, int b, int p, boolean aux) {
         int i = a, j = m;
         while(i < m && j < b) {
@@ -157,49 +156,49 @@ public class AdaptiveEctaSort extends Sort {
         int s = m - a;
         Writes.arraycopy(array, a, tmp, 0, s, 1, true, true);
         int i = 0, j = m;
-        while (i < s && j < b)
+        while (i < s && j < b) {
             if (Reads.compareValues(tmp[i], array[j]) <= 0)
                 Writes.write(array, a++, tmp[i++], 1, true, false);
             else
                 Writes.write(array, a++, array[j++], 1, true, false);
-        while (i < s)
-            Writes.write(array, a++, tmp[i++], 1, true, false);
+        }
+        while (i < s) Writes.write(array, a++, tmp[i++], 1, true, false);
     }
 
     protected void mergeBWExt(int[] array, int[] tmp, int a, int m, int b) {
         int s = b - m;
         Writes.arraycopy(array, m, tmp, 0, s, 1, true, true);
         int i = s - 1, j = m - 1;
-        while (i >= 0 && j >= a)
+        while (i >= 0 && j >= a) {
             if (Reads.compareValues(tmp[i], array[j]) >= 0)
                 Writes.write(array, --b, tmp[i--], 1, true, false);
             else
                 Writes.write(array, --b, array[j--], 1, true, false);
-        while (i >= 0)
-            Writes.write(array, --b, tmp[i--], 1, true, false);
+        }
+        while (i >= 0) Writes.write(array, --b, tmp[i--], 1, true, false);
     }
 
     protected void inPlaceMergeFW(int[] array, int a, int m, int b) {
         while (a < m && m < b) {
-            int i = leftExpSearch(array, m, b, array[a], true);
+            int i = minExpSearch(array, m, b, array[a], true);
             rotate(array, a, m, i);
             int t = i - m;
             m = i;
             a += t + 1;
             if (m >= b) break;
-            a = leftExpSearch(array, a, m, array[m], false);
+            a = minExpSearch(array, a, m, array[m], false);
         }
     }
 
     protected void inPlaceMergeBW(int[] array, int a, int m, int b) {
         while (b > m && m > a) {
-            int i = rightExpSearch(array, a, m, array[b - 1], false);
+            int i = maxExpSearch(array, a, m, array[b - 1], false);
             rotate(array, i, m, b);
             int t = m - i;
             m = i;
             b -= t + 1;
             if (m <= a) break;
-            b = rightExpSearch(array, m, b, array[m - 1], true);
+            b = maxExpSearch(array, m, b, array[m - 1], true);
         }
     }
 
@@ -217,7 +216,7 @@ public class AdaptiveEctaSort extends Sort {
     }
 
     protected void blockCycle(int[] array, int[] buf, int[] keys, int a, int bLen, int bCnt) {
-        for (int i = 0; i < bCnt; i++)
+        for (int i = 0; i < bCnt; i++) {
             if (Reads.compareOriginalValues(i, keys[i]) != 0) {
                 Writes.arraycopy(array, a + i * bLen, buf, 0, bLen, 1, true, true);
                 int j = i, next = keys[i];
@@ -230,9 +229,10 @@ public class AdaptiveEctaSort extends Sort {
                 Writes.arraycopy(buf, 0, array, a + j * bLen, bLen, 1, true, false);
                 Writes.write(keys, j, j, 1, true, true);
             }
+        }
     }
 
-    protected void blockMerge(int[] array, int[] buf, int[] tags, int a, int m, int b, int bLen) {
+    protected void blockMergeHelper(int[] array, int[] buf, int[] tags, int a, int m, int b, int bLen) {
         int c = 0, t = 2;
         int i = a, j = m, k = 0;
         int l = 0, r = 0;
@@ -295,13 +295,25 @@ public class AdaptiveEctaSort extends Sort {
 
     protected void smartMerge(int[] array, int[] buf, int a, int m, int b) {
         if (Reads.compareValues(array[m - 1], array[m]) <= 0) return;
-        a = leftExpSearch(array, a, m, array[m], false);
-        b = rightExpSearch(array, m, b, array[m - 1], true);
+        a = minExpSearch(array, a, m, array[m], false);
+        b = maxExpSearch(array, m, b, array[m - 1], true);
         if (Reads.compareValues(array[a], array[b - 1]) > 0) {
             rotate(array, a, m, b);
             return;
         }
         merge(array, buf, a, m, b);
+    }
+
+    protected void smartInPlaceMerge(int[] array, int a, int m, int b) {
+        if (Reads.compareValues(array[m - 1], array[m]) <= 0) return;
+        a = minExpSearch(array, a, m, array[m], false);
+        b = maxExpSearch(array, m, b, array[m - 1], true);
+        if (Reads.compareValues(array[a], array[b - 1]) > 0) {
+            rotate(array, a, m, b);
+            return;
+        }
+        if (b - m < m - a) inPlaceMergeBW(array, a, m, b);
+        else inPlaceMergeFW(array, a, m, b);
     }
     
     protected void pingPongMerge(int[] array, int[] buf, int a, int m1, int m2, int m3, int b) {
@@ -314,22 +326,20 @@ public class AdaptiveEctaSort extends Sort {
         } else smartMerge(array, buf, a, m2, b);
     }
 
-    protected void smartBlockMerge(int[] array, int[] buf, int[] tags, int a, int m, int b, int bLen) {
+    protected void blockMerge(int[] array, int[] buf, int[] tags, int a, int m, int b, int bLen) {
         if (Reads.compareValues(array[m - 1], array[m]) <= 0) return;
-        int s = leftExpSearch(array, a, m, array[m], false);
-        b = rightExpSearch(array, m, b, array[m - 1], true);
-        if (checkReverseBounds(array, s, m, b))
+        int s = minExpSearch(array, a, m, array[m], false);
+        b = maxExpSearch(array, m, b, array[m - 1], true);
+        if (Reads.compareValues(array[a], array[b - 1]) > 0) {
+            rotate(array, a, m, b);
             return;
-        if (Math.min(m - s, b - m) <= 2 * bLen)
-            merge(array, buf, s, m, b);
-        else {
-            s -= (s - a) % bLen;
-            blockMerge(array, buf, tags, s, m, b, bLen);
         }
+        if (Math.min(m - s, b - m) <= 2 * bLen) merge(array, buf, s, m, b);
+        else blockMergeHelper(array, buf, tags, s - (s - a) % bLen, m, b, bLen);
     }
 
     /**
-     * Sorts the range {@code [a, b)} of {@code array} using a block merge sort.
+     * Sorts the range {@code [a, b)} of {@code array} using Adaptive Ectasort.
      *
      * @param array the array
      * @param a     the start of the range, inclusive
@@ -337,26 +347,20 @@ public class AdaptiveEctaSort extends Sort {
      */
     public void blockMergeSort(int[] array, int a, int b) {
         int len = b - a;
-        if (len < 128) { // adaptive bottom-up merge sort
-            int j = 16;
-            if (buildRuns(array, a, b, j)) return;
-            int[] tmp = Writes.createExternalArray(len / 2);
+        int j = 16;
+        if (buildRuns(array, a, b, j)) return;
+        if (len <= 64) { // adaptive lazy stable sort
             int i;
-            for (; j < len; j *= 2) {
-                for (i = a; i + 2 * j <= b; i += 2 * j)
-                    smartMerge(array, tmp, i, i + j, i + 2 * j);
-                if (i + j < b)
-                    smartMerge(array, tmp, i, i + j, b);
-            }
-            Writes.deleteExternalArray(tmp);
+            for (; j < len; j *= 2)
+                for (i = a; i + j < b; i += 2 * j)
+                    smartInPlaceMerge(array, i, i + j, Math.min(i + 2 * j, b));
             return;
         }
-        int j = 16;
         int bLen;
         for (bLen = j; bLen * bLen < len; bLen *= 2);
         int tLen = len / bLen, bufLen = 2 * bLen;
-        if (buildRuns(array, a, b, j)) return;
         int[] buf  = Writes.createExternalArray(bufLen);
+        int[] tags = Writes.createExternalArray(tLen);
         int i;
         for (; 4 * j <= bufLen; j *= 4) {
             for(i = a; i+2*j < b; i += 4*j)
@@ -365,17 +369,12 @@ public class AdaptiveEctaSort extends Sort {
                 smartMerge(array, buf, i, i + j, b);
         }
         for (; j <= bufLen; j *= 2) {
-            for (i = a; i + 2 * j <= b; i += 2 * j)
-                smartMerge(array, buf, i, i + j, i + 2 * j);
-            if (i + j < b)
-                smartMerge(array, buf, i, i + j, b);
+            for (i = a; i + j < b; i += 2 * j)
+                smartMerge(array, buf, i, i + j, Math.min(i + 2 * j, b));
         }
-        int[] tags = Writes.createExternalArray(tLen);
         for (; j < len; j *= 2) {
-            for (i = a; i + 2 * j <= b; i += 2 * j)
-                smartBlockMerge(array, buf, tags, i, i + j, i + 2 * j, bLen);
-            if (i + j < b)
-                smartBlockMerge(array, buf, tags, i, i + j, b, bLen);
+            for (i = a; i + j < b; i += 2 * j)
+                blockMerge(array, buf, tags, i, i + j, Math.min(i + 2 * j, b), bLen);
         }
         Writes.deleteExternalArray(tags);
         Writes.deleteExternalArray(buf);

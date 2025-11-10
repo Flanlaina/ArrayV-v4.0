@@ -42,14 +42,14 @@ SOFTWARE.
  * @author Scandum
  * 
  */
-public class RewrittenBlockTimSort extends Sort {
+public class BlockTimSortMonobound extends Sort {
 
-    public RewrittenBlockTimSort(ArrayVisualizer arrayVisualizer) {
+    public BlockTimSortMonobound(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
         //enableSort(false);
-        setSortListName("Block Tim (Rewritten)");
-        setRunAllSortsName("Rewritten Block Tim Sort");
-        setRunSortName("Rewritten Block Timsort");
+        setSortListName("Block Tim (Monobound Binary Search)");
+        setRunAllSortsName("Block Tim Sort (Monobound Binary Search)");
+        setRunSortName("Block Timsort (Monobound Binary Search)");
         setCategory("Hybrid Sorts");
         setComparisonBased(true);
         setBucketSort(false);

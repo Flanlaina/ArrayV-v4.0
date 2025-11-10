@@ -35,6 +35,18 @@ public class RecursiveExchangeBomoSort extends BogoSorting {
         this.setBogoSort(true);
     }
 
+    public boolean recIsSorted(int[] array, int a, int b, int depth) {
+        Writes.recordDepth(depth++);
+        if (b - a < 2) return true;
+        int m = a + (b - a) / 2;
+        boolean c = Reads.compareIndices(array, m - 1, m, this.delay, true) <= 0;
+        Writes.recursion();
+        c &= recIsSorted(array, a, m, depth);
+        Writes.recursion();
+        c &= recIsSorted(array, m, b, depth);
+        return c;
+    }
+
     public void pull(int[] array, int a, int b) {
         if (a < b) {
             for (int i = a; i < b; i++) {
@@ -65,7 +77,7 @@ public class RecursiveExchangeBomoSort extends BogoSorting {
     }
 
     public void recBomo(int[] array, int a, int b) {
-        while (!isRangeSorted(array, a, b)) recShuffle(array, a, b, 0);
+        while (!recIsSorted(array, a, b, 0)) recShuffle(array, a, b, 0);
     }
 
     @Override
