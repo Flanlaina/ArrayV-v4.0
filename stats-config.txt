@@ -1,4 +1,4 @@
-FONT: Consolas * 25
+FONT: Times New Roman * 25
 # fps
 #
 sort
