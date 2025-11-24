@@ -602,16 +602,11 @@ public final class ArrayVisualizer {
         this.toggleVisualUpdates(false);
         //DRAW THREAD
         this.visualsThread = new Thread("VisualsThread") {
-            @SuppressWarnings("unused")
             @Override
             public void run() {
                 ArrayVisualizer.this.visualsEnabled = true;
 
                 utils.Renderer.initializeVisuals(ArrayVisualizer.this);
-
-                Graphics background = ArrayVisualizer.this.window.getGraphics();
-                background.setColor(Color.BLACK);
-                int coltmp = 255;
 
                 ArrayVisualizer.this.visualClasses = new Visual[18];
 
@@ -658,6 +653,8 @@ public final class ArrayVisualizer {
                                 ArrayVisualizer.this.drawStats(Color.BLACK, true);
                                 ArrayVisualizer.this.drawStats(Color.WHITE, false);
                             }
+                            Graphics background = ArrayVisualizer.this.window.getGraphics();
+                            background.setColor(Color.BLACK);
                             background.drawImage(ArrayVisualizer.this.img, 0, 0, null);
                             Toolkit.getDefaultToolkit().sync();
                         }

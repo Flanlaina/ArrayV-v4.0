@@ -486,6 +486,7 @@ final public class UtilFrame extends javax.swing.JFrame {
 
     private void jCheckBox2ActionPerformed() {//GEN-FIRST:event_jCheckBox3ActionPerformed
         ArrayVisualizer.toggleLinkedDots(jCheckBox2.isSelected());
+        ArrayVisualizer.updateNow();
     }//GEN-LAST:event_jCheckBox2ActionPerformed
 
     private void jCheckBox3ActionPerformed() {//GEN-FIRST:event_jCheckBox3ActionPerformed
@@ -502,10 +503,12 @@ final public class UtilFrame extends javax.swing.JFrame {
 
     private void jCheckBox4ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
         RealTimer.toggleRealTimer(jCheckBox4.isSelected());
+        ArrayVisualizer.updateNow();
     }//GEN-LAST:event_jCheckBox4ActionPerformed
 
     private void jButton5ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
         ArrayVisualizer.resetAllStatistics();
+        ArrayVisualizer.updateNow();
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jCheckBox5ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
@@ -537,6 +540,7 @@ final public class UtilFrame extends javax.swing.JFrame {
 
     private void jCheckBox6ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
         ArrayVisualizer.toggleStatistics(jCheckBox6.isSelected());
+        ArrayVisualizer.updateNow();
     }//GEN-LAST:event_jCheckBox6ActionPerformed
 
     private void jCheckBox7ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
@@ -545,6 +549,7 @@ final public class UtilFrame extends javax.swing.JFrame {
 
     private void jCheckBox8ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
         ArrayVisualizer.toggleColor(jCheckBox8.isSelected());
+        ArrayVisualizer.updateNow();
     }//GEN-LAST:event_jCheckBox8ActionPerformed
 
     private void jCheckBox9ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
@@ -564,14 +569,17 @@ final public class UtilFrame extends javax.swing.JFrame {
             jCheckBox9WarningShown = true;
         }
         ArrayVisualizer.toggleExternalArrays(jCheckBox9.isSelected());
+        ArrayVisualizer.updateNow();
     }//GEN-LAST:event_jCheckBox8ActionPerformed
 
     private void jCheckBox10ActionPerformed() {
         ArrayVisualizer.toggleClassicStyle(jCheckBox10.isSelected());
+        ArrayVisualizer.updateNow();
     }
 
     private void jCheckBox11ActionPerformed() {
         ArrayVisualizer.toggleColorCoding(jCheckBox11.isSelected());
+        ArrayVisualizer.updateNow();
     }
 
     private void jComboBox1ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
