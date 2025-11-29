@@ -57,7 +57,7 @@ public enum Distributions {
         @Override
         public void initializeArray(int[] array, ArrayVisualizer ArrayVisualizer) {
             int currentLen = ArrayVisualizer.getCurrentLength();
-            Random random = new Random();
+            Random random = getRng();
 
             int l = 0, r, t = Math.min(currentLen, 8);
             for (int i = 0; i < t; i++)
@@ -91,7 +91,7 @@ public enum Distributions {
         @Override
         public void initializeArray(int[] array, ArrayVisualizer ArrayVisualizer) {
             int currentLen = ArrayVisualizer.getCurrentLength();
-            Random random = new Random();
+            Random random = getRng();
 
             for (int i = 0; i < currentLen; i++)
                 array[i] = random.nextInt(currentLen);
@@ -220,7 +220,7 @@ public enum Distributions {
         @Override
         public void initializeArray(int[] array, ArrayVisualizer ArrayVisualizer) {
             int currentLen = ArrayVisualizer.getCurrentLength();
-            Random random = new Random();
+            Random random = getRng();
 
             int[] perlinNoise = new int[currentLen];
 
@@ -480,7 +480,7 @@ public enum Distributions {
         @Override
         public void initializeArray(int[] array, ArrayVisualizer ArrayVisualizer) {
             int currentLen = ArrayVisualizer.getCurrentLength();
-            Random random = new Random();
+            Random random = getRng();
 
             for (int i = 0; i < currentLen; i++){
                 array[i] = random.nextInt(currentLen - i) + i;
@@ -495,7 +495,7 @@ public enum Distributions {
         @Override
         public void initializeArray(int[] array, ArrayVisualizer arrayVisualizer) {
             int currentLen = arrayVisualizer.getCurrentLength();
-            Random random = new Random();
+            Random random = getRng();
 
             for (int i = 0; i < currentLen; i++) {
                 array[i] = random.nextInt(i + 1);
@@ -638,7 +638,7 @@ public enum Distributions {
         }
         @Override
         public void initializeArray(int[] array, ArrayVisualizer arrayVisualizer) {
-            Random random = new Random();
+            Random random = getRng();
             int n = arrayVisualizer.getCurrentLength() / 2;
             int c = (int) Math.max(n / 2, 2);
             n -= c / 2;
@@ -832,6 +832,10 @@ public enum Distributions {
             }
         }
     };
+
+    public Random getRng() {
+        return ArrayVisualizer.getInstance().getArrayManager().isSeededShufflesEnabled() ? new Random(1) : new Random();
+    }
 
     public abstract String getName();
     public boolean selectDistribution(int[] array, ArrayVisualizer ArrayVisualizer) {

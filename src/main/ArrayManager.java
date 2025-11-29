@@ -45,6 +45,7 @@ final public class ArrayManager {
     private String[] distributionIDs;
 
     private boolean hadDistributionAllocationError;
+    private volatile boolean useSeededShuffles = false;
 
     private volatile boolean MUTABLE;
 
@@ -64,7 +65,7 @@ final public class ArrayManager {
         this.distributionTypes = Distributions.values();
 
         hadDistributionAllocationError = false;
-
+        this.useSeededShuffles = false;
         this.Delays = ArrayVisualizer.getDelays();
         this.Highlights = ArrayVisualizer.getHighlights();
         this.Writes = ArrayVisualizer.getWrites();
@@ -78,6 +79,14 @@ final public class ArrayManager {
             this.distributionIDs[i] = this.distributionTypes[i].getName();
 
         this.MUTABLE = true;
+    }
+
+    public boolean isSeededShufflesEnabled() {
+        return useSeededShuffles;
+    }
+
+    public void toggleSeededShuffles(boolean useSeededShuffles) {
+        this.useSeededShuffles = useSeededShuffles;
     }
 
     public boolean isLengthMutable() {

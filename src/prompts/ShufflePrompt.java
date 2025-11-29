@@ -128,7 +128,7 @@ final public class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
     private void initComponents() {
 
         this.jButton1 = new javax.swing.JButton();
-
+        this.jCheckBox1 = new javax.swing.JCheckBox();
         this.jLabel1 = new javax.swing.JLabel();
         this.jScrollPane1 = new javax.swing.JScrollPane();
         this.jList1 = new javax.swing.JList();
@@ -144,6 +144,15 @@ final public class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed();
+            }
+        });
+
+        jCheckBox1.setSelected(ArrayManager.isSeededShufflesEnabled());
+        jCheckBox1.setText("Seeded");
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed();
             }
         });
 
@@ -189,6 +198,9 @@ final public class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
                             .addGap(5, 5, 5))
                     .addGroup(layout.createSequentialGroup()
                             .addComponent(this.jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(20, 20, 20)
+                    .addGroup(layout.createSequentialGroup()
+                            .addComponent(this.jButton1))
                             .addGap(20, 20, 20))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGap(475, 475, 475)
@@ -199,10 +211,11 @@ final public class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
                                 .addGap(5, 5, 5))
                         .addGroup(layout.createSequentialGroup()
                                 .addComponent(this.jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(20, 20, 20)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(this.jCheckBox1))
                                 .addGap(20, 20, 20))
-                .addGroup(javax.swing.GroupLayout.Alignment.CENTER, layout.createSequentialGroup()
-                    .addComponent(this.jButton1)))
-                );
+                ));
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
@@ -212,7 +225,9 @@ final public class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, true)
                                 .addComponent(this.jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(20, 20, 20))
+                        .addGap(10, 10, 10)
+                        .addComponent(this.jButton1)
+                        .addGap(15, 15, 15))
                 .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -221,7 +236,7 @@ final public class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, true)
                                 .addComponent(this.jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(10, 10, 10)
-                        .addComponent(this.jButton1)
+                        .addComponent(this.jCheckBox1)
                         .addGap(15, 15, 15))
                 );
 
@@ -233,6 +248,10 @@ final public class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
         dispose();
         new ShuffleDialog(ArrayManager, this, UtilFrame);
     }//GEN-LAST:event_jList1ValueChanged
+
+    private void jCheckBox1ActionPerformed() {//GEN-FIRST:event_jCheckBox2ActionPerformed
+        ArrayManager.toggleSeededShuffles(jCheckBox1.isSelected());
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) throws Exception {//GEN-FIRST:event_jList1ValueChanged
         if (initializing || jList1.getValueIsAdjusting())
@@ -272,7 +291,7 @@ final public class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
     @SuppressWarnings("rawtypes")
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
-
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel2;
     @SuppressWarnings("rawtypes")
     private javax.swing.JList jList2;

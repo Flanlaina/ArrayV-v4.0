@@ -255,10 +255,10 @@ public final class ArrayVisualizer {
     public  volatile boolean benchmarking;
     public  volatile static boolean doRSS = false;
 
-    public static int MAX_LENGTH_POWER = 15;
+    public static int MAX_LENGTH_POWER = 24;
 
-    private boolean useClassicStyle = false;
-    private boolean inShowcase = false;
+    private volatile boolean useClassicStyle = false;
+    private volatile boolean inShowcase = false;
     public static boolean writesWarningsEnabled = false;
 
     private volatile boolean hidden;
@@ -1582,7 +1582,7 @@ public final class ArrayVisualizer {
     }
 
     public static void main(String[] args) {
-        System.setProperty("sun.java2d.d3d", "false");
+        // System.setProperty("sun.java2d.d3d", "false");
         // if (args.length > 0) {
         //     if (args[0].contains("RSS")) doRSS = true;
         //     else ArrayVisualizer.MAX_LENGTH_POWER = Integer.parseInt(args[0]);
@@ -1591,7 +1591,21 @@ public final class ArrayVisualizer {
         for (int i = 0; i < args.length; i++) {
             if ("RSS".equals(args[i])) doRSS = true;
             else if ("--enable-writes-warnings".equals(args[i])) writesWarningsEnabled = true;
-            else ArrayVisualizer.MAX_LENGTH_POWER = Integer.parseInt(args[i]);
+            else {
+                int tmpMaxLenPower = 24;
+                try {
+                    tmpMaxLenPower = Integer.parseInt(args[i]);
+                } catch (NumberFormatException e) {
+                    System.err.println("Error parsing the maximal power of two of the array length: \"" + args[i]
+                            + "\" is not a valid int. The default (24) will be used.");
+                }
+                if (tmpMaxLenPower < 2 || tmpMaxLenPower > 30) {
+                    System.err.println("The specified maximal power of two of the array length (" + tmpMaxLenPower
+                            + ") is not in the range [2, 30]. The default (24) will be used.");
+                    tmpMaxLenPower = 24;
+                }
+                ArrayVisualizer.MAX_LENGTH_POWER = tmpMaxLenPower;
+            }
         }
         new ArrayVisualizer();
     }
