@@ -1582,7 +1582,7 @@ public final class ArrayVisualizer {
     }
 
     public static void main(String[] args) {
-        // System.setProperty("sun.java2d.d3d", "false");
+        System.setProperty("sun.java2d.d3d", "false");
         // if (args.length > 0) {
         //     if (args[0].contains("RSS")) doRSS = true;
         //     else ArrayVisualizer.MAX_LENGTH_POWER = Integer.parseInt(args[0]);
