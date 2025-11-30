@@ -13,8 +13,9 @@ or:
 .\antw.bat
 ```
 depending on the CLI you are using. Alternatively, you can double-click on "antw" or "antw.bat" on Windows.
+If you have Ant in your PATH, you can simply run `ant`.
 
-To create a runnable JAR, run `./antw dist-jar`. The JAR will be placed in the `dist` directory.
+To create a runnable JAR, run `./antw dist-jar`, or run `ant dist-jar` if you have Ant in your PATH. The JAR will be placed in the `dist` directory.
 
 To run use:
 ```shell

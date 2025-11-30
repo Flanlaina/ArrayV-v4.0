@@ -1,31 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- WARNING: Eclipse auto-generated file.
-              Any modifications will be overwritten.
-              To include a user specific buildfile here, simply create one in the same
-              directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. --><project basedir="." default="build" name="ArrayVisualizer-master">
+<project basedir="." default="build" name="ArrayVisualizer-master">
+    <available file=".git" type="dir" property="git.present"/>
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.8"/>
     <property name="source" value="1.8"/>
+    <property name="target" value="1.8"/>
     <path id="ArrayVisualizer-master.classpath">
         <pathelement location="bin"/>
         <pathelement location="lib/classgraph-4.8.47.jar"/>
     </path>
-    <path id="run.ArrayVisualizer.classpath">
-        <path refid="ArrayVisualizer-master.classpath"/>
-        <pathelement location="lib/classgraph-4.8.47.jar"/>
-    </path>
     <target name="init">
         <mkdir dir="bin"/>
-        <copy includeemptydirs="false" todir="bin">
-            <fileset dir="src">
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
+        <mkdir dir="dist"/>
     </target>
-    <target name="clean">
+    <target name="clean" description="Cleans build files">
         <delete dir="bin"/>
+        <delete dir="dist"/>
     </target>
     <!-- Thanks to https://stackoverflow.com/questions/2974106/how-to-lookup-the-latest-git-commit-hash-from-an-ant-build-script -->
     <target name="git-sha" if="git.present"> <!-- Stores revision in ${git.sha} -->
@@ -40,7 +30,7 @@
                 <length string="${git.revision}" trim="yes" length="0" when="greater"/>
             </and>
         </condition>
-        <copy file="buildInfo.properties.template" tofile="bin/buildInfo.properties" overwrite="yes">
+        <copy file="buildInfo.properties.template" tofile="src/buildInfo.properties" overwrite="yes">
             <filterchain>
                 <replacetokens>
                     <token key="git.sha" value="${git.sha}" />
@@ -48,20 +38,31 @@
             </filterchain>
         </copy>
     </target>
-    <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project" name="build"/>
-    <target name="build-subprojects"/>
-    <target depends="init" name="build-project">
+    <target depends="init" name="build" description="Builds ArrayV into the bin directory">
         <echo message="${ant.project.name}: ${ant.file}"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
         <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
             <classpath refid="ArrayVisualizer-master.classpath"/>
         </javac>
+        <copy todir="bin">
+            <fileset dir="." includes="stats-config.txt"/>
+        </copy>
     </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-    <target name="ArrayVisualizer">
-        <java classname="main.ArrayVisualizer" failonerror="true" fork="yes">
-            <classpath refid="run.ArrayVisualizer.classpath"/>
-        </java>
+    <target depends="build" name="dist-jar" description="Creates an executable JAR file in the dist directory">
+        <jar destfile="dist/arrayVisualizer.jar">
+            <manifest>
+                <attribute name="Main-Class" value="main.ArrayVisualizer"/>
+                <attribute name="Class-Path" value="cache"/>
+                <attribute name="Add-Opens" value="java.desktop/com.sun.media.sound"/>
+            </manifest>
+            <zipfileset src="lib/classgraph-4.8.47.jar"/>
+            <fileset dir="bin"/>
+        </jar>
     </target>
 </project>

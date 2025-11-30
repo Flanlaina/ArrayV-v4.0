@@ -6,5 +6,5 @@ antiqsort_*
 network_*.svg
 sorting_networks
 dist/*
-!dist/build.xml
+#!dist/build.xml
 src/buildInfo.properties
