@@ -52,7 +52,10 @@ public class NitroCircloidSortIterative extends Sort {
     }
     
     public void shellSort(int[] array, int a, int b) {
-        for (int gap = (int) Math.sqrt(b - a); gap >= 2; gap /= 2.3601) shellPass(array, a, b, gap);
+        int gap = 1;
+        while (gap * gap < b - a) gap = (int) Math.ceil(gap * 2.36);
+        gap /= 2.36;
+        for (; gap >= 2; gap /= 2.36) shellPass(array, a, b, gap);
         shellPass(array, a, b, 1);
     }
     

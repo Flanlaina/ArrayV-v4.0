@@ -5,19 +5,24 @@ import sorts.templates.Sort;
 
 /*
 
-/------------------/
-|   SORTS GALORE   |
-|------------------|
-|  courtesy of     |
-|  meme man        |
-|  (aka gooflang)  |
-/------------------/
++---------------------------+
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
++---------------------------+
 
-Why do I keep doing this to myself?
+An improved version of Gooflang's Nitro Sort.
 
  */
 
-public final class NitroSort extends Sort {
+/**
+ * @author Flanlaina
+ * @author gooflang
+ * 
+ */
+public class NitroSort extends Sort {
     public NitroSort(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
 
@@ -40,33 +45,40 @@ public final class NitroSort extends Sort {
         return answer;
     }
 
-    private void combSort(int[] array, int a, int b, double shrink) {
+    int incs[] = { 48, 21, 7, 3, 1 };
+
+    public void shellSort(int[] array, int lo, int hi) {
+        Highlights.clearAllMarks();
+        for (int k = 0; k < incs.length; k++) {
+            for (int h = incs[k], i = h + lo; i < hi; i++) {
+                int v = array[i];
+                int j = i;
+                while (j >= h + lo && Reads.compareValues(array[j - h], v) == 1) {
+                    Highlights.markArray(1, j);
+                    Writes.write(array, j, array[j - h], 0.75, true, false);
+                    j -= h;
+                }
+                if (j != i) Writes.write(array, j, v, 0.75, true, false);
+            }
+        }
+        Highlights.clearAllMarks();
+    }
+
+    public void combSort(int[] array, int a, int b, double shrink) {
         boolean swapped = false;
-        int gap = b;
-        int incs[] = {48, 21, 7, 3, 1};
+        int len = b - a, gap = len;
+
         while ((gap > 1) || swapped) {
             if (gap > 1) gap = (int) (gap / shrink);
             swapped = false;
-            for (int i = 0; (gap + i) < b; i++) {
-                if (gap <= Math.min(8, b * 0.03125)) {
+            for (int i = a; (gap + i) < b; i++) {
+                if (gap <= Math.min(64, len * 0.03125)) {
                     gap = 0;
-                    for (int k = 0; k < incs.length; k++) {
-                        for (int h = incs[k], l = h + a; l < b; l++) {
-                            int v = array[l];
-                            int j = l;
-                            boolean change = false;
-                            while (j >= h && Reads.compareValues(array[j-h], v) > 0) {
-                                Writes.write(array, j, array[j - h], 1, true, false);
-                                change = true;
-                                j -= h;
-                            }
-                            if (change) Writes.write(array, j, v, 0.5, true, false);
-                        }
-                    }
+                    shellSort(array, a, b);
                     break;
                 }
                 if (Reads.compareValues(array[i], array[i + gap]) == 1) {
-                    Writes.swap(array, i, i+gap, 0.75, true, false);
+                    Writes.swap(array, i, i + gap, 0.75, true, false);
                     swapped = true;
                 }
             }
