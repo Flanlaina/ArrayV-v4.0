@@ -51,7 +51,7 @@ public class AdvancedCircleBogoSort extends BogoSorting {
             }
         }
         while (!isRangeSorted(array, a, b, false, true)) {
-            int rIdx = randInt(a, nRanges);
+            int rIdx = randInt(0, nRanges);
             int i = starts.get(rIdx), j = ends.get(rIdx) - 1;
             while (i < j) {
                 if (j < b && Reads.compareIndices(array, i, j, 0.5, true) > 0) {
