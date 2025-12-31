@@ -19,7 +19,7 @@ import utils.IndexedRotations;
 /**
  * A Fluxsort variant with Logsort and Logota Sort.
  * <p>
- * To use this algorithm in another, use {@code blockMergeSort()} from a reference
+ * To use this algorithm in another, use {@code quickSort()} from a reference
  * instance.
  *
  * @author Flanlaina
@@ -43,6 +43,8 @@ public class PeachSort extends Sort {
         this.setQuestion("Set block size (default: calculates minimum block length for current length)", 1);
     }
 
+    static final int INSERT_THRESHOLD = 32;
+
     /*
      * 1st return value: W(n)
      * 2nd return value: first power of two greater than or equal to W(n)
@@ -59,7 +61,7 @@ public class PeachSort extends Sort {
         return 31 - Integer.numberOfLeadingZeros(n);
     }
 
-    private static int branchlessEq(int a, int b) {
+    private static int equ(int a, int b) {
         return ((a - b) >> 31) + ((b - a) >> 31) + 1;
     }
 
@@ -502,7 +504,7 @@ public class PeachSort extends Sort {
     }
 
     protected void sortHelper(int[] array, int[] buf, int a, int b, int bLen, int depth, boolean bad) {
-        while (b - a > 32) {
+        while (b - a > INSERT_THRESHOLD) {
             if (depth == 0) {
                 blockMergeSort(array, buf, a, b, bLen);
                 return;
@@ -517,7 +519,9 @@ public class PeachSort extends Sort {
             int m = partition(array, buf, a, b, bLen, array[pIdx], 1);
             if (m == b) {
                 // pivot is highest rank, partition again with inverted bias
-                b = partition(array, buf, a, b, bLen, array[pIdx], 0);
+                m = partition(array, buf, a, b, bLen, array[pIdx], 0);
+                bad = (m - a) / 8 > b - m;
+                b = m;
                 continue;
             }
             int lLen = m - a, rLen = b - m;
@@ -544,7 +548,7 @@ public class PeachSort extends Sort {
      */
     public void quickSort(int[] array, int a, int b, int bLen) {
         int len = b - a;
-        if (len <= 32) {
+        if (len <= INSERT_THRESHOLD) {
             insertSort(array, a, b);
             return;
         }
@@ -556,7 +560,7 @@ public class PeachSort extends Sort {
                 eqdist += cmp == 0 ? 1 : 0;
                 pos++;
             }
-            streaks += branchlessEq(dist, 0) | branchlessEq(dist + eqdist, 16);
+            streaks += equ(dist, 0) | equ(dist + eqdist, 16);
             balance += dist;
             eq += eqdist;
             cnt -= 16;

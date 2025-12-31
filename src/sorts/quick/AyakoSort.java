@@ -5,16 +5,22 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Ayako-chan
-in collaboration with aphitorite and Scandum
-
 +---------------------------+
-| Sorting Algorithm Scarlet |
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
 +---------------------------+
 
  */
 
 /**
+ * A Fluxsort variant with Ternary Aeos Quicksort and Ecta Sort.
+ * <p>
+ * To use this algorithm in another, use {@code quickSort()} from a reference
+ * instance.
+ *
  * @author Ayako-chan
  * @author aphitorite
  * @author Scandum
@@ -35,13 +41,17 @@ public final class AyakoSort extends Sort {
         this.setUnreasonableLimit(0);
         this.setBogoSort(false);
     }
-    
-    int threshold = 32;
-    
+
+    static final int INSERT_THRESHOLD = 32;
+
+    public static int log2(int n) {
+        return 31 - Integer.numberOfLeadingZeros(n);
+    }
+
     int equ(int a, int b) {
         return ((a - b) >> 31) + ((b - a) >> 31) + 1;
     }
-    
+
     protected int medOf3(int[] array, int i0, int i1, int i2) {
         int tmp;
         if(Reads.compareIndices(array, i0, i1, 1, true) > 0) {
@@ -54,93 +64,105 @@ public final class AyakoSort extends Sort {
         }
         return i1;
     }
-    
-    public int medP3(int[] array, int a, int b, int d) {
-        if (b - a == 3 || (b - a > 3 && d == 0))
-            return medOf3(array, a, a + (b - a) / 2, b - 1);
-        if (b - a < 3) return a + (b - a) / 2;
-        int t = (b - a) / 3;
-        int l = medP3(array, a, a + t, --d), c = medP3(array, a + t, b - t, d), r = medP3(array, b - t, b, d);
-        // median
-        return medOf3(array, l, c, r);
+
+    public int ninther(int[] array, int a, int b) {
+        if (b - a <= 9) return a + (b - a) / 2;
+        int len = b - a, half = len / 2, quart = len / 4, eight = len / 8;
+        int c = medOf3(array, a, a + eight, a + quart);
+        int d = medOf3(array, a + quart + eight, a + half, a + half + eight);
+        int e = medOf3(array, b - quart, b - eight, b - 1);
+        return medOf3(array, c, d, e);
     }
 
-    public int medOfMed(int[] array, int a, int b) {
-        int log5 = 0, exp5 = 1, exp5_1 = 0;
-        int[] indices = new int[5];
-        int n = b - a;
-        while (exp5 < n) {
-            exp5_1 = exp5;
-            log5++;
-            exp5 *= 5;
-        }
-        if (log5 < 1) return a;
-        // fill indexes, recursing if required
-        if (log5 == 1) for (int i = a, j = 0; i < b; i++, j++) indices[j] = i;
-        else {
-            n = 0;
-            for (int i = a; i < b; i += exp5_1) {
-                indices[n] = medOfMed(array, i, Math.min(b, i + exp5_1));
-                n++;
-            }
-        }
-        // sort - insertion sort is good enough for 5 elements
-        for (int i = 1; i < n; i++) {
-            for(int j = i; j > 0; j--) {
-                if (Reads.compareIndices(array, indices[j], indices[j - 1], 0.5, true) < 0) {
-                    int t = indices[j];
-                    indices[j] = indices[j - 1];
-                    indices[j - 1] = t;
-                } else break;
-            }
-        }
-        // return median
-        return indices[(n - 1) / 2];
+    // Median of 3 ninthers
+    public int pseudomo27(int[] array, int a, int b) {
+        if (b - a < 64) return this.ninther(array, a, b);
+        int d = (b - a) / 3;
+        int m0 = this.ninther(array, a, a + d);
+        int m1 = this.ninther(array, a + d, a + 2 * d);
+        int m2 = this.ninther(array, a + 2 * d, b);
+        return this.medOf3(array, m0, m1, m2);
     }
-    
-    protected void stableSegmentReversal(int[] array, int start, int end) {
-        if (end - start < 3) Writes.swap(array, start, end, 0.75, true, false);
-        else Writes.reversal(array, start, end, 0.75, true, false);
-        int i = start;
-        int left;
-        int right;
-        while (i < end) {
-            left = i;
-            while (i < end && Reads.compareIndices(array, i, i + 1, 0.5, true) == 0) i++;
-            right = i;
+
+    // Ninther of 9 ninthers
+    public int pseudomo81(int[] array, int a, int b) {
+        if (b - a < 256) return this.pseudomo27(array, a, b);
+        int d = (b - a) / 9;
+        int m0 = this.ninther(array, a, a + d);
+        int m1 = this.ninther(array, a + d, a + 2 * d);
+        int m2 = this.ninther(array, a + 2 * d, a + 3 * d);
+        int m3 = this.ninther(array, a + 3 * d, a + 4 * d);
+        int m4 = this.ninther(array, a + 4 * d, a + 5 * d);
+        int m5 = this.ninther(array, a + 5 * d, a + 6 * d);
+        int m6 = this.ninther(array, a + 6 * d, a + 7 * d);
+        int m7 = this.ninther(array, a + 7 * d, a + 8 * d);
+        int m8 = this.ninther(array, a + 8 * d, b);
+        return this.medOf3(array, this.medOf3(array, m0, m1, m2), this.medOf3(array, m3, m4, m5),
+                this.medOf3(array, m6, m7, m8));
+    }
+
+    // Ninther of 9 medians of 3 ninthers
+    public int pseudomo243(int[] array, int a, int b) {
+        if (b - a < 16384) return this.pseudomo81(array, a, b);
+        int d = (b - a) / 9;
+        int m0 = this.pseudomo27(array, a, a + d);
+        int m1 = this.pseudomo27(array, a + d, a + 2 * d);
+        int m2 = this.pseudomo27(array, a + 2 * d, a + 3 * d);
+        int m3 = this.pseudomo27(array, a + 3 * d, a + 4 * d);
+        int m4 = this.pseudomo27(array, a + 4 * d, a + 5 * d);
+        int m5 = this.pseudomo27(array, a + 5 * d, a + 6 * d);
+        int m6 = this.pseudomo27(array, a + 6 * d, a + 7 * d);
+        int m7 = this.pseudomo27(array, a + 7 * d, a + 8 * d);
+        int m8 = this.pseudomo27(array, a + 8 * d, b);
+        return this.medOf3(array, this.medOf3(array, m0, m1, m2), this.medOf3(array, m3, m4, m5),
+                this.medOf3(array, m6, m7, m8));
+    }
+
+    public void segmentReversal(int[] array, int start, int end, double delay, boolean mark, boolean aux) {
+        for (int i = start; i < end; i++) {
+            int left = i;
+            while (i < end && Reads.compareIndices(array, i, i + 1, delay, true) == 0) i++;
+            int right = i;
             if (left != right) {
-                if (right - left < 3) Writes.swap(array, left, right, 0.75, true, false);
-                else Writes.reversal(array, left, right, 0.75, true, false);
+                if (right - left < 3) Writes.swap(array, left, right, delay * 2, mark, aux);
+                else Writes.reversal(array, left, right, delay * 2, mark, aux);
             }
-            i++;
         }
     }
-    
-    void multiSwap(int[] array, int a, int b, int s) {
-        if (a != b) while (s-- > 0) Writes.swap(array, a++, b++, 1, true, false);
+
+    void blockSwap(int[] array, int a, int b, int len) {
+        if (a != b) while (len-- > 0) Writes.swap(array, a++, b++, 1, true, false);
     }
-    
-    void multiSwapBW(int[] array, int a, int b, int s) {
-        if (a != b) while (s-- > 0) Writes.swap(array, a + s, b + s, 1, true, false);
-    }
-    
+
     void rotate(int[] array, int a, int m, int b) {
-        int l = m - a, r = b - m;
-        while (l > 1 && r > 1) {
-            if (r < l) {
-                this.multiSwapBW(array, m - r, m, r);
-                b -= r;
-                m -= r;
-                l -= r;
-            } else {
-                this.multiSwap(array, a, m, l);
-                a += l;
-                m += l;
-                r -= l;
-            }
+        Highlights.clearMark(2);
+        if (a == m || m == b) return;
+        int p0 = a, p1 = m - 1, p2 = m, p3 = b - 1;
+        int tmp;
+        while (p0 < p1 && p2 < p3) {
+            tmp = array[p1];
+            Writes.write(array, p1--, array[p0], 0.5, true, false);
+            Writes.write(array, p0++, array[p2], 0.5, true, false);
+            Writes.write(array, p2++, array[p3], 0.5, true, false);
+            Writes.write(array, p3--, tmp, 0.5, true, false);
         }
-        if (r == 1) this.insertTo(array, m, a);
-        else if (l == 1) this.insertTo(array, a, b - 1);
+        while (p0 < p1) {
+            tmp = array[p1];
+            Writes.write(array, p1--, array[p0], 0.5, true, false);
+            Writes.write(array, p0++, array[p3], 0.5, true, false);
+            Writes.write(array, p3--, tmp, 0.5, true, false);
+        }
+        while (p2 < p3) {
+            tmp = array[p2];
+            Writes.write(array, p2++, array[p3], 0.5, true, false);
+            Writes.write(array, p3--, array[p0], 0.5, true, false);
+            Writes.write(array, p0++, tmp, 0.5, true, false);
+        }
+        if (p0 < p3) { // don't count reversals that don't do anything
+            if (p3 - p0 >= 3) Writes.reversal(array, p0, p3, 1, true, false);
+            else Writes.swap(array, p0, p3, 1, true, false);
+            Highlights.clearMark(2);
+        }
     }
 
     // not at all a true rotation method, but the concept is similar
@@ -156,7 +178,7 @@ public final class AyakoSort extends Sort {
         j -= cnts[0];
         Writes.arraycopy(buf, 0, array, j, cnts[0], 1, true, false);
     }
-    
+
     protected int binSearch(int[] array, int a, int b, int val, boolean left) {
         while (a < b) {
             int m = a + (b - a) / 2;
@@ -169,14 +191,14 @@ public final class AyakoSort extends Sort {
         return a;
     }
 
-    protected int leftExpSearch(int[] array, int a, int b, int val, boolean left) {
+    protected int minExpSearch(int[] array, int a, int b, int val, boolean left) {
         int i = 1;
         if (left) while (a - 1 + i < b && Reads.compareValues(val, array[a - 1 + i]) > 0) i *= 2;
         else while (a - 1 + i < b && Reads.compareValues(val, array[a - 1 + i]) >= 0) i *= 2;
         return binSearch(array, a + i / 2, Math.min(b, a - 1 + i), val, left);
     }
 
-    protected int rightExpSearch(int[] array, int a, int b, int val, boolean left) {
+    protected int maxExpSearch(int[] array, int a, int b, int val, boolean left) {
         int i = 1;
         if (left) while (b - i >= a && Reads.compareValues(val, array[b - i]) <= 0) i *= 2;
         else while (b - i >= a && Reads.compareValues(val, array[b - i]) < 0) i *= 2;
@@ -191,7 +213,7 @@ public final class AyakoSort extends Sort {
             Writes.write(array, i, array[i + d], 0.5, true, false);
         if (a != b) Writes.write(array, b, temp, 0.5, true, false);
     }
-    
+
     protected boolean buildRuns(int[] array, int a, int b, int mRun) {
         int i = a + 1, j = a;
         boolean noSort = true;
@@ -206,14 +228,14 @@ public final class AyakoSort extends Sort {
                 j = i - (i - j - 1) % mRun - 1;
             }
             while (i - j < mRun && i < b) {
-                insertTo(array, i, rightExpSearch(array, j, i, array[i], false));
+                insertTo(array, i, binSearch(array, j, i, array[i], false));
                 i++;
             }
             j = i++;
         }
         return noSort;
     }
-    
+
     public void insertSort(int[] array, int a, int b) {
         buildRuns(array, a, b, b - a);
     }
@@ -239,7 +261,7 @@ public final class AyakoSort extends Sort {
         }
         Highlights.clearMark(2);
     }
-    
+
     protected void mergeFWExt(int[] array, int[] tmp, int a, int m, int b) {
         int s = m - a;
         Writes.arraycopy(array, a, tmp, 0, s, 1, true, true);
@@ -265,14 +287,14 @@ public final class AyakoSort extends Sort {
         }
         while (i >= 0) Writes.write(array, --b, tmp[i--], 1, true, false);
     }
-    
+
     protected void merge(int[] array, int[] buf, int a, int m, int b) {
         if (m - a > b - m) mergeBWExt(array, buf, a, m, b);
         else mergeFWExt(array, buf, a, m, b);
     }
-    
+
     protected void blockCycle(int[] array, int[] buf, int[] keys, int a, int bLen, int bCnt) {
-        for (int i = 0; i < bCnt; i++)
+        for (int i = 0; i < bCnt; i++) {
             if (Reads.compareOriginalValues(i, keys[i]) != 0) {
                 Writes.arraycopy(array, a + i * bLen, buf, 0, bLen, 1, true, true);
                 int j = i, next = keys[i];
@@ -285,9 +307,10 @@ public final class AyakoSort extends Sort {
                 Writes.arraycopy(buf, 0, array, a + j * bLen, bLen, 1, true, false);
                 Writes.write(keys, j, j, 1, true, true);
             }
+        }
     }
 
-    protected void blockMerge(int[] array, int[] buf, int[] tags, int a, int m, int b, int bLen) {
+    protected void blockMergeHelper(int[] array, int[] buf, int[] tags, int a, int m, int b, int bLen) {
         int c = 0, t = 2;
         int i = a, j = m, k = 0;
         int l = 0, r = 0;
@@ -347,11 +370,11 @@ public final class AyakoSort extends Sort {
         }
         blockCycle(array, buf, tags, a, bLen, (b - a) / bLen);
     }
-    
+
     protected void smartMerge(int[] array, int[] buf, int a, int m, int b) {
         if (Reads.compareIndices(array, m - 1, m, 0.0, true) <= 0) return;
-        a = leftExpSearch(array, a, m, array[m], false);
-        b = rightExpSearch(array, m, b, array[m - 1], true);
+        a = minExpSearch(array, a, m, array[m], false);
+        b = maxExpSearch(array, m, b, array[m - 1], true);
         if (Reads.compareValues(array[a], array[b - 1]) > 0) {
             rotate(array, a, m, b);
             return;
@@ -359,7 +382,7 @@ public final class AyakoSort extends Sort {
         Highlights.clearMark(2);
         merge(array, buf, a, m, b);
     }
-    
+
     protected void pingPongMerge(int[] array, int[] buf, int a, int m1, int m2, int m3, int b) {
         int p = 0, p1 = p + m2-a, pEnd = p + b-a;
         if(Reads.compareIndices(array, m1-1, m1, 1, true) > 0
@@ -371,21 +394,18 @@ public final class AyakoSort extends Sort {
         else smartMerge(array, buf, a, m2, b);
     }
 
-    protected void smartBlockMerge(int[] array, int[] buf, int[] tags, int a, int m, int b, int bLen) {
+    protected void blockMerge(int[] array, int[] buf, int[] tags, int a, int m, int b, int bLen) {
         if (Reads.compareIndices(array, m - 1, m, 0.0, true) <= 0) return;
-        int s = leftExpSearch(array, a, m, array[m], false);
-        b = rightExpSearch(array, m, b, array[m - 1], true);
+        int s = minExpSearch(array, a, m, array[m], false);
+        b = maxExpSearch(array, m, b, array[m - 1], true);
         if (Reads.compareValues(array[s], array[b - 1]) > 0) {
             rotate(array, s, m, b);
             return;
         }
         if (Math.min(m - s, b - m) <= 2 * bLen) merge(array, buf, s, m, b);
-        else {
-            s -= (s - a) % bLen;
-            blockMerge(array, buf, tags, s, m, b, bLen);
-        }
+        else blockMergeHelper(array, buf, tags, s - (s - a) % bLen, m, b, bLen);
     }
-    
+
     public void blockMergeSort(int[] array, int[] buf, int[] tags, int a, int b, int bLen) {
         int len = b - a;
         int j = 16;
@@ -403,9 +423,9 @@ public final class AyakoSort extends Sort {
                 smartMerge(array, buf, i, i + j, Math.min(i + 2 * j, b));
         for (; j < len; j *= 2)
             for (i = a; i + j < b; i += 2 * j)
-                smartBlockMerge(array, buf, tags, i, i + j, Math.min(i + 2 * j, b), bLen);
+                blockMerge(array, buf, tags, i, i + j, Math.min(i + 2 * j, b), bLen);
     }
-    
+
     int pivCmp(int v, int piv) {
         int c = Reads.compareValues(v, piv);
         if (c > 0) return 2;
@@ -431,7 +451,7 @@ public final class AyakoSort extends Sort {
         }
         return new int[] { p0, p0 + eqSize };
     }
-    
+
     protected int[] partition(int[] array, int[] buf, int[] tags, int a, int b, int bLen, int piv) {
         Highlights.clearMark(2);
         // determines which elements do not need to be moved
@@ -474,7 +494,7 @@ public final class AyakoSort extends Sort {
             int now = tags[i];
             boolean change = false;
             while (Reads.compareOriginalValues(i, now / bLen) != 0) {
-                multiSwap(array, a + i * bLen, a + now, bLen);
+                blockSwap(array, a + i * bLen, a + now, bLen);
                 int tmp = tags[now / bLen];
                 Writes.write(tags, now / bLen, now, 0, false, true);
                 now = tmp;
@@ -490,12 +510,19 @@ public final class AyakoSort extends Sort {
         ptrs[1] += cnts[0] + cnts[1];
         return ptrs;
     }
-    
-    void sortHelper(int[] array, int[] buf, int[] tags, int a, int b, int bLen, boolean bad) {
-        while (b - a > threshold) {
+
+    void sortHelper(int[] array, int[] buf, int[] tags, int a, int b, int bLen, boolean bad, int depth) {
+        while (b - a > INSERT_THRESHOLD) {
+            if (depth == 0) {
+                blockMergeSort(array, buf, tags, a, b, bLen);
+                return;
+            }
+            depth--;
             int pIdx;
-            if (bad) pIdx = medOfMed(array, a, b);
-            else pIdx = medP3(array, a, b, 2);
+            if(bad) {
+                pIdx = pseudomo243(array, a, b);
+                bad = false;
+            } else pIdx = ninther(array, a, b);
             int[] pr = partition(array, buf, tags, a, b, bLen, array[pIdx]);
             if (pr[1] - pr[0] == b - a) return;
             int lLen = pr[0] - a, rLen = b - pr[1], eqLen = pr[1] - pr[0];
@@ -511,18 +538,29 @@ public final class AyakoSort extends Sort {
             }
             bad = lLen < rLen / 8 || rLen < lLen / 8;
             if (rLen < lLen) {
-                sortHelper(array, buf, tags, pr[1], b, bLen, bad);
+                sortHelper(array, buf, tags, pr[1], b, bLen, bad, depth);
                 b = pr[0];
             } else {
-                sortHelper(array, buf, tags, a, pr[0], bLen, bad);
+                sortHelper(array, buf, tags, a, pr[0], bLen, bad, depth);
                 a = pr[1];
             }
         }
         insertSort(array, a, b);
     }
-    
+
+    /**
+     * Sorts the range {@code [a, b)} of {@code array} using Ayako Sort.
+     * 
+     * @param array the array
+     * @param a     the start of the range, inclusive
+     * @param b     the end of the range, exclusive
+     */
     public void quickSort(int[] array, int a, int b) {
         int len = b - a;
+        if (len <= INSERT_THRESHOLD) {
+            insertSort(array, a, b);
+            return;
+        }
         int balance = 0, eq = 0, streaks = 0, dist, eqdist, loop, cnt = len, pos = a;
         while (cnt > 16) {
             for (eqdist = dist = 0, loop = 0; loop < 16; loop++) {
@@ -544,9 +582,9 @@ public final class AyakoSort extends Sort {
         }
         if (balance == 0) return;
         if (balance + eq == len - 1) {
-            if (eq > 0) stableSegmentReversal(array, a, b - 1);
-            else if (b - a < 4) Writes.swap(array, a, b - 1, 0.75, true, false);
+            if (b - a < 4) Writes.swap(array, a, b - 1, 0.75, true, false);
             else Writes.reversal(array, a, b - 1, 0.75, true, false);
+            if (eq > 0) segmentReversal(array, a, b - 1, 0.75, true, false);
             return;
         }
         int bLen = 1;
@@ -556,7 +594,7 @@ public final class AyakoSort extends Sort {
         int sixth = len / 6;
         if (streaks > len / 20 || balance <= sixth || balance + eq >= len - sixth)
             blockMergeSort(array, buf, tags, a, b, bLen);
-        else sortHelper(array, buf, tags, a, b, bLen, false);
+        else sortHelper(array, buf, tags, a, b, bLen, false, 2 * log2(len));
         Writes.deleteExternalArray(buf);
         Writes.deleteExternalArray(tags);
     }
