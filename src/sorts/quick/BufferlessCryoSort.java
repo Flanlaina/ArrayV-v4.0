@@ -230,8 +230,7 @@ public class BufferlessCryoSort extends Sort {
     }
 
     public void mergeSort(int[] array, int a, int b) {
-        int j = b - a;
-        while (j >= 32) j = (j - 1) / 2 + 1;
+        int j = 16;
         if (buildRuns(array, a, b, j)) return;
         for(; j < b - a; j *= 2) {
             for(int i = a; i+j < b; i += 2*j)

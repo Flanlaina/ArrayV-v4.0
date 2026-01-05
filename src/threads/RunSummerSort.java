@@ -36,11 +36,11 @@ SOFTWARE.
  */
 
 final public class RunSummerSort extends MultipleSortThread {
-    final Class<? extends Sort> SORT_CLASS = sorts.hybrid.KotaSort.class;
+    final Class<? extends Sort> SORT_CLASS = sorts.hybrid.AdaptiveEctaSort.class;
     final int                  SORT_LENGTH = 4096;
     final double                SORT_SPEED = 4;
     final int                 BUCKET_COUNT = 0;
-    final int                 UNIQUE_COUNT = 64;
+    final int                 UNIQUE_COUNT = 16;
     static boolean         stabilityProper = true;
 
 
@@ -349,23 +349,23 @@ final public class RunSummerSort extends MultipleSortThread {
         arrayManager.setShuffleSingle(Distributions.TOTIENT); // 74
         RunSummerSort.this.runSort(array, "Euler Totient Function");
 
-        arrayManager.setShuffleSingle(Distributions.NOISY_UNIQUES); // 75
+        arrayManager.setShuffleSingle(Distributions.FSD); // 75
+        RunSummerSort.this.runSort(array, "Fly Straight, Dammit!");
+
+        arrayManager.setShuffleSingle(Distributions.NOISY_UNIQUES); // 76
         RunSummerSort.this.runSort(array, "Noisy Uniques");
 
-        arrayManager.setShuffleSingle(Distributions.RAMP); // 76
+        arrayManager.setShuffleSingle(Distributions.RAMP); // 77
         RunSummerSort.this.runSort(array, "Ramps");
 
-        arrayManager.setShuffleSingle(Distributions.REVLOG); // 77
+        arrayManager.setShuffleSingle(Distributions.REVLOG); // 78
         RunSummerSort.this.runSort(array, "Decreasing Random");
 
-        arrayManager.setShuffleSingle(Distributions.INCREASING_RANDOM); // 78
+        arrayManager.setShuffleSingle(Distributions.INCREASING_RANDOM); // 79
         RunSummerSort.this.runSort(array, "Increasing Random");
 
-        arrayManager.setShuffleSingle(Distributions.WEIERSTRASS); // 79
+        arrayManager.setShuffleSingle(Distributions.WEIERSTRASS); // 80
         RunSummerSort.this.runSort(array, "Weierstrass Function");
-
-        arrayManager.setShuffleSingle(Distributions.DIVISORS_COUNT); // 80
-        RunSummerSort.this.runSort(array, "Number of Divisors");
     }
 
     @Override

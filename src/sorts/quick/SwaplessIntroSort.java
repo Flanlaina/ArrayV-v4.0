@@ -5,7 +5,7 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Haruki
+Coded for ArrayV by Flanlaina
 in collaboration with David Musser
 
 +---------------------------+
@@ -15,7 +15,7 @@ in collaboration with David Musser
  */
 
 /**
- * @author Haruki (Ayako-chan)
+ * @author Flanlaina
  * @author David Musser
  *
  */
@@ -38,7 +38,7 @@ public class SwaplessIntroSort extends Sort {
         return 31 - Integer.numberOfLeadingZeros(val);
     }
 
-    static final int INSERT_THRESHOLD = 32;
+    static final int INSERT_THRESHOLD = 16;
 
     private void siftDown(int[] array, int val, int i, int p, int n) {
         while (4 * i + 1 < n) {

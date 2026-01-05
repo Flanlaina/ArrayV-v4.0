@@ -287,7 +287,7 @@ public final class CryoSort extends Sort {
                 j = i - (i - j - 1) % mRun - 1;
             }
             while (i - j < mRun && i < b) {
-                insertTo(array, i, rightExpSearch(array, j, i, array[i], false));
+                insertTo(array, i, binSearch(array, j, i, array[i], false));
                 i++;
             }
             j = i++;
@@ -300,8 +300,7 @@ public final class CryoSort extends Sort {
     }
     
     public void mergeSort(int[] array, int[] buf, int a, int b) {
-        int j = b - a;
-        while (j >= 32) j = (j - 1) / 2 + 1;
+        int j = 16;
         if (buildRuns(array, a, b, j)) return;
         for(; j < b - a; j *= 2) {
             for(int i = a; i+j < b; i += 2*j)
@@ -437,12 +436,12 @@ public final class CryoSort extends Sort {
     }
 
     /**
-     * Sorts the range {@code [a, b)} of {@code array} using a Median-of-Medians
-     * Stable Quicksort with O(1) External Space.
+     * Sorts the range {@code [a, b)} of {@code array} using Cryo Sort.
      * 
      * @param array the array
      * @param a     the start of the range, inclusive
      * @param b     the end of the range, exclusive
+     * @param bLen  the buffer size
      */
     public void quickSort(int[] array, int a, int b, int bLen) {
         int len = b - a;
