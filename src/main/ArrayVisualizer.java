@@ -255,7 +255,7 @@ public final class ArrayVisualizer {
     public  volatile boolean benchmarking;
     public  volatile static boolean doRSS = false;
 
-    public static int MAX_LENGTH_POWER = 24;
+    public static int MAX_LENGTH_POWER = 18;
 
     private volatile boolean useClassicStyle = false;
     private volatile boolean inShowcase = false;

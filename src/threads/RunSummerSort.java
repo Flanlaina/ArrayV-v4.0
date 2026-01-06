@@ -36,11 +36,11 @@ SOFTWARE.
  */
 
 final public class RunSummerSort extends MultipleSortThread {
-    final Class<? extends Sort> SORT_CLASS = sorts.hybrid.AdaptiveEctaSort.class;
+    final Class<? extends Sort> SORT_CLASS = sorts.hybrid.NewAdaptiveGrailSort.class;
     final int                  SORT_LENGTH = 4096;
     final double                SORT_SPEED = 4;
     final int                 BUCKET_COUNT = 0;
-    final int                 UNIQUE_COUNT = 16;
+    final int                 UNIQUE_COUNT = 32;
     static boolean         stabilityProper = true;
 
 
