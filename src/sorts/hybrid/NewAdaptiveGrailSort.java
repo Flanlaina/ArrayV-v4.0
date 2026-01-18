@@ -45,8 +45,8 @@ public class NewAdaptiveGrailSort extends Sort {
         super(arrayVisualizer);
 
         this.setSortListName("Adaptive Grail (New)");
-        this.setRunAllSortsName("New Adaptive Grail Sort");
-        this.setRunSortName("New Adaptive Grailsort");
+        this.setRunAllSortsName("Adaptive Grail Sort");
+        this.setRunSortName("Adaptive Grailsort");
         this.setCategory("Hybrid Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);

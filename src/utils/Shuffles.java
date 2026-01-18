@@ -1663,6 +1663,48 @@ public enum Shuffles {
             Writes.arraycopy(tmp, a, array, a, b-a, sleep, true, false);
         }
     },
+    SHELL_BAD {
+        @Override
+        public String getName() {
+            return "Shell Adversary";
+        }
+        @Override
+        public void shuffleArray(int[] array, ArrayVisualizer ArrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
+            int currentLen = ArrayVisualizer.getCurrentLength();
+            
+            int[] gaps = {13090572, 5818032, 2585792, 1149241,  510774, 227011, 100894,  44842, 19930,  8858,  3937, 1750,  701,  301,  132,  57,  23,  10,  4,  1};
+            
+            // count buckets
+            
+            int[] cnts = new int[currentLen];
+            int k = gaps.length, j = k;
+            cnts[0] = k+1;
+            
+            for(int g : gaps) {
+                for(int i = g; i < currentLen; i++)
+                    if(cnts[i-g] > 0 && cnts[i] == 0) 
+                        cnts[i] = j;
+                j--;
+            }
+            
+            // distribute into buckets
+            
+            int[] pos = new int[k+2];
+            
+            for(int i = 0; i < currentLen; i++) pos[cnts[i]]++;
+            
+            for(int i = 1; i < pos.length; i++) pos[i] += pos[i-1];
+            
+            for(int i = 0; i < currentLen; i++) // iterate forwards instead backwards
+                cnts[i] = --pos[cnts[i]];       // to reverse order of elements
+            
+            // copy array elements
+            
+            int[] temp = Arrays.copyOf(array, currentLen);
+            for(int i = 0; i < currentLen; i++)
+                Writes.write(array, i, temp[cnts[i]], 1, true, false);
+        }
+    },
     BIT_REVERSE {
         @Override
         public String getName() {

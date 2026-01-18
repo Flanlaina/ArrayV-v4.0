@@ -5,17 +5,18 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Haruki
-in collaboration with aphitorite and Gaming32
-
 +---------------------------+
-| Sorting Algorithm Scarlet |
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
 +---------------------------+
 
  */
 
 /**
- * @author Haruki (a.k.a. Ayako-chan)
+ * @author Flanlaina
  * @author aphitorite
  * @author Gaming32
  *
@@ -78,29 +79,25 @@ public class OptimizedRaikoSort extends Sort {
 
     protected void insertTo(int[] array, int a, int b) {
         Highlights.clearMark(2);
-        int temp = array[a];
-        int d = (a > b) ? -1 : 1;
-        for (int i = a; i != b; i += d)
-            Writes.write(array, i, array[i + d], 0.5, true, false);
-        if (a != b)
+        if (a != b) {
+            int temp = array[a];
+            int d = (a > b) ? -1 : 1;
+            for (int i = a; i != b; i += d)
+                Writes.write(array, i, array[i + d], 0.5, true, false);
             Writes.write(array, b, temp, 0.5, true, false);
+        }
     }
 
-    protected int expSearch(int[] array, int a, int b, int val) {
-        int i = 1;
-        while (b - i >= a && Reads.compareValues(val, array[b - i]) < 0)
-            i *= 2;
-        int a1 = Math.max(a, b - i + 1), b1 = b - i / 2;
-        while (a1 < b1) {
-            int m = a1 + (b1 - a1) / 2;
+    protected int binSearch(int[] array, int a, int b, int val, boolean left) {
+        while (a < b) {
+            int m = a + (b - a) / 2;
             Highlights.markArray(2, m);
             Delays.sleep(0.25);
-            if (Reads.compareValues(val, array[m]) < 0)
-                b1 = m;
-            else
-                a1 = m + 1;
+            int c = Reads.compareValues(val, array[m]);
+            if (c < 0 || (left && c == 0)) b = m;
+            else a = m + 1;
         }
-        return a1;
+        return a;
     }
 
     protected void stableSegmentReversal(int[] array, int start, int end) {
@@ -151,7 +148,7 @@ public class OptimizedRaikoSort extends Sort {
             }
         }
         while (i - start < mRun && i < end) {
-            insertTo(array, i, expSearch(array, start, i, array[i]));
+            insertTo(array, i, binSearch(array, start, i, array[i], false));
             i++;
         }
         return i;
