@@ -166,9 +166,9 @@ public enum Shuffles {
             shuffle(array, 0, j, 2, Writes);
         }
     },
-    SHUFFLED_TAIL_ALT { // Scrambled Tail, but always shuffles 1/7th of the array, and moves data in-place
+    SHUFFLED_TAIL_INDEXSORT { // Scrambled Tail, but always shuffles 1/7th of the array, and moves data in-place
         public String getName() {
-            return "Scrambled Tail (Alternative)";
+            return "Scrambled Tail (Indexsort)";
         }
         @Override
         public void shuffleArray(int[] array, ArrayVisualizer ArrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
@@ -196,9 +196,9 @@ public enum Shuffles {
             shuffle(array, m, currentLen, 2, Writes);
         }
     },
-    SHUFFLED_HEAD_ALT { // Scrambled Head, but always shuffles 1/7th of the array, and moves data in-place
+    SHUFFLED_HEAD_INDEXSORT { // Scrambled Head, but always shuffles 1/7th of the array, and moves data in-place
         public String getName() {
-            return "Scrambled Head (Alternative)";
+            return "Scrambled Head (Indexsort)";
         }
         @Override
         public void shuffleArray(int[] array, ArrayVisualizer ArrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
@@ -226,7 +226,7 @@ public enum Shuffles {
             shuffle(array, 0, m, 2, Writes);
         }
     },
-   SHUFFLED_TAIL_LEGACY {
+    SHUFFLED_TAIL_LEGACY {
         public String getName() {
             return "Scrambled End (Legacy)";
         }

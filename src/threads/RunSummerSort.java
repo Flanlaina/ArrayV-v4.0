@@ -36,11 +36,11 @@ SOFTWARE.
  */
 
 final public class RunSummerSort extends MultipleSortThread {
-    final Class<? extends Sort> SORT_CLASS = sorts.hybrid.NewAdaptiveGrailSort.class;
-    final int                  SORT_LENGTH = 4096;
-    final double                SORT_SPEED = 4;
+    final Class<? extends Sort> SORT_CLASS = sorts.hybrid.OptimizedRaikoSort.class;
+    final int                  SORT_LENGTH = 16384;
+    final double                SORT_SPEED = 8;
     final int                 BUCKET_COUNT = 0;
-    final int                 UNIQUE_COUNT = 32;
+    final int                 UNIQUE_COUNT = 16;
     static boolean         stabilityProper = true;
 
 
@@ -136,10 +136,10 @@ final public class RunSummerSort extends MultipleSortThread {
         }
 
         arrayVisualizer.getArrayFrame().setUniqueSlider(arrayVisualizer.getCurrentLength()); // 5
-        arrayManager.setShuffleSingle(Shuffles.SHUFFLED_TAIL_ALT);
+        arrayManager.setShuffleSingle(Shuffles.SHUFFLED_TAIL_INDEXSORT);
         RunSummerSort.this.runSort(array, "Scrambled Tail");
 
-        arrayManager.setShuffleSingle(Shuffles.SHUFFLED_HEAD_ALT); // 6
+        arrayManager.setShuffleSingle(Shuffles.SHUFFLED_HEAD_INDEXSORT); // 6
         RunSummerSort.this.runSort(array, "Scrambled Head");
 
         arrayManager.setShuffleSingle(Shuffles.FINAL_MERGE); // 7
