@@ -199,8 +199,8 @@ final public class Highlights {
     // Ambitious function: Set the color directly
     public synchronized void setRawColor(int[] array, int position, Color color) {
         try {
-            if (position < 0) {
-                throw new Exception("Highlights.setRawColor(): Invalid position!");
+            if (position < 0 || position >= arrayVisualizer.getCurrentLength()) {
+                throw new Exception("Highlights.setRawColor(): Invalid position (" + position + ")!");
             } else {
                 boolean[] colorMark = getColorMarks(array);
                 Delays.disableStepping();
@@ -241,8 +241,8 @@ final public class Highlights {
     // Convenience function: Set the color using a predefined alias
     public synchronized void colorCode(int[] array, int position, String color) {
         try {
-            if (position < 0) {
-                throw new Exception("Highlights.colorCode(): Invalid position!");
+            if (position < 0 || position >= arrayVisualizer.getCurrentLength()) {
+                throw new Exception("Highlights.colorCode(): Invalid position (" + position + ")!");
             } else {
                 boolean[] colorMark = getColorMarks(array);
                 Delays.disableStepping();
@@ -278,8 +278,7 @@ final public class Highlights {
 
     public synchronized void clearColor(int[] array, int position) {
         boolean[] colorMark = getColorMarks(array);
-        if (colorMark == null)
-            return;
+        if (colorMark == null) return;
         Delays.disableStepping();
         if (colorMark[position]) {
             colorMark[position] = false;
@@ -312,8 +311,7 @@ final public class Highlights {
     public void swapColors(int[] array, int locA, int locB) {
         boolean[] colorMark = getColorMarks(array);
         Color[] colorColor = getColorColors(array);
-        if (colorMark == null)
-            return;
+        if (colorMark == null) return;
         boolean t0 = colorMark[locA];
         Color t1 = colorColor[locA];
         colorMark[locA] = colorMark[locB];
@@ -327,10 +325,10 @@ final public class Highlights {
     }
     public synchronized void markArray(int marker, int markPosition) {
         try {
-            if (markPosition < 0) {
+            if (markPosition < 0 || markPosition >= arrayVisualizer.getCurrentLength()) {
                 if (markPosition == -1) throw new Exception("Highlights.markArray(): Invalid position! -1 is reserved for the clearMark method.");
                 else if (markPosition == -5) throw new Exception("Highlights.markArray(): Invalid position! -5 was the constant originally used to unmark numbers in the array. Instead, use the clearMark method.");
-                else throw new Exception("Highlights.markArray(): Invalid position!");
+                else throw new Exception("Highlights.markArray(): Invalid position (" + markPosition + ")!");
             } else {
                 if (highlights[marker] == markPosition) {
                     return;

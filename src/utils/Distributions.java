@@ -224,8 +224,8 @@ public enum Distributions {
 
             int[] perlinNoise = new int[currentLen];
 
-            float step = 1f / Math.min(currentLen, 3072);
-            float randomStart = (float) (random.nextInt(currentLen));
+            double step = 1d / currentLen;
+            double randomStart = random.nextInt(currentLen);
             int octave = (int) (Math.log(currentLen) / Math.log(2));
 
             for (int i = 0; i < currentLen; i++) {
@@ -240,9 +240,8 @@ public enum Distributions {
                     minimum = perlinNoise[i];
                 }
             }
-            minimum = Math.abs(minimum);
             for (int i = 0; i < currentLen; i++) {
-                perlinNoise[i] += minimum;
+                perlinNoise[i] -= minimum;
             }
 
             double maximum = Double.MIN_VALUE;
@@ -272,7 +271,7 @@ public enum Distributions {
             int currentLen = ArrayVisualizer.getCurrentLength();
 
             for (int i = 0; i < currentLen; i++) {
-                int value = 0 - (int) (PerlinNoise.returnNoise((float) i / currentLen) * currentLen);
+                int value = 0 - (int) (PerlinNoise.returnNoise((double) i / currentLen) * currentLen);
                 array[i] = Math.min(value, currentLen-1);
             }
         }

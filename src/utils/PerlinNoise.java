@@ -19,37 +19,34 @@ public class PerlinNoise {
             151
         };
 
-    public PerlinNoise() {
-    }
-
-    private static float fade(float t) {
+    private static double fade(double t) {
         return t * t * t * (t * (t * 6 - 15) + 10);
     }
 
-    private static float grad(int hash, float x) {
+    private static double grad(int hash, double x) {
         return (hash & 1) == 0 ? x : -x;
     }
 
-    private static float lerp(float t, float a, float b)
+    private static double lerp(double t, double a, double b)
     {
         return a + t * (b - a);
     }
 
-    public static float returnNoise(float x) {
+    public static double returnNoise(double x) {
         int index = ((int) Math.floor(x)) & 0xff;
         x -= Math.floor(x);
-        float u = fade(x);
+        double u = fade(x);
         return lerp(u, grad(perm[index], x), grad(perm[index + 1], x - 1)) * 2;
     }
 
-    public static float returnFracBrownNoise(float x, int octave)
+    public static double returnFracBrownNoise(double x, int octave)
     {
-        float f = 0.0f;
-        float w = 0.5f;
+        double f = 0.0;
+        double w = 0.5;
         for (int i = 0; i < octave; i++) {
             f += w * returnNoise(x);
-            x *= 2.0f;
-            w *= 0.5f;
+            x *= 2.0;
+            w *= 0.5;
         }
         return f;
     }

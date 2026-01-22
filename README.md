@@ -8,36 +8,22 @@ To compile use:
 ```shell
 ./antw
 ```
-or:
-```bat
-.\antw.bat
-```
-depending on the CLI you are using. Alternatively, you can double-click on "antw" or "antw.bat" on Windows.
-If you have Ant in your PATH, you can simply run `ant`.
+or `ant` if you have Ant in your PATH. Alternatively, you can double-click on `antw` or `antw.bat` on Windows.
 
 To create a runnable JAR, run `./antw dist-jar`, or run `ant dist-jar` if you have Ant in your PATH. The JAR will be placed in the `dist` directory.
 
 To run use:
 ```shell
-./run.sh
+./run
 ```
-or:
-```bat
-.\run.bat
-```
-depending on the CLI you are using. Alternatively, you can double click on "run.sh" or "run.bat" on Windows.
+Alternatively, you can double click on `run` or `run.bat` on Windows.
 
 You can always download the most up-to-date pre-built JAR from [GitHub Actions](https://nightly.link/Flanlaina/ArrayV-v4.0/workflows/ant/personal-build/standalone-jar.zip) (link via [nightly.link](https://nightly.link)).
 
 You have to use command line if you want to add additional arguments to the program. To do so, use:
 ```shell
-./run.sh <arguments>
+./run <arguments>
 ```
-or:
-```bat
-.\run.bat <arguments>
-```
-depending on the CLI you are using.
 
 ## Legacy changelog
 

@@ -36,12 +36,13 @@ SOFTWARE.
  */
 
 final public class RunSummerSort extends MultipleSortThread {
-    final Class<? extends Sort> SORT_CLASS = sorts.hybrid.OptimizedRaikoSort.class;
-    final int                  SORT_LENGTH = 16384;
-    final double                SORT_SPEED = 8;
-    final int                 BUCKET_COUNT = 0;
-    final int                 UNIQUE_COUNT = 16;
-    static boolean         stabilityProper = true;
+    static final Class<? extends Sort> SORT_CLASS = sorts.hybrid.OptimizedIndexRaikoSort.class;
+    static final int                  SORT_LENGTH = 16384;
+    static final double                SORT_SPEED = 8;
+    static final int                 BUCKET_COUNT = 0;
+    static final int                 UNIQUE_COUNT = 16;
+    static final String               SORT_AUTHOR = "Flanlaina & aphitorite";
+    static boolean                stabilityProper = true;
 
 
     public RunSummerSort(ArrayVisualizer arrayVisualizer) {
@@ -62,7 +63,8 @@ final public class RunSummerSort extends MultipleSortThread {
 
         arrayManager.refreshArray(array, arrayVisualizer.getCurrentLength(), this.arrayVisualizer);
 
-        arrayVisualizer.setHeading(shuffleName + " (" + this.sortNumber + " / " + this.sortCount + ")");
+        arrayVisualizer.setHeading(
+                sort.getRunAllSortsName() + " (" + shuffleName + ": " + this.sortNumber + " / " + this.sortCount + ")");
 
         double sortSpeed = this.calculateSpeed(defaultSpeed, arrayVisualizer.getCurrentLength());
         Delays.setSleepRatio(sortSpeed);
@@ -120,7 +122,7 @@ final public class RunSummerSort extends MultipleSortThread {
         arrayManager.setShuffleSingle(Shuffles.ALMOST); // 3
         RunSummerSort.this.runSort(array, "Almost Sorted");
 
-        arrayVisualizer.getArrayFrame().setUniqueSlider(UNIQUE_COUNT); // 4
+        arrayFrame.setUniqueSlider(UNIQUE_COUNT); // 4
         arrayManager.setShuffleSingle(Shuffles.RANDOM);
         RunSummerSort.this.runSort(array, "Many Similar");
 
@@ -135,7 +137,7 @@ final public class RunSummerSort extends MultipleSortThread {
             Thread.sleep(3000);
         }
 
-        arrayVisualizer.getArrayFrame().setUniqueSlider(arrayVisualizer.getCurrentLength()); // 5
+        arrayFrame.setUniqueSlider(arrayVisualizer.getCurrentLength()); // 5
         arrayManager.setShuffleSingle(Shuffles.SHUFFLED_TAIL_INDEXSORT);
         RunSummerSort.this.runSort(array, "Scrambled Tail");
 
@@ -154,11 +156,9 @@ final public class RunSummerSort extends MultipleSortThread {
         arrayManager.setShuffleSingle(Shuffles.FINAL_MERGE).addSingle(Shuffles.REVERSE); // 10
         RunSummerSort.this.runSort(array, "Reversed Final Merge");
 
-        //arrayVisualizer.getArrayFrame().setUniqueSlider(arrayVisualizer.getCurrentLength() / 2);
         arrayManager.setShuffleSingle(Shuffles.ORGAN); // 11
         RunSummerSort.this.runSort(array, "Pipe Organ");
 
-        //arrayVisualizer.getArrayFrame().setUniqueSlider(arrayVisualizer.getCurrentLength());
         arrayManager.setShuffleSingle(Shuffles.FINAL_RADIX); // 12
         RunSummerSort.this.runSort(array, "Final Radix Pass");
 
@@ -289,62 +289,62 @@ final public class RunSummerSort extends MultipleSortThread {
         arrayManager.setShuffleSingle(Shuffles.PRIMES_REVERSED); // 54
         RunSummerSort.this.runSort(array, "Primes Reversed");
 
-        arrayManager.setShuffleSingle(Shuffles.RBST_BREADTH); // 55
+        arrayManager.setShuffleSingle(Shuffles.BST_PREORDER); // 55
+        RunSummerSort.this.runSort(array, "Pre-order BST Traversal");
+
+        arrayManager.setShuffleSingle(Shuffles.BST_POSTORDER); // 56
+        RunSummerSort.this.runSort(array, "Post-order BST Traversal");
+
+        arrayManager.setShuffleSingle(Shuffles.RBST_BREADTH); // 57
         RunSummerSort.this.runSort(array, "Breadth RBST Traversal");
 
-        arrayManager.setShuffleSingle(Shuffles.ONLY_RUNS); // 56
+        arrayManager.setShuffleSingle(Shuffles.ONLY_RUNS); // 58
         RunSummerSort.this.runSort(array, "Random Runs");
 
-        arrayManager.setShuffleSingle(Shuffles.LOG_SLOPES); // 57
+        arrayManager.setShuffleSingle(Shuffles.LOG_SLOPES); // 59
         RunSummerSort.this.runSort(array, "Logpile");
 
-        arrayManager.setShuffleSingle(Distributions.RANDOM); // 58
+        arrayManager.setShuffleSingle(Distributions.RANDOM); // 60
         RunSummerSort.this.runSort(array, "White Noise");
 
-        arrayManager.setShuffleSingle(Distributions.MODULO); // 59
+        arrayManager.setShuffleSingle(Distributions.MODULO); // 61
         RunSummerSort.this.runSort(array, "Modulo Function");
 
-        arrayManager.setShuffleSingle(Distributions.CUBIC).addSingle(Shuffles.RANDOM).setSleepRatio(2); // 60
+        arrayManager.setShuffleSingle(Distributions.CUBIC).addSingle(Shuffles.RANDOM).setSleepRatio(2); // 62
         RunSummerSort.this.runSort(array, "Shuffled Cubic");
 
-        arrayManager.setShuffleSingle(Distributions.QUINTIC).addSingle(Shuffles.RANDOM).setSleepRatio(2); // 61
+        arrayManager.setShuffleSingle(Distributions.QUINTIC).addSingle(Shuffles.RANDOM).setSleepRatio(2); // 63
         RunSummerSort.this.runSort(array, "Shuffled Quintic");
 
-        arrayManager.setShuffleSingle(Distributions.SINE); // 62
+        arrayManager.setShuffleSingle(Distributions.SINE); // 64
         RunSummerSort.this.runSort(array, "Sine Wawe");
 
-        arrayManager.setShuffleSingle(Distributions.COSINE); // 63
+        arrayManager.setShuffleSingle(Distributions.COSINE); // 65
         RunSummerSort.this.runSort(array, "Cosine Wawe");
 
-        arrayManager.setShuffleSingle(Distributions.SIMILAR).addSingle(Shuffles.RANDOM).setSleepRatio(2); // 64
+        arrayManager.setShuffleSingle(Distributions.SIMILAR).addSingle(Shuffles.RANDOM).setSleepRatio(2); // 66
         RunSummerSort.this.runSort(array, "Few Unique");
 
-        arrayManager.setShuffleSingle(Distributions.EQUAL); // 65
+        arrayManager.setShuffleSingle(Distributions.EQUAL); // 67
         RunSummerSort.this.runSort(array, "No Unique");
 
-        arrayManager.setShuffleSingle(Distributions.RULER); // 66
+        arrayManager.setShuffleSingle(Distributions.RULER); // 68
         RunSummerSort.this.runSort(array, "Ruler");
 
-        arrayManager.setShuffleSingle(Distributions.BLANCMANGE); // 67
+        arrayManager.setShuffleSingle(Distributions.BLANCMANGE); // 69
         RunSummerSort.this.runSort(array, "Blancmange Curve");
 
-        arrayManager.setShuffleSingle(Distributions.CANTOR).addSingle(Shuffles.RANDOM).setSleepRatio(2); // 68
+        arrayManager.setShuffleSingle(Distributions.CANTOR).addSingle(Shuffles.RANDOM).setSleepRatio(2); // 70
         RunSummerSort.this.runSort(array, "Shuffled Cantor Function");
 
-        arrayManager.setShuffleSingle(Distributions.DIVISORS); // 69
+        arrayManager.setShuffleSingle(Distributions.DIVISORS); // 71
         RunSummerSort.this.runSort(array, "Sum of Divisors");
 
-        arrayManager.setShuffleSingle(Distributions.DIGITS_PROD); // 70
+        arrayManager.setShuffleSingle(Distributions.DIGITS_PROD); // 72
         RunSummerSort.this.runSort(array, "Product of Digits");
 
-        arrayManager.setShuffleSingle(Distributions.DIGITS_SUM); // 71
+        arrayManager.setShuffleSingle(Distributions.DIGITS_SUM); // 73
         RunSummerSort.this.runSort(array, "Sum of Digits");
-
-        arrayManager.setShuffleSingle(Distributions.BITS_SUM); // 72
-        RunSummerSort.this.runSort(array, "Sum of Bits");
-
-        arrayManager.setShuffleSingle(Distributions.HEX_DIGITS_SUM); // 73
-        RunSummerSort.this.runSort(array, "Sum of Hex Digits");
 
         arrayManager.setShuffleSingle(Distributions.TOTIENT); // 74
         RunSummerSort.this.runSort(array, "Euler Totient Function");
@@ -389,7 +389,7 @@ final public class RunSummerSort extends MultipleSortThread {
 
                     Sort tempSort = createSortInstance();
 
-                    arrayVisualizer.setCategory(tempSort.getRunAllSortsName());
+                    arrayVisualizer.setCategory(SORT_AUTHOR);
                     arrayVisualizer.toggleInShowcase(true);
                     RunSummerSort.this.executeSortList(array);
                     arrayVisualizer.toggleInShowcase(false);

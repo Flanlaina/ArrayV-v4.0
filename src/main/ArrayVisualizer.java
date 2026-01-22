@@ -1583,26 +1583,22 @@ public final class ArrayVisualizer {
 
     public static void main(String[] args) {
         System.setProperty("sun.java2d.d3d", "false");
-        // if (args.length > 0) {
-        //     if (args[0].contains("RSS")) doRSS = true;
-        //     else ArrayVisualizer.MAX_LENGTH_POWER = Integer.parseInt(args[0]);
-        // }
-        // if (args.length > 1) if (args[1].contains("RSS")) doRSS = true;
         for (int i = 0; i < args.length; i++) {
             if ("RSS".equals(args[i])) doRSS = true;
             else if ("--enable-writes-warnings".equals(args[i])) writesWarningsEnabled = true;
             else {
-                int tmpMaxLenPower = 24;
+                int tmpMaxLenPower = 18;
                 try {
                     tmpMaxLenPower = Integer.parseInt(args[i]);
                 } catch (NumberFormatException e) {
                     System.err.println("Error parsing the maximal power of two of the array length: \"" + args[i]
-                            + "\" is not a valid int. The default (24) will be used.");
+                            + "\" is not a valid int.");
+                    System.exit(1); // there was an error while parsing arguments
                 }
                 if (tmpMaxLenPower < 2 || tmpMaxLenPower > 30) {
                     System.err.println("The specified maximal power of two of the array length (" + tmpMaxLenPower
-                            + ") is not in the range [2, 30]. The default (24) will be used.");
-                    tmpMaxLenPower = 24;
+                            + ") is not in the range [2, 30].");
+                    System.exit(1);
                 }
                 ArrayVisualizer.MAX_LENGTH_POWER = tmpMaxLenPower;
             }

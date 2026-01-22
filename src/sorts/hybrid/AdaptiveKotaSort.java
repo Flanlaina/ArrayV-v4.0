@@ -4,15 +4,29 @@ import main.ArrayVisualizer;
 import sorts.templates.Sort;
 
 /*
+ * 
+The MIT License (MIT)
 
-+---------------------------+
-| SORTING ALGORITHM SCARLET |
-+---------------------------+
-|    A sorting algorithm    |
-|    studio by Flanlaina    |
-|    (a.k.a Ayako-chan)     |
-+---------------------------+
+Copyright (c) 2020 aphitorite
+Copyright (c) 2023-2026 Flanlaina, Sorting Algorithm Scarlet
 
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
  */
 
 /**
@@ -68,22 +82,34 @@ public class AdaptiveKotaSort extends Sort {
     }
 
     void rotate(int[] array, int a, int m, int b) {
-        int l = m - a, r = b - m;
-        while (l > 1 && r > 1) {
-            if (r < l) {
-                this.blockSwap(array, m - r, m, r);
-                b -= r;
-                m -= r;
-                l -= r;
-            } else {
-                this.blockSwap(array, a, m, l);
-                a += l;
-                m += l;
-                r -= l;
-            }
+        Highlights.clearAllMarks();
+        if (a == m || m == b) return;
+        int p0 = a, p1 = m - 1, p2 = m, p3 = b - 1;
+        int tmp;
+        while (p0 < p1 && p2 < p3) {
+            tmp = array[p1];
+            Writes.write(array, p1--, array[p0], 0.5, true, false);
+            Writes.write(array, p0++, array[p2], 0.5, true, false);
+            Writes.write(array, p2++, array[p3], 0.5, true, false);
+            Writes.write(array, p3--, tmp, 0.5, true, false);
         }
-        if (r == 1) this.insertTo(array, m, a);
-        else if (l == 1) this.insertTo(array, a, b - 1);
+        while (p0 < p1) {
+            tmp = array[p1];
+            Writes.write(array, p1--, array[p0], 0.5, true, false);
+            Writes.write(array, p0++, array[p3], 0.5, true, false);
+            Writes.write(array, p3--, tmp, 0.5, true, false);
+        }
+        while (p2 < p3) {
+            tmp = array[p2];
+            Writes.write(array, p2++, array[p3], 0.5, true, false);
+            Writes.write(array, p3--, array[p0], 0.5, true, false);
+            Writes.write(array, p0++, tmp, 0.5, true, false);
+        }
+        if (p0 < p3) { // don't count reversals that don't do anything
+            if (p3 - p0 >= 3) Writes.reversal(array, p0, p3, 1, true, false);
+            else Writes.swap(array, p0, p3, 1, true, false);
+            Highlights.clearMark(2);
+        }
     }
 
     protected int binSearch(int[] array, int a, int b, int val, boolean left) {
@@ -358,19 +384,7 @@ public class AdaptiveKotaSort extends Sort {
         }
     }
 
-    void blockMerge(int[] array, int a, int m, int b, int t, int p, int bLen) {
-        if (Reads.compareValues(array[m - 1], array[m]) <= 0) return;
-        b = maxExpSearch(array, m, b, array[m - 1], true);
-        if(b - m <= 2 * bLen) {
-            mergeBW(array, a, m, b, p);
-            return;
-        }
-        int a1 = minExpSearch(array, a, m, array[m], false);
-        if(m - a1 <= 2 *bLen) {
-            mergeFW(array, a1, m, b, p);
-            return;
-        }
-        a = a1 - (a1 - a) % bLen;
+    void blockMergeHelper(int[] array, int a, int m, int b, int t, int p, int bLen) {
         int c = 0, tp = t;
 
         int i = a, j = m, k = p;
@@ -425,19 +439,7 @@ public class AdaptiveKotaSort extends Sort {
         this.blockSelect(array, a+2*bLen, b1, t, bLen);
     }
 
-    void blockMergeNoBuf(int[] array, int a, int m, int b, int t, int bLen) { //from wiki sort
-        if (Reads.compareValues(array[m - 1], array[m]) <= 0) return;
-        b = maxExpSearch(array, m, b, array[m - 1], true);
-        if(b - m <= 2 * bLen) {
-            inPlaceMergeBW(array, a, m, b);
-            return;
-        }
-        int a1 = minExpSearch(array, a, m, array[m], false);
-        if(m - a1 <= 2 * bLen) {
-            inPlaceMergeFW(array, a1, m, b);
-            return;
-        }
-        a = a1 - (a1 - a) % bLen;
+    void blockMergeNoBufHelper(int[] array, int a, int m, int b, int t, int bLen) { //from wiki sort
         for(int i = a+bLen, j = t; i < m; i += bLen, j++) //tag blocks
             Writes.swap(array, i, j, 10, true, false);
 
@@ -472,6 +474,30 @@ public class AdaptiveKotaSort extends Sort {
             }
         }
         this.inPlaceMergeBW(array, a, b1, b);
+    }
+
+    void blockMerge(int[] array, int a, int m, int b, int t, int p, int bLen) {
+        if (Reads.compareValues(array[m - 1], array[m]) <= 0) return;
+        int s = minExpSearch(array, a, m, array[m], false);
+        b = maxExpSearch(array, m, b, array[m - 1], true);
+        if (Reads.compareValues(array[s], array[b - 1]) > 0) {
+            rotate(array, s, m, b);
+            return;
+        }
+        if (Math.min(m - s, b - m) <= 2 * bLen) merge(array, s, m, b, p);
+        else blockMergeHelper(array, s - (s - a) % bLen, m, b, t, p, bLen);
+    }
+
+    void blockMergeNoBuf(int[] array, int a, int m, int b, int t, int bLen) {
+        if (Reads.compareValues(array[m - 1], array[m]) <= 0) return;
+        int s = minExpSearch(array, a, m, array[m], false);
+        b = maxExpSearch(array, m, b, array[m - 1], true);
+        if (Reads.compareValues(array[s], array[b - 1]) > 0) {
+            rotate(array, s, m, b);
+            return;
+        }
+        if (Math.min(m - s, b - m) <= 2 * bLen) inPlaceMerge(array, s, m, b);
+        else blockMergeNoBufHelper(array, s - (s - a) % bLen, m, b, t, bLen);
     }
 
     void mergeTo(int[] array, int a, int m, int b, int p) {
@@ -522,7 +548,7 @@ public class AdaptiveKotaSort extends Sort {
         int bLen   = 1 << ((32-Integer.numberOfLeadingZeros(length-1))/2), //pow of 2 >= sqrt n
             tLen   = this.tLenCalc(length, bLen),
             bufLen = 2*bLen;
-        int ideal = bufLen + tLen;
+        int ideal = bufLen + tLen, idealBLen = bLen;
         //choose direction to find keys
         boolean bwBuf;
         int rRun = this.buildUniqueRunBW(array, b, ideal), lRun = 0;
@@ -584,9 +610,11 @@ public class AdaptiveKotaSort extends Sort {
             }
         }
         if (bwBuf) {
-            fragmentedMergeBW(array, a, b1, b, bLen);
+            a = minExpSearch(array, a, b1, array[b1], false);
+            fragmentedMergeBW(array, a, b1, b, idealBLen);
         } else {
-            fragmentedMergeFW(array, a, a1, b, bLen);
+            b = maxExpSearch(array, a1, b, array[a1 - 1], true);
+            fragmentedMergeFW(array, a, a1, b, idealBLen);
         }
     }
 
