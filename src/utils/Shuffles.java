@@ -78,8 +78,9 @@ public enum Shuffles {
             Random random = getRng();
 
             for (int i = 0; i < Math.max(currentLen / 20, 1); i++){
-                int i1 = randInt(0, currentLen - 1, random);
-                int i2 = randInt(i1 + 1, currentLen, random);
+                int i1 = randInt(0, currentLen, random);
+                int i2 = randInt(0, currentLen - 1, random);
+                if (i2 >= i1) i2++;
                 Writes.swap(array, i1, i2, 10, true, false);
             }
         }
@@ -119,6 +120,26 @@ public enum Shuffles {
             for (int i = 0; i < currentLen; i++) {
                 int r = random.nextInt(currentLen);
                 if (i != r) Writes.swap(array, i, r, 1, true, false);
+            }
+        }
+    },
+    NAIVER {
+        public int randInt(int a, int b, Random rng) {
+            return rng.nextInt(b - a) + a;
+        }
+        public String getName() {
+            return "Naiver Randomly";
+        }
+        @Override
+        public void shuffleArray(int[] array, ArrayVisualizer ArrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
+            int currentLen = ArrayVisualizer.getCurrentLength();
+            Random random = getRng();
+
+            for (int i = 0; i < currentLen; i++){
+                int i1 = randInt(0, currentLen, random);
+                int i2 = randInt(0, currentLen - 1, random);
+                if (i2 >= i1) i2++;
+                Writes.swap(array, i1, i2, 1, true, false);
             }
         }
     },
