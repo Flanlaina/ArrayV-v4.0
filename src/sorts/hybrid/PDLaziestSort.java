@@ -6,7 +6,7 @@ import utils.IndexedRotations;
 
 /*
 
-Coded for ArrayV by Harumi
+Coded for ArrayV by Flanlaina
 extending code by aphitorite
 
 +---------------------------+
@@ -16,7 +16,7 @@ extending code by aphitorite
  */
 
 /**
- * @author Harumi
+ * @author Flanlaina
  * @author aphitorite
  *
  */

@@ -8,7 +8,7 @@ import main.ArrayVisualizer;
  * 
 MIT License
 
-Copyright (c) 2021-2024 aphitorite, edited by Haruki (a.k.a. Ayako-chan)
+Copyright (c) 2021-2024 aphitorite, edited by Flanlaina
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

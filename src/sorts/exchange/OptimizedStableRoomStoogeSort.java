@@ -5,8 +5,8 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Harumi
-in collaboration with thatsOven and PCBoy
+Coded for ArrayV by Flanlaina
+in collaboration with Amari (thatsOven) and PCBoy
 
 +---------------------------+
 | Sorting Algorithm Scarlet |
@@ -15,8 +15,8 @@ in collaboration with thatsOven and PCBoy
  */
 
 /**
- * @author Harumi
- * @author thatsOven
+ * @author Flanlaina
+ * @author Amari (thatsOven)
  * @author PCBoy
  *
  */

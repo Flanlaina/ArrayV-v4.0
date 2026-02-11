@@ -5,7 +5,7 @@ import sorts.templates.Sort;
 
 /*
 
-Ported to ArrayV by Haruki
+Ported to ArrayV by Flanlaina
 in collaboration with yuji
 
 +-------------------------+
@@ -15,7 +15,7 @@ in collaboration with yuji
  */
 
 /**
- * @author Haruki
+ * @author Flanlaina
  * @author yuji
  *
  */

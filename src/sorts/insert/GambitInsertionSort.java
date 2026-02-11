@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sorts.insert;
 
 import main.ArrayVisualizer;

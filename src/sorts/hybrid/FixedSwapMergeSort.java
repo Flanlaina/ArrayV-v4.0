@@ -5,7 +5,7 @@ import sorts.templates.Sort;
 
 /**
  * @author Gaming32
- * @author Harumi
+ * @author Flanlaina
  * 
  */
 public class FixedSwapMergeSort extends Sort {

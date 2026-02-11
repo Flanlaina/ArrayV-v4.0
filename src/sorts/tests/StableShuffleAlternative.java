@@ -7,8 +7,8 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Harumi
-extending code by thatsOven and aphitorite
+Coded for ArrayV by Flanlaina
+extending code by Amari (thatsOven) and aphitorite
 
 +---------------------------+
 | Sorting Algorithm Scarlet |
@@ -17,8 +17,8 @@ extending code by thatsOven and aphitorite
  */
 
 /**
- * @author Harumi
- * @author thatsOven
+ * @author Flanlaina
+ * @author Amari (thatsOven)
  * @author aphitorite
  *
  */

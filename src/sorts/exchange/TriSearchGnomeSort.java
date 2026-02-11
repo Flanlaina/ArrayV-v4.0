@@ -1,14 +1,11 @@
-/**
- * 
- */
 package sorts.exchange;
 
 import main.ArrayVisualizer;
 import sorts.templates.Sort;
 
 /**
- * @author thatsOven - for the TriSearch algorithm
- * @author mingyue12 - for the rest of this sorting algorithm
+ * @author Amari (thatsOven) - for the TriSearch algorithm
+ * @author Flanlaina - for the rest of this sorting algorithm
  *
  */
 public final class TriSearchGnomeSort extends Sort {

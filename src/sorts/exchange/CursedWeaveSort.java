@@ -5,7 +5,7 @@ import sorts.insert.InsertionSort;
 import sorts.templates.Sort;
 
 /**
- * @author Haruki
+ * @author Flanlaina
  * @author yuji
  *
  */

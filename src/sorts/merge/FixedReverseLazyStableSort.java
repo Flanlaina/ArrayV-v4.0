@@ -6,7 +6,7 @@ import utils.IndexedRotations;
 
 /*
 
-Coded for ArrayV by Haruki
+Coded for ArrayV by Flanlaina
 extending code by Gaming32
 
 +---------------------------+
@@ -16,7 +16,7 @@ extending code by Gaming32
  */
 
 /**
- * @author Haruki
+ * @author Flanlaina
  * @author Gaming32
  *
  */

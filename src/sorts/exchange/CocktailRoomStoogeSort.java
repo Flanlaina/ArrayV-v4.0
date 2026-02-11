@@ -5,18 +5,19 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Harumi
-extending code by thatsOven
-
 +---------------------------+
-| Sorting Algorithm Scarlet |
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
 +---------------------------+
 
  */
 
 /**
- * @author Harumi
- * @author thatsOven
+ * @author Flanlaina
+ * @author Amari (thatsOven)
  *
  */
 public class CocktailRoomStoogeSort extends Sort {

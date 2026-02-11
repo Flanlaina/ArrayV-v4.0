@@ -5,7 +5,7 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Harumi
+Coded for ArrayV by Flanlaina
 
 +---------------------------+
 | Sorting Algorithm Scarlet |
@@ -14,7 +14,7 @@ Coded for ArrayV by Harumi
  */
 
 /**
- * @author Harumi
+ * @author Flanlaina
  *
  */
 public class SinkingMergeSortRecursive extends Sort {

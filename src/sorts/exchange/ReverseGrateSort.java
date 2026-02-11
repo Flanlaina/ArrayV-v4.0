@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sorts.exchange;
 
 import main.ArrayVisualizer;

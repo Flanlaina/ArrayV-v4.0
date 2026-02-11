@@ -19,8 +19,8 @@ final public class OptimizedStoogeSortStudio extends Sort {
         super(arrayVisualizer);
         
         this.setSortListName("Optimized Stooge (The Studio version)");
-        this.setRunAllSortsName("Optimized Stooge Sort");
-        this.setRunSortName("Optistooge Sort");
+        this.setRunAllSortsName("Optimized Stooge Sort (The Studio)");
+        this.setRunSortName("Optistooge Sort (Studio Stooge Sort)");
         this.setCategory("Exchange Sorts");
         this.setComparisonBased(true);
         this.setBucketSort(false);

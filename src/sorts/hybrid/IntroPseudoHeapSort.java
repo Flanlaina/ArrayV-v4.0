@@ -5,7 +5,7 @@ import sorts.insert.InsertionSort;
 import sorts.templates.Sort;
 
 /**
- * @author mingyue12
+ * @author Flanlaina
  *
  */
 public final class IntroPseudoHeapSort extends Sort {

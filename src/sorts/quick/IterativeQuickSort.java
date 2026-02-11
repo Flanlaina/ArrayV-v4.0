@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sorts.quick;
 
 import main.ArrayVisualizer;

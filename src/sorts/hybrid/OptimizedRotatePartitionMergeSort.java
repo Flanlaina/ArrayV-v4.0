@@ -5,11 +5,12 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Haruki
-in collaboration with aphitorite and Control
-
 +---------------------------+
-| Sorting Algorithm Scarlet |
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
 +---------------------------+
 
  */
@@ -21,7 +22,7 @@ in collaboration with aphitorite and Control
  * {@code mergeSortWithBuf()} or {@code mergeSortNoBuf()} from a reference
  * instance.
  * 
- * @author Haruki (a.k.a. Ayako-chan)
+ * @author Flanlaina
  * @author aphitorite
  * @author Control
  *
@@ -100,7 +101,7 @@ public class OptimizedRotatePartitionMergeSort extends Sort {
 
     protected void rotate(int[] array, int[] buf, int a, int m, int b) {
         Highlights.clearAllMarks();
-        if (a >= m || m >= b) return;
+        if (a == m || m == b) return;
         if (buf == null) {
             rotateNoBuf(array, a, m, b);
             return;
@@ -165,8 +166,7 @@ public class OptimizedRotatePartitionMergeSort extends Sort {
         int d = (a > b) ? -1 : 1;
         for (int i = a; i != b; i += d)
             Writes.write(array, i, array[i + d], 0.5, true, false);
-        if (a != b)
-            Writes.write(array, b, temp, 0.5, true, false);
+        if (a != b) Writes.write(array, b, temp, 0.5, true, false);
     }
 
     protected int binSearch(int[] array, int a, int b, int val, boolean left) {
@@ -247,28 +247,21 @@ public class OptimizedRotatePartitionMergeSort extends Sort {
 
     protected void merge(int[] array, int[] buf, int a, int m, int b) {
         Highlights.clearMark(2);
-        if (m - a > b - m)
-            mergeBWExt(array, buf, a, m, b);
-        else
-            mergeFWExt(array, buf, a, m, b);
+        if (m - a > b - m) mergeBWExt(array, buf, a, m, b);
+        else               mergeFWExt(array, buf, a, m, b);
     }
 
     protected void inPlaceMerge(int[] array, int a, int m, int b) {
         Highlights.clearMark(2);
-        if (b - m < m - a)
-            inPlaceMergeBW(array, a, m, b);
-        else
-            inPlaceMergeFW(array, a, m, b);
+        if (b - m < m - a) inPlaceMergeBW(array, a, m, b);
+        else               inPlaceMergeFW(array, a, m, b);
     }
 
     public void rotateMerge(int[] array, int[] buf, int a, int m, int b) {
-        if (a >= m || m >= b || (Reads.compareIndices(array, m - 1, m, 0.0, true) <= 0)) return;
+        if (a == m || m == b) return;
+        if (Reads.compareIndices(array, m - 1, m, 0.0, true) <= 0) return;
         a = minExpSearch(array, a, m, array[m], false);
         b = maxExpSearch(array, m, b, array[m - 1], true);
-        if (Reads.compareValues(array[a], array[b - 1]) > 0) {
-            rotate(array, buf, a, m, b);
-            return;
-        }
         int lenA = m - a, lenB = b - m;
         if (Math.min(lenA, lenB) <= 8) {
             inPlaceMerge(array, a, m, b);
@@ -310,7 +303,7 @@ public class OptimizedRotatePartitionMergeSort extends Sort {
 
     public int findRun(int[] array, int start, int end) {
         int i = start + 1;
-        if (i >= end) return i;
+        if (i == end) return i;
         boolean lessunique = false;
         boolean different = false;
         int cmp = Reads.compareIndices(array, i - 1, i, 0.5, true);

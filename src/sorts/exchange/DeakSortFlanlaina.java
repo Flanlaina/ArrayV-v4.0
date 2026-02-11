@@ -5,15 +5,13 @@ import sorts.templates.Sort;
 
 /*
 
-/------------------/
-|   SORTS GALORE   |
-|------------------|
-|  courtesy of     |
-|  meme man        |
-|  (aka gooflang)  |
-/------------------/
-
-This sort was made completely on accident.
++---------------------------+
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
++---------------------------+
 
  */
 
@@ -83,17 +81,7 @@ public class DeakSortFlanlaina extends Sort {
             tries++;
         }
         if (tries >= currentLength || segCnt > 1) {
-            // bubble sort
-            boolean change = true;
-            while (change) {
-                change = false;
-                for (int i = 1; i < currentLength; i++) {
-                    if (Reads.compareIndices(array, i, i - 1, 0.1, true) < 0) {
-                        Writes.swap(array, i, i - 1, 0.1, true, false);
-                        change = true;
-                    }
-                }
-            } 
+            bubbleSort(array, 0, currentLength, 0.1);
         }
     }
 }

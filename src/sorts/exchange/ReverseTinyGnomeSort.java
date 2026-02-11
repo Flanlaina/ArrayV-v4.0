@@ -4,7 +4,7 @@ import main.ArrayVisualizer;
 import sorts.templates.Sort;
 
 /**
- * @author Harumi
+ * @author Flanlaina
  *
  */
 public class ReverseTinyGnomeSort extends Sort {

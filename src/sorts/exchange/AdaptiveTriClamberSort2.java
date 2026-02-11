@@ -6,7 +6,7 @@ import sorts.templates.Sort;
 /*
 
 Coded for ArrayV by Flanlaina
-extending code by PCBoy and thatsOven
+extending code by PCBoy and Amari (thatsOven)
 
 +---------------------------+
 | Sorting Algorithm Scarlet |
@@ -17,7 +17,7 @@ extending code by PCBoy and thatsOven
 /**
  * @author Flanlaina
  * @author PCBoy
- * @author thatsOven
+ * @author Amari (thatsOven)
  * 
  */
 public class AdaptiveTriClamberSort2 extends Sort {

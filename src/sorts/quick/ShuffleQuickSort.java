@@ -9,7 +9,7 @@ import sorts.templates.Sort;
 /*
 
 Ported to ArrayV by Kiriko-chan
-in collaboration with thatsOven
+in collaboration with Amari (thatsOven)
 
 -----------------------------
 - Sorting Algorithm Scarlet -
@@ -19,7 +19,7 @@ in collaboration with thatsOven
 
 /**
  * @author Kiriko-chan
- * @author thatsOven
+ * @author Amari (thatsOven)
  *
  */
 public final class ShuffleQuickSort extends Sort {

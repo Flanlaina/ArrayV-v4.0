@@ -6,7 +6,7 @@ import utils.IndexedRotations;
 
 /*
 
-Coded for ArrayV by Haruki
+Coded for ArrayV by Flanlaina
 
 +---------------------------+
 | Sorting Algorithm Scarlet |
@@ -15,7 +15,7 @@ Coded for ArrayV by Haruki
  */
 
 /**
- * @author Haruki
+ * @author Flanlaina
  *
  */
 public class CocktailLazyStableSort extends Sort {

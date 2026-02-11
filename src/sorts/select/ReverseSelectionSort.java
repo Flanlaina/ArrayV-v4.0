@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sorts.select;
 
 import main.ArrayVisualizer;
@@ -10,7 +7,7 @@ import sorts.templates.Sort;
  * 
 MIT License
 
-Copyright (c) 2021 mingyue12
+Copyright (c) 2021 Flanlaina
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +30,7 @@ SOFTWARE.
  */
 
 /**
- * @author mingyue12
+ * @author Flanlaina
  *
  */
 public final class ReverseSelectionSort extends Sort {

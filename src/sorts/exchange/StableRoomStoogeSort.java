@@ -5,8 +5,8 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Harumi
-in collaboration with thatsOven
+Coded for ArrayV by Flanlaina
+in collaboration with Amari (thatsOven)
 
 +---------------------------+
 | Sorting Algorithm Scarlet |
@@ -15,8 +15,8 @@ in collaboration with thatsOven
  */
 
 /**
- * @author Harumi
- * @author thatsOven
+ * @author Flanlaina
+ * @author Amari (thatsOven)
  *
  */
 public final class StableRoomStoogeSort extends Sort {

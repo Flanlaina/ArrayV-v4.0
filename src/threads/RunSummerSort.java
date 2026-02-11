@@ -36,12 +36,12 @@ SOFTWARE.
  */
 
 final public class RunSummerSort extends MultipleSortThread {
-    static final Class<? extends Sort> SORT_CLASS = sorts.hybrid.OptimizedIndexRaikoSort.class;
-    static final int                  SORT_LENGTH = 16384;
-    static final double                SORT_SPEED = 8;
+    static final Class<? extends Sort> SORT_CLASS = sorts.hybrid.AdaptiveKotaSort.class;
+    static final int                  SORT_LENGTH = 4096;
+    static final double                SORT_SPEED = 4;
     static final int                 BUCKET_COUNT = 0;
-    static final int                 UNIQUE_COUNT = 16;
-    static final String               SORT_AUTHOR = "Flanlaina & aphitorite";
+    static final int                 UNIQUE_COUNT = 64;
+    static final String                 SORT_NAME = "Adaptive Kotasort";
     static boolean                stabilityProper = true;
 
 
@@ -58,13 +58,11 @@ final public class RunSummerSort extends MultipleSortThread {
         if (slowSort) sortLength = this.calculateLengthSlow(defaultLength, sort.getUnreasonableLimit());
         else sortLength = this.calculateLength(defaultLength);
 
-        if(sortLength != arrayVisualizer.getCurrentLength())
-            arrayFrame.setLengthSlider(sortLength);
+        if(sortLength != arrayVisualizer.getCurrentLength()) arrayFrame.setLengthSlider(sortLength);
 
         arrayManager.refreshArray(array, arrayVisualizer.getCurrentLength(), this.arrayVisualizer);
 
-        arrayVisualizer.setHeading(
-                sort.getRunAllSortsName() + " (" + shuffleName + ": " + this.sortNumber + " / " + this.sortCount + ")");
+        arrayVisualizer.setHeading(shuffleName + " (" + this.sortNumber + " / " + this.sortCount + ")");
 
         double sortSpeed = this.calculateSpeed(defaultSpeed, arrayVisualizer.getCurrentLength());
         Delays.setSleepRatio(sortSpeed);
@@ -234,7 +232,7 @@ final public class RunSummerSort extends MultipleSortThread {
         arrayManager.setShuffleSingle(Shuffles.REC_REV); // 36
         RunSummerSort.this.runSort(array, "Recursive Reversal");
 
-        arrayManager.setShuffleSingle(Shuffles.TRI_HEAP).setSleepRatio(3); // 37
+        arrayManager.setShuffleSingle(Shuffles.TRI_HEAP).setSleepRatio(1.5); // 37
         RunSummerSort.this.runSort(array, "Triangular Heap");
 
         arrayManager.setShuffleSingle(Shuffles.BIT_REVERSE); // 38
@@ -276,8 +274,7 @@ final public class RunSummerSort extends MultipleSortThread {
         arrayManager.setShuffleSingle(Shuffles.XORSWAP); // 50
         RunSummerSort.this.runSort(array, "XOR Swap");
 
-        arrayManager.setShuffleSingle(Shuffles.FINAL_MERGE)
-             .addSingle(Shuffles.PARTIAL_REVERSE_ALT); // 51
+        arrayManager.setShuffleSingle(Shuffles.FINAL_MERGE).addSingle(Shuffles.PARTIAL_REVERSE_ALT); // 51
         RunSummerSort.this.runSort(array, "Penultimate Bitonic Pass");
 
         arrayManager.setShuffleSingle(Shuffles.GRAY_CODE); // 52
@@ -370,8 +367,7 @@ final public class RunSummerSort extends MultipleSortThread {
 
     @Override
     protected synchronized void runThread(int[] array, int current, int total, boolean runAllActive) throws Exception {
-        if(arrayVisualizer.isActive())
-            return;
+        if(arrayVisualizer.isActive()) return;
 
         Sounds.toggleSound(true);
         arrayVisualizer.setSortingThread(new Thread("RSS") {
@@ -387,22 +383,23 @@ final public class RunSummerSort extends MultipleSortThread {
 
                     arrayManager.toggleMutableLength(false);
 
-                    Sort tempSort = createSortInstance();
-
-                    arrayVisualizer.setCategory(SORT_AUTHOR);
+                    arrayVisualizer.setCategory(SORT_NAME);
                     arrayVisualizer.toggleInShowcase(true);
                     RunSummerSort.this.executeSortList(array);
-                    arrayVisualizer.toggleInShowcase(false);
+
                     if(!runAllActive) {
-                        arrayVisualizer.setCategory("Run " + tempSort.getRunAllSortsName());
+                        arrayVisualizer.setCategory("Run " + SORT_NAME);
                         arrayVisualizer.setHeading("Done");
                     }
 
-                    arrayManager.toggleMutableLength(true);
                 }
                 catch (Exception e) {
                     JErrorPane.invokeErrorMessage(e);
                 }
+
+                arrayVisualizer.toggleInShowcase(false);
+                arrayManager.toggleMutableLength(true);
+
                 Sounds.toggleSound(false);
                 arrayVisualizer.setSortingThread(null);
             }

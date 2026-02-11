@@ -4,7 +4,7 @@ import main.ArrayVisualizer;
 import sorts.templates.Sort;
 
 /**
- * @author Yuri-chan2007
+ * @author Flanlaina
  *
  */
 public final class PatternDefeatingGnomeSort extends Sort {

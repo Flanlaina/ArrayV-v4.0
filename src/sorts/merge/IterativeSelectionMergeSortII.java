@@ -5,7 +5,7 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Harumi
+Coded for ArrayV by Flanlaina
 extending code by _fluffyy and PCBoy
 
 +---------------------------+
@@ -15,7 +15,7 @@ extending code by _fluffyy and PCBoy
  */
 
 /**
- * @author Harumi
+ * @author Flanlaina
  * @author _fluffyy
  * @author PCBoy
  *

@@ -5,7 +5,7 @@ import sorts.templates.Sort;
 
 /*
 
-Coded for ArrayV by Haruki
+Coded for ArrayV by Flanlaina
 in collaboration with Scandum
 
 +---------------------------+
@@ -18,7 +18,7 @@ in collaboration with Scandum
  * To use this algorithm in another, use {@code quickSort()} from a reference
  * instance.
  * 
- * @author Haruki - implementation of the sort
+ * @author Flanlaina - implementation of the sort
  * @author Scandum - the analyzer before sorting
  *
  */

@@ -7,8 +7,8 @@ import utils.IndexedRotations;
 
 /*
 
-Coded for ArrayV by Harumi
-extending code by Meme Man and PCBoy
+Coded for ArrayV by Flanlaina
+extending code by gooflang and PCBoy
 
 +---------------------------+
 | Sorting Algorithm Scarlet |
@@ -17,8 +17,8 @@ extending code by Meme Man and PCBoy
  */
 
 /**
- * @author Harumi
- * @author Meme Man
+ * @author Flanlaina
+ * @author gooflang
  * @author PCBoy
  *
  */

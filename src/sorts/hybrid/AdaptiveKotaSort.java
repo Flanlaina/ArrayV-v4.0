@@ -126,22 +126,22 @@ public class AdaptiveKotaSort extends Sort {
 
     protected int minExpSearch(int[] array, int a, int b, int val, boolean left) {
         int i = 1;
-        if (left) while (a - 1 + i < b && Reads.compareValues(val, array[a - 1 + i]) > 0) i *= 2;
-        else while (a - 1 + i < b && Reads.compareValues(val, array[a - 1 + i]) >= 0) i *= 2;
+        if (left) while (a - 1 + i < b && Reads.compareValues(val, array[a - 1 + i]) >  0) i *= 2;
+        else      while (a - 1 + i < b && Reads.compareValues(val, array[a - 1 + i]) >= 0) i *= 2;
         return binSearch(array, a + i / 2, Math.min(b, a - 1 + i), val, left);
     }
 
     protected int maxExpSearch(int[] array, int a, int b, int val, boolean left) {
         int i = 1;
         if (left) while (b - i >= a && Reads.compareValues(val, array[b - i]) <= 0) i *= 2;
-        else while (b - i >= a && Reads.compareValues(val, array[b - i]) < 0) i *= 2;
+        else      while (b - i >= a && Reads.compareValues(val, array[b - i]) <  0) i *= 2;
         return binSearch(array, Math.max(a, b - i + 1), b - i / 2, val, left);
     }
 
     // Easy patch to avoid the "reversals can be done in a single swap" notes.
     protected void reverse(int[] array, int a, int b) {
         if (b - a >= 3) Writes.reversal(array, a, b, 1, true, false);
-        else Writes.swap(array, a, b, 1, true, false);
+        else            Writes.swap(array, a, b, 1, true, false);
     }
 
     protected int buildUniqueRunFW(int[] array, int a, int n) {
@@ -236,7 +236,7 @@ public class AdaptiveKotaSort extends Sort {
                 j = i - (i - j - 1) % mRun - 1;
             }
             while (i - j < mRun && i < b) {
-                insertTo(array, i, maxExpSearch(array, j, i, array[i], false));
+                insertTo(array, i, binSearch(array, j, i, array[i], false));
                 i++;
             }
             j = i++;
@@ -245,6 +245,7 @@ public class AdaptiveKotaSort extends Sort {
     }
 
     protected void insertSort(int[] array, int a, int b) {
+        // findRun(array, start, end, end - start) = pattern-defeating insertion sort
         buildRuns(array, a, b, b - a);
     }
 
