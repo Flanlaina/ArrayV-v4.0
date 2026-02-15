@@ -253,7 +253,6 @@ public final class ArrayVisualizer {
 
     private volatile int updateVisualsForced;
     public  volatile boolean benchmarking;
-    public  volatile static boolean doRSS = false;
 
     public static int MAX_LENGTH_POWER = 18;
 
@@ -1584,8 +1583,7 @@ public final class ArrayVisualizer {
     public static void main(String[] args) {
         System.setProperty("sun.java2d.d3d", "false");
         for (int i = 0; i < args.length; i++) {
-            if ("RSS".equals(args[i])) doRSS = true;
-            else if ("--enable-writes-warnings".equals(args[i])) writesWarningsEnabled = true;
+            if ("--enable-writes-warnings".equals(args[i])) writesWarningsEnabled = true;
             else {
                 int tmpMaxLenPower = 18;
                 try {

@@ -116,11 +116,17 @@ final public class SortPrompt extends javax.swing.JFrame implements AppFrame {
         loadSortThreads();
         initComponents();
         if (lastCategory == -1) {
-            for (lastCategory = 1; ; lastCategory++) {
+            boolean chg = false;
+            for (lastCategory = 1; lastCategory < jComboBox1.getItemCount() ; lastCategory++) {
                 jComboBox1.setSelectedIndex(lastCategory);
                 if (jComboBox1.getSelectedItem().equals("Hybrid Sorts")) {
+                    chg = true;
                     break;
                 }
+            }
+            if (!chg) { // there is no "Hybrid Sorts" category, fallback
+                lastCategory = 0;
+                jComboBox1.setSelectedIndex(lastCategory);
             }
         } else {
             jComboBox1.setSelectedIndex(lastCategory);
@@ -141,10 +147,7 @@ final public class SortPrompt extends javax.swing.JFrame implements AppFrame {
         categorySortThreads.put("Concurrent Sorts",    new RunConcurrentSorts   (ArrayVisualizer));
         categorySortThreads.put("Distribution Sorts",  new RunDistributionSorts (ArrayVisualizer));
         categorySortThreads.put("Exchange Sorts",      new RunExchangeSorts     (ArrayVisualizer));
-        if (main.ArrayVisualizer.doRSS)
-            categorySortThreads.put("Hybrid Sorts",        new RunSummerSort        (ArrayVisualizer));
-        else
-            categorySortThreads.put("Hybrid Sorts",        new RunHybridSorts       (ArrayVisualizer));
+        categorySortThreads.put("Hybrid Sorts",        new RunHybridSorts       (ArrayVisualizer));
         categorySortThreads.put("Impractical Sorts",   new RunImpracticalSorts  (ArrayVisualizer));
         categorySortThreads.put("Insertion Sorts",     new RunInsertionSorts    (ArrayVisualizer));
         categorySortThreads.put("Merge Sorts",         new RunMergeSorts        (ArrayVisualizer));
@@ -163,6 +166,7 @@ final public class SortPrompt extends javax.swing.JFrame implements AppFrame {
         this.jButton1 = new javax.swing.JButton();
         this.jButton2 = new javax.swing.JButton();
         this.jButton3 = new javax.swing.JButton();
+        this.jButton4 = new javax.swing.JButton();
         this.jTextField1 = new PlaceholderTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -239,6 +243,14 @@ final public class SortPrompt extends javax.swing.JFrame implements AppFrame {
             }
         });
 
+        jButton4.setText("RunSummerSort");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed();
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -261,6 +273,8 @@ final public class SortPrompt extends javax.swing.JFrame implements AppFrame {
                     .addComponent(this.jButton1))
                 .addGroup(javax.swing.GroupLayout.Alignment.CENTER, layout.createSequentialGroup()
                     .addComponent(this.jButton2))
+                .addGroup(javax.swing.GroupLayout.Alignment.CENTER, layout.createSequentialGroup()
+                    .addComponent(this.jButton4))
                 );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -280,6 +294,8 @@ final public class SortPrompt extends javax.swing.JFrame implements AppFrame {
                         .addComponent(this.jButton1)
                         .addGap(5, 5, 5)
                         .addComponent(this.jButton2)
+                        .addGap(5, 5, 5)
+                        .addComponent(this.jButton4)
                         .addGap(5, 5, 5))
                 );
 
@@ -321,6 +337,17 @@ final public class SortPrompt extends javax.swing.JFrame implements AppFrame {
             } catch (Exception e) {
                 JErrorPane.invokeErrorMessage(e);
             }
+        }
+        UtilFrame.jButton1ResetText();
+        dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton4ActionPerformed() {//GEN-FIRST:event_jButton1ActionPerformed
+        MultipleSortThread thread = new RunSummerSort(ArrayVisualizer);
+        try {
+            thread.reportAllSorts(array, 1, thread.getSortCount());
+        } catch (Exception e) {
+            JErrorPane.invokeErrorMessage(e);
         }
         UtilFrame.jButton1ResetText();
         dispose();
@@ -392,6 +419,7 @@ final public class SortPrompt extends javax.swing.JFrame implements AppFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     @SuppressWarnings("rawtypes")
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
