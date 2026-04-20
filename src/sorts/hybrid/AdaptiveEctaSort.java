@@ -4,12 +4,39 @@ import main.ArrayVisualizer;
 import sorts.templates.Sort;
 
 /*
+ *
+MIT License
 
-Coded for ArrayV by Flanlaina
-in collaboration with aphitorite
+Copyright (c) 2022-2026 Flanlaina, Sorting Algorithm Scarlet
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ *
+ */
+
+/*
 
 +---------------------------+
-| Sorting Algorithm Scarlet |
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
 +---------------------------+
 
  */
@@ -44,11 +71,13 @@ public class AdaptiveEctaSort extends Sort {
 
     protected void insertTo(int[] array, int a, int b) {
         Highlights.clearMark(2);
-        int temp = array[a];
-        int d = (a > b) ? -1 : 1;
-        for (int i = a; i != b; i += d)
-            Writes.write(array, i, array[i + d], 0.5, true, false);
-        if (a != b) Writes.write(array, b, temp, 0.5, true, false);
+        if (a != b) {
+            int temp = array[a];
+            int d = (a > b) ? -1 : 1;
+            for (int i = a; i != b; i += d)
+                Writes.write(array, i, array[i + d], 0.5, true, false);
+            Writes.write(array, b, temp, 0.5, true, false);
+        }
     }
 
     protected void rotate(int[] array, int a, int m, int b) {
@@ -232,6 +261,7 @@ public class AdaptiveEctaSort extends Sort {
         }
     }
 
+    // precondition: m-a is >= bLen and divisible by bLen
     protected void blockMergeHelper(int[] array, int[] buf, int[] tags, int a, int m, int b, int bLen) {
         int c = 0, t = 2;
         int i = a, j = m, k = 0;

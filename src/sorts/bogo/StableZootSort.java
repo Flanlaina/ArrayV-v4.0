@@ -16,8 +16,8 @@ import sorts.templates.BogoSorting;
  */
 
 /**
- * Stable Bogosort randomly shuffles the array without changing the equal
- * elements' order until the array is sorted.
+ * Stable Zootsort randomly shuffles the array and reverses the array, all
+ * without changing the equal elements' order, until the array is sorted.
  * 
  * @author gooflang
  * @author Flanlaina

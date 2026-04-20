@@ -5,6 +5,32 @@ import sorts.templates.Sort;
 import utils.IndexedRotations;
 
 /*
+ *
+MIT License
+
+Copyright (c) 2025-2026 Flanlaina, Sorting Algorithm Scarlet
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ *
+ */
+
+/*
 
 +---------------------------+
 | SORTING ALGORITHM SCARLET |
@@ -17,7 +43,7 @@ import utils.IndexedRotations;
  */
 
 /**
- * A Fluxsort variant with Logsort and Logota Sort.
+ * A Fluxsort variant with Logsort and Half Logota Sort.
  * <p>
  * To use this algorithm in another, use {@code quickSort()} from a reference
  * instance.
@@ -45,16 +71,10 @@ public class PeachSort extends Sort {
 
     static final int INSERT_THRESHOLD = 32;
 
-    /*
-     * 1st return value: W(n)
-     * 2nd return value: first power of two greater than or equal to W(n)
-     */
-    public static int[] productLog2(int n) {
+    public static int productLog(int n) {
         int r = 1;
         while((r<<r)+r-1 < n) r++;
-        int q = 0;
-        while(1<<q < r) q++;
-        return new int[] {r, 1<<q};
+        return r;
     }
 
     public static int log2(int n) {
@@ -150,11 +170,13 @@ public class PeachSort extends Sort {
 
     protected void insertTo(int[] array, int a, int b) {
         Highlights.clearMark(2);
-        int temp = array[a];
-        int d = (a > b) ? -1 : 1;
-        for (int i = a; i != b; i += d)
-            Writes.write(array, i, array[i + d], 0.5, true, false);
-        if (a != b) Writes.write(array, b, temp, 0.5, true, false);
+        if (a != b) {
+            int temp = array[a];
+            int d = (a > b) ? -1 : 1;
+            for (int i = a; i != b; i += d)
+                Writes.write(array, i, array[i + d], 0.5, true, false);
+            Writes.write(array, b, temp, 0.5, true, false);
+        }
     }
 
     protected void rotate(int[] array, int a, int m, int b) {
@@ -167,124 +189,21 @@ public class PeachSort extends Sort {
         return c < 0 || ((eqLower == 1) && c == 0);
     }
 
-    void pivBufXor(int[] array, int pa, int pb, int v, int wLen) {
-        while (wLen-- > 0) {
-            if ((v & 1) == 1) Writes.swap(array, pa + wLen, pb + wLen, 1, true, false);
-            v >>= 1;
+    private void pivBufXor(int[] array, int pa, int pb, int v, int wLen) {
+        int i = 0;
+        while(wLen-- > 0) {
+            if((v&1) == 1) Writes.swap(array, pa+i, pb+i, 1, true, false);
+            v >>= 1; i++;
         }
     }
-
-    // @param bit - < pivot means this bit
-    int pivBufGet(int[] array, int pa, int piv, int eqLower, int wLen, int bit) {
+    //@param bit - < pivot means this bit
+    private int pivBufGet(int[] array, int pa, int piv, int pCmp, int wLen, int bit) {
         int r = 0;
         while (wLen-- > 0) {
             r <<= 1;
-            r |= (this.pivCmp(array[pa++], piv, eqLower) ? 0 : 1) ^ bit;
+            r |= (this.pivCmp(array[pa + wLen], piv, pCmp) ? 0 : 1) ^ bit;
         }
         return r;
-    }
-
-    protected void blockCycle(int[] array, int a, int n, int tagStart, int bLen, int wLen, int piv, int eqLower,
-            int bit) {
-        for (int i = 0, aPtr = a, tPtr = tagStart; i < n; i++, aPtr += bLen, tPtr += bLen) {
-            int dest = this.pivBufGet(array, aPtr, piv, eqLower, wLen, bit);
-            while (dest != i) {
-                this.blockSwap(array, aPtr, a + dest * bLen, bLen);
-                dest = this.pivBufGet(array, aPtr, piv, eqLower, wLen, bit);
-            }
-            this.pivBufXor(array, aPtr, tPtr, i, wLen);
-        }
-    }
-
-    protected int partition(int[] array, int[] buf, int a, int b, int bLen, int piv, int bias) {
-        // determines which elements do not need to be moved
-        for(; a < b; a++) {
-            Highlights.markArray(1, a);
-            Delays.sleep(0.25);
-            if(!this.pivCmp(array[a], piv, bias)) break;
-        }
-        for(; b > a; b--) {
-            Highlights.markArray(1, b-1);
-            Delays.sleep(0.25);
-            if(this.pivCmp(array[b-1], piv, bias)) break;
-        }
-        if (b - a <= bLen) {
-            int j = a, k = 0;
-            for (int i = a; i < b; i++) {
-                int cmp = Reads.compareIndexValue(array, i, piv, 0.25, true);
-                if (cmp < 0 || ((bias == 1) && cmp == 0)) {
-                    if (j != i) Writes.write(array, j, array[i], 0.5, true, false);
-                    j++;
-                } else Writes.write(buf, k++, array[i], 0.5, false, true);
-            }
-            Writes.arraycopy(buf, 0, array, j, k, 0.5, true, false);
-            return j;
-        }
-
-        // sort blocks and type blocks
-        int p = a;
-        int l = 0, r = 0;
-        int lb = 0, rb = 0;
-        for (int i = a; i < b; i++) {
-            int cmp = Reads.compareIndexValue(array, i, piv, 0.25, true);
-            if (cmp < 0 || ((bias == 1) && cmp == 0)) {
-                Writes.write(array, p + l++, array[i], 0.25, true, false);
-                if(l == bLen) {
-                    l = 0;
-                    lb++;
-                    p += bLen;
-                }
-            } else {
-                Writes.write(buf, r++, array[i], 0.25, false, true);
-                if(r == bLen) {
-                    Writes.arraycopy(array, p, array, p+bLen, l, 0.5, true, false);
-                    Writes.arraycopy(buf, 0, array, p, bLen, 0.5, true, false);
-                    r = 0;
-                    rb++;
-                    p += bLen;
-                }
-            }
-        }
-
-        // sort blocks
-        int min = Math.min(lb, rb);
-        int m = a + lb * bLen;
-        if (min > 0) {
-            int wLen = 32 - Integer.numberOfLeadingZeros(min - 1); // ceil(log2(min))
-            for (int i = 0, j = a, k = a; i < min; i++) { // set bit buffers
-                while (!this.pivCmp(array[j + wLen], piv, bias)) j += bLen;
-                while (this.pivCmp(array[k + wLen], piv, bias)) k += bLen;
-                this.pivBufXor(array, j, k, i, wLen);
-                j += bLen; k += bLen;
-            }
-            if (lb < rb) {
-                for (int i = p - bLen, j = p; i >= a; i -= bLen) { // swap right to left
-                    if (!pivCmp(array[i + wLen], piv, bias)) {
-                        j -= bLen;
-                        blockSwap(array, i, j, bLen);
-                    }
-                }
-                this.blockCycle(array, a, lb, m, bLen, wLen, piv, bias, 0);
-            } else {
-                for (int i = a, j = a; i < p; i += bLen) { // swap left to right
-                    if (pivCmp(array[i + wLen], piv, bias)) {
-                        blockSwap(array, i, j, bLen);
-                        j += bLen;
-                    }
-                }
-                this.blockCycle(array, m, rb, a, bLen, wLen, piv, bias, 1);
-            }
-        }
-
-        // handle leftover
-        Writes.arraycopy(buf, 0, array, b - r, r, 1, true, false);
-        if (l > 0) {
-            Highlights.clearMark(2);
-            Writes.arraycopy(array, b - r - l, buf, 0, l, 1, false, true);
-            Writes.arraycopy(array, m, array, m + l, rb * bLen, 1, true, false);
-            Writes.arraycopy(buf, 0, array, m, l, 1, true, false);
-        }
-        return m + l;
     }
 
     protected int binSearch(int[] array, int a, int b, int val, boolean left) {
@@ -371,75 +290,98 @@ public class PeachSort extends Sort {
         while(i >= 0) Writes.write(array, --b, tmp[i--], 1, true, false);
     }
 
+    protected void blockCycle(int[] array, int a, int n, int tagStart, int bLen, int wLen, int piv, int eqLower,
+            int bit) {
+        for (int i = 0, aPtr = a, tPtr = tagStart; i < n; i++, aPtr += bLen, tPtr += bLen) {
+            int dest = this.pivBufGet(array, aPtr, piv, eqLower, wLen, bit);
+            while (dest != i) {
+                this.blockSwap(array, aPtr, a + dest * bLen, bLen);
+                dest = this.pivBufGet(array, aPtr, piv, eqLower, wLen, bit);
+            }
+            this.pivBufXor(array, aPtr, tPtr, i, wLen);
+        }
+    }
+
+    // Adaptive Half Logota Sort merging adapted from Half Ectasort
+    // precondition: (m-a) is divisible by bLen && (b-m) is divisible by bLen
     private void blockMergeHelper(int[] array, int[] swap, int a, int m, int b, int p, int bLen, int piv, int pCmp, int bit) {
-        if(m-a <= 2*bLen) {
+        if(m-a <= bLen) {
             this.mergeFWExt(array, swap, a, m, b);
             return;
         }
+        if(b-m <= bLen) {
+            this.mergeBWExt(array, swap, a, m, b);
+            return;
+        }
 
-        int bCnt = 0, wLen = log2((b-a)/bLen-3)+1, l = 0, r = 0, c = 0;
-        int i = a, j = m, k = 0;
-        for(; c < 2*bLen; c++) { //merge 2 blocks into buffer to create 2 buffers
-            if(Reads.compareValues(array[i], array[j]) <= 0) {
-                Writes.write(swap, k++, array[i++], 1, true, true);
-                l++;
+        int wLen = log2((b-a)/bLen-1)+1, t = 1;
+        int i = a, j = m, l = a, r = m;
+        int pc = p + bLen;
+        
+        for(int c = 0; c < bLen; c++) {
+            if(Reads.compareIndices(array, i, j, 0.5, true) <= 0) {
+                Writes.write(swap, c, array[i++], 1, true, true);
             } else {
-                Writes.write(swap, k++, array[j++], 1, true, true);
-                r++;
+                Writes.write(swap, c, array[j++], 1, true, true);
             }
         }
 
-        int t = 0, pc = p;
-        boolean left = l >= r;
-        k = left ? i-l : j-r;
-        c = 0;
-        do {
-            if(j == b || Reads.compareValues(array[i], array[j]) <= 0) {
-                Writes.write(array, k++, array[i++], 1, true, false);
-                l++;
-            } else {
-                Writes.write(array, k++, array[j++], 1, true, false);
-                r++;
+        while (l < m && r < b) {
+            boolean left = i-l > 0 && (i-l == bLen || Reads.compareIndices(array, l+bLen-1, r+bLen-1, 1, true) <= 0);
+            int k = left ? l : r;
+            for(int c = 0; c < bLen; c++) {
+                int tmp;
+                if(i < m && (j == b || Reads.compareIndices(array, i, j, 0.5, true) <= 0)) tmp = array[i++];
+                else tmp = array[j++];
+                Highlights.markArray(3, k);
+                Writes.write(array, k++, tmp, 1, false, false);
             }
-            if(++c == bLen) { //change buffer after every block
-                this.pivBufXor(array, k-bLen, pc, t++, wLen);
-                pc += bLen;
-                if (left) l -= bLen;
-                else      r -= bLen;
-                left = l >= r;
-                k = left ? i-l : j-r;
-                c = 0;
-                bCnt++;
+            if(left) l = k;
+            else     r = k;
+
+            pivBufXor(array, k - bLen, pc, t++, wLen);
+            pc += bLen;
+        }
+        Highlights.clearMark(2);
+        Highlights.clearMark(3);
+        
+        int pr = l < m ? l : r;
+        Writes.arraycopy(swap, 0, array, pr, bLen, 0.5, true, false);
+        pivBufXor(array, pr, p, 0, wLen);
+
+        if (l < m) {
+            l += bLen;
+            while (l < m) {
+                pivBufXor(array, l, pc, t++, wLen);
+                pc += bLen; l += bLen;
             }
-        } while(i < m);
+        }
+        if (r < b) {
+            r += bLen;
+            while (r < b) {
+                pivBufXor(array, r, pc, t++, wLen);
+                pc += bLen; r += bLen;
+            }
+        }
 
-        int b1 = j-c;
-        Writes.arraycopy(array, k-c, array, b1, c, 1, true, false); //swap remainder to end (r buffer)
-        r -= c;
-        l = Math.min(l, m-a-l);
-        //l and r buffers are divisible by bLen
-        Writes.arraycopy(array, a,   array, m-l,  l, 1, true, false); //swap l buffer to front
-        Writes.arraycopy(array, a+l, array, b1-r, r, 1, true, false); //swap r buffer to front
-        Writes.arraycopy(swap,  0, array, a, 2*bLen, 1, true, false); //swap first merged elements to correct position in front
-
-        this.blockCycle(array, a+2*bLen, bCnt, p, bLen, wLen, piv, pCmp, bit);
+        this.blockCycle(array, a, (b - a) / bLen, p, bLen, wLen, piv, pCmp, bit);
     }
-
     private void blockMergeEasy(int[] array, int[] swap, int a, int m, int b, int p, int bLen, int piv, int pCmp, int bit) {
         if (Reads.compareIndices(array, m - 1, m, 0.5, true) <= 0) return;
         b = maxExpSearch(array, m, b, array[m - 1], true);
-        if(b-m <= 2*bLen) {
+        if(b-m <= bLen) {
             this.mergeBWExt(array, swap, a, m, b);
             return;
         }
         a = minExpSearch(array, a, m, array[m], false);
-        if(m-a <= 2*bLen) {
+        if(m-a <= bLen) {
             this.mergeFWExt(array, swap, a, m, b);
             return;
         }
 
-        int a1 = a+(m-a)%bLen;
-        this.blockMergeHelper(array, swap, a1, m, b, p, bLen, piv, pCmp, bit);
+        int a1 = a+(m-a)%bLen, b1 = b-(b-m)%bLen;
+        this.blockMergeHelper(array, swap, a1, m, b1, p, bLen, piv, pCmp, bit);
+        this.mergeBWExt(array, swap, a1, b1, b);
         this.mergeFWExt(array, swap, a, a1, b);
     }
 
@@ -502,6 +444,98 @@ public class PeachSort extends Sort {
             for(int i = left; i+j < right; i += 2*j)
                 this.blockMerge(array, swap, i, i+j, Math.min(right, i+2*j), bLen);
     }
+
+    protected int partition(int[] array, int[] buf, int a, int b, int bLen, int piv, int eqLower) {
+        // determines which elements do not need to be moved
+        for(; a < b; a++) {
+            Highlights.markArray(1, a);
+            Delays.sleep(0.25);
+            if(!this.pivCmp(array[a], piv, eqLower)) break;
+        }
+        for(; b > a; b--) {
+            Highlights.markArray(1, b-1);
+            Delays.sleep(0.25);
+            if(this.pivCmp(array[b-1], piv, eqLower)) break;
+        }
+        if (b - a <= bLen) {
+            int j = a, k = 0;
+            for (int i = a; i < b; i++) {
+                int cmp = Reads.compareIndexValue(array, i, piv, 0.25, true);
+                if (cmp < 0 || ((eqLower == 1) && cmp == 0)) {
+                    if (j != i) Writes.write(array, j, array[i], 0.5, true, false);
+                    j++;
+                } else Writes.write(buf, k++, array[i], 0.5, false, true);
+            }
+            Writes.arraycopy(buf, 0, array, j, k, 0.5, true, false);
+            return j;
+        }
+
+        // sort blocks and type blocks
+        int p = a;
+        int l = 0, r = 0;
+        int lb = 0, rb = 0;
+        for (int i = a; i < b; i++) {
+            int cmp = Reads.compareIndexValue(array, i, piv, 0.25, true);
+            if (cmp < 0 || ((eqLower == 1) && cmp == 0)) {
+                Writes.write(array, p + l++, array[i], 0.25, true, false);
+                if(l == bLen) {
+                    l = 0;
+                    lb++;
+                    p += bLen;
+                }
+            } else {
+                Writes.write(buf, r++, array[i], 0.25, false, true);
+                if(r == bLen) {
+                    Writes.arraycopy(array, p, array, p+bLen, l, 0.5, true, false);
+                    Writes.arraycopy(buf, 0, array, p, bLen, 0.5, true, false);
+                    r = 0;
+                    rb++;
+                    p += bLen;
+                }
+            }
+        }
+
+        // sort blocks
+        int min = Math.min(lb, rb);
+        int m = a + lb * bLen;
+        if (min > 0) {
+            int wLen = log2(min - 1) + 1; // ceil(log2(min))
+            for (int i = 0, j = a, k = a; i < min; i++) { // set bit buffers
+                while (!this.pivCmp(array[j + wLen], piv, eqLower)) j += bLen;
+                while (this.pivCmp(array[k + wLen], piv, eqLower)) k += bLen;
+                this.pivBufXor(array, j, k, i, wLen);
+                j += bLen; k += bLen;
+            }
+            if (lb < rb) {
+                for (int i = p - bLen, j = p; i >= a; i -= bLen) { // swap right to left
+                    if (!pivCmp(array[i + wLen], piv, eqLower)) {
+                        j -= bLen;
+                        blockSwap(array, i, j, bLen);
+                    }
+                }
+                this.blockCycle(array, a, lb, m, bLen, wLen, piv, eqLower, 0);
+            } else {
+                for (int i = a, j = a; i < p; i += bLen) { // swap left to right
+                    if (pivCmp(array[i + wLen], piv, eqLower)) {
+                        blockSwap(array, i, j, bLen);
+                        j += bLen;
+                    }
+                }
+                this.blockCycle(array, m, rb, a, bLen, wLen, piv, eqLower, 1);
+            }
+        }
+
+        // handle leftover
+        Writes.arraycopy(buf, 0, array, b - r, r, 1, true, false);
+        if (l > 0) {
+            Highlights.clearMark(2);
+            Writes.arraycopy(array, b - r - l, buf, 0, l, 1, false, true);
+            Writes.arraycopy(array, m, array, m + l, rb * bLen, 1, true, false);
+            Writes.arraycopy(buf, 0, array, m, l, 1, true, false);
+        }
+        return m + l;
+    }
+
 
     protected void sortHelper(int[] array, int[] buf, int a, int b, int bLen, int depth, boolean bad) {
         while (b - a > INSERT_THRESHOLD) {
@@ -578,8 +612,8 @@ public class PeachSort extends Sort {
             if (eq > 0) segmentReversal(array, a, b - 1, 0.75, true, false);
             return;
         }
-        bLen = Math.max(productLog2(len)[0], Math.min(bLen, len));
-        int[] buf = Writes.createExternalArray(2 * bLen);
+        bLen = Math.max(productLog(len), Math.min(bLen, len));
+        int[] buf = Writes.createExternalArray(bLen);
         int sixth = len / 6;
         if (streaks > len / 20 || balance <= sixth || balance + eq >= len - sixth) {
             blockMergeSort(array, buf, a, b, bLen);

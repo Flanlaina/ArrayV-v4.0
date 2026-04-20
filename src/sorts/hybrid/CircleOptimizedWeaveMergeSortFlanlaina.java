@@ -61,9 +61,9 @@ public class CircleOptimizedWeaveMergeSortFlanlaina extends Sort {
         IndexedRotations.cycleReverse(array, a, m, b, 1, true, false);
     }
 
-    void weave(int[] array, int a, int m, int b) { // precondition: b-a is even
+    void weave(int[] array, int a, int b) { // precondition: b-a is even
         for (int e = b, f; e - a > 2; e = f) {
-            m = a + (e - a) / 2;
+            int m = a + (e - a) / 2;
             int p = 1 << log2(m - a);
 
             this.rotate(array, m - p, m, e - p);
@@ -107,7 +107,7 @@ public class CircleOptimizedWeaveMergeSortFlanlaina extends Sort {
             if (m - a < b - m) a1--;
             else b1++;
         }
-        weave(array, a1, m, b1);
+        weave(array, a1, b1);
         circlePass(array, a, b);
     }
 

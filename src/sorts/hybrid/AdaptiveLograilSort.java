@@ -113,18 +113,18 @@ public class AdaptiveLograilSort extends Sort {
     }
 
     private void pivBufXor(int[] array, int pa, int pb, int v, int wLen) {
+        int i = 0;
         while(wLen-- > 0) {
-            if((v&1) == 1) Writes.swap(array, pa+wLen, pb+wLen, 1, true, false);
-            v >>= 1;
+            if((v&1) == 1) Writes.swap(array, pa+i, pb+i, 1, true, false);
+            v >>= 1; i++;
         }
     }
     //@param bit - < pivot means this bit
     private int pivBufGet(int[] array, int pa, int piv, int pCmp, int wLen, int bit) {
-        int r = 0;
-
+        int r = 0, i = 0;
         while(wLen-- > 0) {
-            r <<= 1;
-            r |= (this.pivCmp(array[pa++], piv, pCmp) ? 0 : 1) ^ bit;
+            r |= ((this.pivCmp(array[pa++], piv, pCmp) ? 0 : 1) ^ bit) << i;
+            i++;
         }
         return r;
     }
@@ -191,99 +191,98 @@ public class AdaptiveLograilSort extends Sort {
     }
 
     private void blockMergeHelper(int[] array, int[] swap, int a, int m, int b, int p, int bLen, int piv, int pCmp, int bit) {
-		if(m-a <= bLen) {
-			this.mergeFWExt(array, swap, a, m, b);
-			return;
-		}
-		Writes.arraycopy(array, m-bLen, swap, 0, bLen, 1, true, true);
-		
-		int bCnt = 0, wLen = this.log2((b-a)/bLen-2)+1;
-		
-		int i = a, j = m, k = 0, pc = p;
-		
-		while(i < m-bLen && j+bLen-1 < b) {
-			if(Reads.compareIndices(array, i+bLen-1, j+bLen-1, 0.5, true) <= 0) {
-				this.pivBufXor(array, i, pc, k++, wLen);
-				i += bLen;
-			}
-			else {
-				this.pivBufXor(array, j, pc, (k++ << 1) | 1, wLen+1);
-				j += bLen;
-			}
-			pc += bLen;
-			bCnt++;
-		}
-		while(i < m-bLen) {
-			this.pivBufXor(array, i, pc, k++, wLen);
-			i += bLen;
-			pc += bLen;
-			bCnt++;
-		}
-		Highlights.clearMark(2);
-		Writes.arraycopy(array, a, array, m-bLen, bLen, 1, true, false);
-		
-		int a1 = a+bLen;
-		this.blockCycle(array, a1, bCnt, p, bLen, wLen, piv, pCmp, bit);
-		
-		int f = a1;
-		boolean left = this.pivCmp(array[a1+wLen], piv, pCmp) ^ (bit != 0);
-		
-		if(!left) Writes.swap(array, a1+wLen, p+wLen, 1, true, false);
-		
-		for(k = 1, j = a; k < bCnt; k++) {
-			int nxt = a1 + k*bLen;
-			boolean frag = this.pivCmp(array[nxt+wLen], piv, pCmp) ^ (bit != 0);
-			
-			if(!frag) Writes.swap(array, nxt+wLen, p+(nxt+wLen-a1), 1, true, false);
-			
-			if(left ^ frag) {
-				i = f; f = nxt;
-				
-				while(i < nxt) {
-					int cmp = Reads.compareValues(array[i], array[f]);
-					Highlights.markArray(2, f);
-					
-					if(cmp < 0 || (left && cmp == 0))
-						Writes.write(array, j++, array[i++], 1, true, false);
-					else
-						Writes.write(array, j++, array[f++], 1, true, false);
-				}
-				left = !left;
-			}
-		}
-		if(left) {
-			k = a1 + bCnt*bLen;
-			i = f; f = k;
-					
-			while(i < k && f < b) {
-				Highlights.markArray(2, f);
-				
-				if(Reads.compareValues(array[i], array[f]) <= 0)
-					Writes.write(array, j++, array[i++], 1, true, false);
-				else
-					Writes.write(array, j++, array[f++], 1, true, false);
-			}
-			Highlights.clearMark(2);
-			
-			if(f == b) {
-				while(i < k) Writes.write(array, j++, array[i++], 1, true, false);
-				Writes.arraycopy(swap, 0, array, b-bLen, bLen, 1, true, false);
-				return;
-			}
-		}
-		i = 0;
-		
-		while(i < bLen && f < b) {
-			Highlights.markArray(2, f);
-			
-			if(Reads.compareValues(swap[i], array[f]) <= 0)
-				Writes.write(array, j++, swap[i++], 1, true, false);
-			else
-				Writes.write(array, j++, array[f++], 1, true, false);
-		}
-		Highlights.clearMark(2);
-		
-		while(i < bLen) Writes.write(array, j++, swap[i++], 1, true, false);
+        if(m-a <= bLen) {
+            this.mergeFWExt(array, swap, a, m, b);
+            return;
+        }
+        Writes.arraycopy(array, m-bLen, swap, 0, bLen, 1, true, true);
+        
+        int bCnt = 0, wLen = this.log2((b-a)/bLen-2)+1;
+        
+        int i = a, j = m, k = 0, pc = p;
+        
+        while(i < m-bLen && j+bLen-1 < b) {
+            if (Reads.compareIndices(array, i + bLen - 1, j + bLen - 1, 0.5, true) <= 0) {
+                this.pivBufXor(array, i, pc, k, wLen);
+                i += bLen;
+            } else {
+                this.pivBufXor(array, j, pc, k | (1 << wLen), wLen + 1);
+                j += bLen;
+            }
+            pc += bLen;
+            bCnt++; k++;
+        }
+        while(i < m-bLen) {
+            this.pivBufXor(array, i, pc, k++, wLen);
+            i += bLen;
+            pc += bLen;
+            bCnt++;
+        }
+        Highlights.clearMark(2);
+        Writes.arraycopy(array, a, array, m-bLen, bLen, 1, true, false);
+        
+        int a1 = a+bLen;
+        this.blockCycle(array, a1, bCnt, p, bLen, wLen, piv, pCmp, bit);
+        
+        int f = a1;
+        boolean left = this.pivCmp(array[a1+wLen], piv, pCmp) ^ (bit != 0);
+        
+        if(!left) Writes.swap(array, a1+wLen, p+wLen, 1, true, false);
+        
+        for(k = 1, j = a; k < bCnt; k++) {
+            int nxt = a1 + k*bLen;
+            boolean frag = this.pivCmp(array[nxt+wLen], piv, pCmp) ^ (bit != 0);
+            
+            if(!frag) Writes.swap(array, nxt+wLen, p+(nxt+wLen-a1), 1, true, false);
+            
+            if(left ^ frag) {
+                i = f; f = nxt;
+                
+                while(i < nxt) {
+                    int cmp = Reads.compareValues(array[i], array[f]);
+                    Highlights.markArray(2, f);
+                    
+                    if(cmp < 0 || (left && cmp == 0))
+                        Writes.write(array, j++, array[i++], 1, true, false);
+                    else
+                        Writes.write(array, j++, array[f++], 1, true, false);
+                }
+                left = !left;
+            }
+        }
+        if(left) {
+            k = a1 + bCnt*bLen;
+            i = f; f = k;
+                    
+            while(i < k && f < b) {
+                Highlights.markArray(2, f);
+                
+                if(Reads.compareValues(array[i], array[f]) <= 0)
+                    Writes.write(array, j++, array[i++], 1, true, false);
+                else
+                    Writes.write(array, j++, array[f++], 1, true, false);
+            }
+            Highlights.clearMark(2);
+            
+            if(f == b) {
+                while(i < k) Writes.write(array, j++, array[i++], 1, true, false);
+                Writes.arraycopy(swap, 0, array, b-bLen, bLen, 1, true, false);
+                return;
+            }
+        }
+        i = 0;
+        
+        while(i < bLen && f < b) {
+            Highlights.markArray(2, f);
+            
+            if(Reads.compareValues(swap[i], array[f]) <= 0)
+                Writes.write(array, j++, swap[i++], 1, true, false);
+            else
+                Writes.write(array, j++, array[f++], 1, true, false);
+        }
+        Highlights.clearMark(2);
+        
+        while(i < bLen) Writes.write(array, j++, swap[i++], 1, true, false);
     }
 
     private void blockMergeEasy(int[] array, int[] swap, int a, int m, int b, int p, int bLen, int piv, int pCmp, int bit) {

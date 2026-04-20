@@ -631,8 +631,15 @@ public final class ArrayVisualizer {
                 while (ArrayVisualizer.this.visualsEnabled) {
                     if (ArrayVisualizer.this.updateVisualsForced == 0) {
                         try {
-                            synchronized (ArrayVisualizer.this) {
-                                ArrayVisualizer.this.wait();
+                            if (ArrayVisualizer.this.isActive()) {
+                                synchronized (ArrayVisualizer.this) {
+                                    ArrayVisualizer.this.wait(500);
+                                    ArrayVisualizer.this.updateVisualsForced++;
+                                }
+                            } else {
+                                synchronized (ArrayVisualizer.this) {
+                                    ArrayVisualizer.this.wait();
+                                }
                             }
                         } catch (InterruptedException e) {
                             e.printStackTrace();

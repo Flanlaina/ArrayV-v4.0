@@ -34,7 +34,7 @@ SOFTWARE.
  */
 
 final public class RunSummerSort extends MultipleSortThread {
-    static final String               SORT_AUTHOR = "Flanlaina";
+    static final String               SORT_AUTHOR = "Edsger Dijkstra's";
     static boolean                stabilityProper = true;
     static boolean        alternate_distributions = false;
     static boolean                          seeds = false;
@@ -56,9 +56,9 @@ final public class RunSummerSort extends MultipleSortThread {
         if(sortLength != arrayVisualizer.getCurrentLength()) arrayFrame.setLengthSlider(sortLength);
 
         if ("Many Similar".equals(shuffleName) || "More Similar".equals(shuffleName) || "Stability Test".equals(shuffleName))
-            arrayVisualizer.getArrayFrame().setUniqueSlider(uniques);
-        else if (alt && alternate_distributions) arrayVisualizer.getArrayFrame().setUniqueSlider(sortLength / 8);
-        else arrayVisualizer.getArrayFrame().setUniqueSlider(sortLength);
+            arrayFrame.setUniqueSlider(uniques);
+        else if (alt && alternate_distributions) arrayFrame.setUniqueSlider(sortLength / 8);
+        else arrayFrame.setUniqueSlider(sortLength);
 
         arrayManager.refreshArray(array, arrayVisualizer.getCurrentLength(), this.arrayVisualizer);
 
@@ -88,9 +88,9 @@ final public class RunSummerSort extends MultipleSortThread {
     }
 
     protected synchronized void runSort(int[] array, String shuffleName, boolean alt) throws Exception {
-        Sort sort = new sorts.hybrid.AdaptiveKotaSort(arrayVisualizer);
+        Sort sort = new sorts.select.SmoothSort(arrayVisualizer);
         RunSummerSort.this.runIndividualSort(sort, 0, array, 4096, 4,
-            64, false, shuffleName, "Adaptive Kotasort", alt);
+            16, false, shuffleName, "Smoothsort", alt);
     }
 
     @Override

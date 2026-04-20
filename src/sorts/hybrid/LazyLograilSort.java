@@ -166,33 +166,32 @@ public class LazyLograilSort extends Sort {
         return c < 0 || (pCmp == 1 && c == 0);
     }
 
-    protected void blockXor(int[] array, int pa, int pb, int v, int wLen) {
-        while (wLen-- > 0) {
-            if ((v & 1) == 1) Writes.swap(array, pa + wLen, pb + wLen, 1, true, false);
-            v >>= 1;
+    private void blockXor(int[] array, int pa, int pb, int v, int wLen) {
+        int i = 0;
+        while(wLen-- > 0) {
+            if((v&1) == 1) Writes.swap(array, pa+i, pb+i, 1, true, false);
+            v >>= 1; i++;
         }
     }
-
-    // @param bit - < pivot means this bit
-    protected int blockRead(int[] array, int pa, int piv, int pCmp, int wLen, int bit) {
-        int r = 0;
-
-        while (wLen-- > 0) {
-            r <<= 1;
-            r |= (this.pivCmp(array[pa++], piv, pCmp) ? 0 : 1) ^ bit;
+    //@param bit - < pivot means this bit
+    private int blockRead(int[] array, int pa, int piv, int pCmp, int wLen, int bit) {
+        int r = 0, i = 0;
+        while(wLen-- > 0) {
+            r |= ((this.pivCmp(array[pa++], piv, pCmp) ? 0 : 1) ^ bit) << i;
+            i++;
         }
         return r;
     }
 
-    protected void blockCycle(int[] array, int p, int n, int p1, int bLen, int wLen, int piv, int pCmp, int bit) {
-        for (int i = 0; i < n; i++) {
-            int dest = this.blockRead(array, p + i * bLen, piv, pCmp, wLen, bit);
-
+    protected void blockCycle(int[] array, int a, int n, int tagStart, int bLen, int wLen, int piv, int eqLower,
+            int bit) {
+        for (int i = 0, aPtr = a, tPtr = tagStart; i < n; i++, aPtr += bLen, tPtr += bLen) {
+            int dest = this.blockRead(array, aPtr, piv, eqLower, wLen, bit);
             while (dest != i) {
-                this.blockSwap(array, p + i * bLen, p + dest * bLen, bLen);
-                dest = this.blockRead(array, p + i * bLen, piv, pCmp, wLen, bit);
+                this.blockSwap(array, aPtr, a + dest * bLen, bLen);
+                dest = this.blockRead(array, aPtr, piv, eqLower, wLen, bit);
             }
-            this.blockXor(array, p + i * bLen, p1 + i * bLen, i, wLen);
+            this.blockXor(array, aPtr, tPtr, i, wLen);
         }
         Highlights.clearMark(2);
     }
@@ -241,14 +240,14 @@ public class LazyLograilSort extends Sort {
 
         while (i < m && j + bLen - 1 < b) {
             if (Reads.compareIndices(array, i + bLen - 1, j + bLen - 1, 0.5, true) <= 0) {
-                this.blockXor(array, i, pc, k++, wLen);
+                this.blockXor(array, i, pc, k, wLen);
                 i += bLen;
             } else {
-                this.blockXor(array, j, pc, (k++ << 1) | 1, wLen + 1);
+                this.blockXor(array, j, pc, k | (1 << wLen), wLen + 1);
                 j += bLen;
             }
             pc += bLen;
-            bCnt++;
+            bCnt++; k++;
         }
         while (i < m) {
             this.blockXor(array, i, pc, k++, wLen);

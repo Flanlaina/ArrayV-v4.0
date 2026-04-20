@@ -60,9 +60,9 @@ public class PairwiseOptimizedWeaveMergeSort extends Sort {
         IndexedRotations.cycleReverse(array, a, m, b, 1, true, false);
     }
 
-    void weave(int[] array, int a, int m, int b) {
+    void weave(int[] array, int a, int b) {
         for (int e = b, f; e - a > 2; e = f) {
-            m = (a + e) / 2;
+            int m = (a + e) / 2;
             int p = 1 << log2(m - a);
 
             this.rotate(array, m - p, m, e - p);
@@ -98,7 +98,7 @@ public class PairwiseOptimizedWeaveMergeSort extends Sort {
             if (m - a < b - m) a1--;
             else b1++;
         }
-        weave(array, a1, m, b1);
+        weave(array, a1, b1);
         Highlights.clearMark(2);
         pairChecks(array, a, b, 1);
     }
