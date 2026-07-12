@@ -1,5 +1,7 @@
 # ArrayV 4.0 (Flanlaina's Personal Mod)
 
+**DEPRECATED** - Visit the home of my new ArrayV mod over here where I'll be contributing from time to time! https://github.com/Flanlaina/ArrayVpp
+
 Over 200 sorting algorithms animated with 15 unique graphic designs
 
 [Join the Discord server!](https://discord.gg/thestudio)
